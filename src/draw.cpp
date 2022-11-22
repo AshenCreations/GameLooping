@@ -82,7 +82,8 @@ void draw_ui_component_rectangle(GPU_Rect rect, SDL_Color color)
 
 void draw_ui_component_circle(GPU_Rect rect, SDL_Color color)
 {
-	GPU_CircleFilled(app.renderTarget, rect.x, rect.y, rect.w / 2, color);
+	f32 radius = rect.w / 2;
+	GPU_CircleFilled(app.renderTarget, rect.x, rect.y, radius, color);
 }
 
 void draw_ui_molecule_radio(GPU_Rect rect, bool state)
