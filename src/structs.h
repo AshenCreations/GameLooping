@@ -4,9 +4,10 @@ struct Ui_id
     s32 index;
 };
 
-struct Ui_molecule
+struct Atomic
 {
-    u8 index, type;
+    GPU_Rect rect;
+    SDL_Color color;
 };
 
 struct Button

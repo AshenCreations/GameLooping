@@ -18,7 +18,6 @@ GPU_Image* init(void)
 	init_keybinds();
 
 	printf("Init success...\n");
-
 	return image;
 }
 

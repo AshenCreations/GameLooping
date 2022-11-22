@@ -59,13 +59,15 @@ GPU_Image* textureFromFont(TTF_Font *font, char *text, s32 style, SDL_Color colo
 void draw_atomic_test(void)
 {
 	GPU_Rect rect;
+	bool state;
+
 	rect.x = 1400.0;
 	rect.y = 200.0;
 	rect.w = rect.h = 20;
 	
-	draw_ui_molecule_radio(rect, 0);
+	draw_ui_molecule_radio(rect, state = 0);
 	rect.y += 50;
-	draw_ui_molecule_radio(rect, 1);
+	draw_ui_molecule_radio(rect, state = 1);
 }
 
 void draw_ui_component_rectangleF(GPU_Rect rect, SDL_Color color)
@@ -78,9 +80,9 @@ void draw_ui_component_rectangle(GPU_Rect rect, SDL_Color color)
 	GPU_Rectangle2(app.renderTarget, rect, color);
 }
 
-void draw_ui_component_circle(f32 x, f32 y, f32 radius, SDL_Color color)
+void draw_ui_component_circle(GPU_Rect rect, SDL_Color color)
 {
-	GPU_CircleFilled(app.renderTarget, x, y, radius, color);
+	GPU_CircleFilled(app.renderTarget, rect.x, rect.y, rect.w / 2, color);
 }
 
 void draw_ui_molecule_radio(GPU_Rect rect, bool state)
@@ -93,8 +95,8 @@ void draw_ui_molecule_radio(GPU_Rect rect, bool state)
 	draw_ui_component_rectangleF(rect, color);
 
 	f32 radius = rect.h / 2;
-	draw_ui_component_circle(rect.x, rect.y + radius, radius, color);
-	draw_ui_component_circle(rect.x + rect.w, rect.y + radius, radius, color);
+	draw_ui_component_circle(rect, color);
+	draw_ui_component_circle(rect, color);
 
 	radius -= 2;
 	if(state)
@@ -106,5 +108,5 @@ void draw_ui_molecule_radio(GPU_Rect rect, bool state)
 	{
 		color = COLOR_RADIO_GREY2;
 	}
-	draw_ui_component_circle(rect.x, rect.y + radius + 2, radius, color);
+	draw_ui_component_circle(rect, color);
 }

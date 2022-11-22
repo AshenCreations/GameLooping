@@ -8,7 +8,6 @@ void do_gui(void)
 
 
 
-
 // menu
 void do_menu(void)
 {
@@ -33,13 +32,11 @@ void do_menu(void)
 // button draw logic
 bool do_button(s32 index, GPU_Rect rect, s32 bsize)
 {
-	SDL_Color color = {0};
+	SDL_Color color;
 	f32 bx, by;
 	bool result = do_button_logic(index, rect);
 
 	// drawing button
-	GPU_Rect dest;
-	dest = {rect.x - 2, rect.y - 2, rect.w + 4, rect.h + 4};
 	draw_ui_component_rectangleF(rect, COLOR_BLACK);
 	do_button_border(rect, bsize, COLOR_RADIO_GREY3);
 

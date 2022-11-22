@@ -10,7 +10,7 @@ GPU_Image* textureFromFont(TTF_Font *font, char *text, s32 style, SDL_Color colo
 void draw_atomic_test(void);
 void draw_ui_component_rectangleF(GPU_Rect rect, SDL_Color color);
 void draw_ui_component_rectangle(GPU_Rect rect, SDL_Color color);
-void draw_ui_component_circle(f32 x, f32 y, f32 radius, SDL_Color color);
+void draw_ui_component_circle(GPU_Rect rect, SDL_Color color);
 void draw_ui_molecule_radio(GPU_Rect rect, bool state);
 
 extern void do_event(s32 event);

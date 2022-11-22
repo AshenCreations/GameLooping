@@ -43,3 +43,10 @@ enum uiOrganisms
     UI_ORGANISM_LABELBUTTON,
     UI_ORGANISM_RADIOBUTTON,
 };
+
+enum uiTemplates
+{
+    UI_TEMPLATE_LIST,
+    UI_TEMPLATE_SCROLL_LIST,
+    UI_TEWMPLATE_DROPDOWN,
+};
