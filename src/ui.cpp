@@ -19,9 +19,9 @@ void do_menu(void)
 	u8 numButtons;
 	f32 buttonH, buttonSpacing, menuH, menuW;
 
-	numButtons = 5;
+	numButtons = 3;
 	buttonSpacing = 5.0f;
-	menuW = 276.0f;
+	menuW = 250.0f;
 	buttonH = app.button[BUTTON_QUITAPP].texture->h;
 	menuH = (numButtons * (buttonH + buttonSpacing)) + buttonSpacing;
 

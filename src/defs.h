@@ -8,7 +8,6 @@
 
 #define COLOR_BLACK {0, 0, 0, 255}
 #define COLOR_WHITE {255, 255, 255, 255}
-
 #define COLOR_RADIO_GREY {45, 45, 45, 255}
 #define COLOR_RADIO_BLUE {0, 0, 125, 255}
 #define COLOR_RADIO_GREY2 {150, 150, 150, 255}

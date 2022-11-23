@@ -12,3 +12,8 @@ bool get_mouse_zone(GPU_Rect rect)
 
     return ((mx >= x1 && mx < x2) && (my >= y1 && my < y2)) ? true:false;
 }
+
+s32 round_float2Int(float inNum)
+{
+    return (s32)(inNum + 0.5f);
+}

@@ -1,9 +1,20 @@
-# Main ideas
+# TO DO
 
-## ???
+## So
 
 - you have a number of things. Solve for those things, not an abstracted generalised solution
 - learn to profile, milliseconds only. Fps is fake
+
+## Rendering
+
+### render sorting layers
+
+- Sorting Layers: Background, Middleground, Foreground
+- Background holds the world: sky, land, etc
+- Middleground holds the action, Npcs & Players
+- Foreground holds anything drawn in front of the action (so that you have "depth"), including "facades" which may fade as the player passes behind them
+- Order in Layer: sublayers numbered as -1, 0, 1 for example. why into -ve tho?
+- first render Background Layer (-1, then 0 then 1 sublayers), then middleground & foreground similarly.
 
 ## Code
 
