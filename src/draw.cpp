@@ -46,7 +46,7 @@ void blit(GPU_Image *image, f32 x, f32 y)
 }
 
 // Creates texture from TTF font text
-GPU_Image* textureFromFont(TTF_Font *font, char *text, s32 style, SDL_Color color)
+GPU_Image* textureFromFont(TTF_Font *font, char *text, u8 style, SDL_Color color)
 {
 	TTF_SetFontStyle(font, style);
 	SDL_Surface *surface = TTF_RenderText_Blended(font, text, color);

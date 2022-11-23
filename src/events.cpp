@@ -1,7 +1,7 @@
 #include "events.h"
 
 // Carries out actions based on input event.
-void do_event(s32 event)
+void do_event(u8 event)
 {
     if(event == EVENT_QUIT)
     {

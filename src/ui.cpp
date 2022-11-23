@@ -1,22 +1,27 @@
 #include "ui.h"
 
 // IMGUI system
-void do_gui(void)
+/*void update_gui(void)
 {
-//	do_menu(menuType, menuRect, menuState, numButtons, buttonS);
-}
+	do_menu(menuType, menuRect, menuState, numButtons, buttonS);
+}*/
 
+struct Menu
+{
+	u8 menuType, widgetList;
 
+};
 
 // menu
 void do_menu(void)
 {
-	GPU_Rect menuRect, buttonRect;
-	f32 numButtons, buttonH, buttonSpacing, menuH, menuW;
+	GPU_Rect menuRect;
+	u8 numButtons;
+	f32 buttonH, buttonSpacing, menuH, menuW;
 
-	numButtons = 3;
-	buttonSpacing = 8;
-	menuW = 276;
+	numButtons = 5;
+	buttonSpacing = 5.0f;
+	menuW = 276.0f;
 	buttonH = app.button[BUTTON_QUITAPP].texture->h;
 	menuH = (numButtons * (buttonH + buttonSpacing)) + buttonSpacing;
 
@@ -24,13 +29,13 @@ void do_menu(void)
 	draw_menu(menuRect);
 
 	// buttons
-	buttonRect = {menuRect.x += buttonSpacing, menuRect.y += buttonSpacing, menuRect.w -= buttonSpacing * 2, buttonH};
-	if(do_button(app.button[BUTTON_QUITAPP].index, buttonRect, 2))
+	menuRect = {menuRect.x += buttonSpacing, menuRect.y += buttonSpacing, menuRect.w -= buttonSpacing * 2, buttonH};
+	if(do_button(app.button[BUTTON_QUITAPP].index, menuRect, 2))
 		do_event(EVENT_QUIT);
 }
 
 // button draw logic
-bool do_button(s32 index, GPU_Rect rect, s32 bsize)
+bool do_button(s32 index, GPU_Rect rect, u8 bsize)
 {
 	SDL_Color color;
 	f32 bx, by;
@@ -38,7 +43,7 @@ bool do_button(s32 index, GPU_Rect rect, s32 bsize)
 
 	// drawing button
 	draw_ui_component_rectangleF(rect, COLOR_BLACK);
-	do_button_border(rect, bsize, COLOR_RADIO_GREY3);
+//	do_button_border(rect, bsize, COLOR_RADIO_GREY3);
 
 	// button text - centered
 	bx = rect.x + (rect.w / 2);
@@ -47,17 +52,14 @@ bool do_button(s32 index, GPU_Rect rect, s32 bsize)
 
 	// if hot draw a button highlight
 	if(app.ui_context.hot.index == index)
-	{	
-		color = {200, 100, 0, 255};
-		do_button_border(rect, bsize, color);
-	}
+		do_button_border(rect, bsize, COLOR_ORANGE_DULL);
 
 	// TODO: If hot draw a tooltip
 	return result;
 }
 
 // draws an internal border of width size on edge of button
-void do_button_border(GPU_Rect rect, s32 size, SDL_Color color)
+void do_button_border(GPU_Rect rect, u8 size, SDL_Color color)
 {
 	for(int i = 0; i < size; i++)
 	{
@@ -73,8 +75,7 @@ void draw_menu(GPU_Rect menuRect)
 	GPU_RectangleFilled2(app.renderTarget, menuRect, {0, 0, 0, 235});
 	GPU_SetShapeBlendMode(GPU_BLEND_NORMAL);
 	do_button_border(menuRect, 2, COLOR_BLACK);
-	menuRect = {menuRect.x + 2, menuRect.y + 2, menuRect.w - 4, menuRect.h - 4};
-	do_button_border(menuRect, 2, {125, 75, 25, 255});
+//	do_button_border({menuRect.x + 2, menuRect.y + 2, menuRect.w - 4, menuRect.h - 4}, 2, COLOR_ORANGE_DULL);
 }
 
 // logic to see if button has been pressed

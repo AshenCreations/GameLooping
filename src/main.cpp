@@ -3,13 +3,15 @@
 clock_t clockStart, clockEnd;
 double timeTaken;
 
-
 int WinMain(int argc, char *argv[])
 {
 	SDL_memset(&app, 0, sizeof(App));
 
 	GPU_Image *background = init();
-
+	GPU_Image *smiley = load_texture("img/smiley.png");
+	GPU_SetImageFilter(smiley, GPU_FILTER_NEAREST);		//set the image to nearest filtering
+	SDL_ShowCursor(SDL_DISABLE);
+	
 	atexit(cleanup);
 
 	// main gameloop
@@ -26,6 +28,7 @@ int WinMain(int argc, char *argv[])
 		draw_atomic_test();
 
 		do_menu();
+		blit(smiley, (f32)app.mouse.pos.x, (f32)app.mouse.pos.y);		// blit image after menu so is on top
 
 		present_scene();
 

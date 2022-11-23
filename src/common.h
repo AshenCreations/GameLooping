@@ -5,6 +5,7 @@
 #include <time.h>
 
 #include "SDL_gpu.h"
+#include "SDL.h"
 #include "SDL_ttf.h"
 
 // unsigned integers
