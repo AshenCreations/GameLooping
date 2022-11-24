@@ -2,17 +2,24 @@
 
 clock_t clockStart, clockEnd;
 double timeTaken;
+GPU_Image *background;
+GPU_Image *smiley;
 
 int WinMain(int argc, char *argv[])
 {
 	SDL_memset(&app, 0, sizeof(App));
 
-	GPU_Image *background = init();
-	GPU_Image *smiley = load_texture("img/smiley.png");
+	init();
+
+	background = load_image("img/startbg.png");
+	GPU_SetAnchor(background, 0.0f, 0.0f);
+	smiley = load_image("img/smiley.png");
 	GPU_SetImageFilter(smiley, GPU_FILTER_NEAREST);		//set the image to nearest filtering
 	SDL_ShowCursor(SDL_DISABLE);
 	
 	atexit(cleanup);
+
+
 
 	// main gameloop
 	while (1)

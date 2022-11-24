@@ -4,6 +4,15 @@
 
 - you have a number of things. Solve for those things, not an abstracted generalised solution
 - learn to profile, milliseconds only. Fps is fake
+- learn about memory allocation & management, arenas maybe
+- are to trying to make pretty code, or trying to create something that works well
+
+## Naming Conventions
+
+- own_functions_like_this
+- MyStructName, myStructInstance
+- variableName
+- #define MACRO_NAME_IN_CAPS
 
 ## Rendering
 
@@ -16,42 +25,20 @@
 - Order in Layer: sublayers numbered as -1, 0, 1 for example. why into -ve tho?
 - first render Background Layer (-1, then 0 then 1 sublayers), then middleground & foreground similarly.
 
-## Code
-
-- learn about memory allocation & management, arenas maybe
-- are to trying to make pretty code, or trying to create something that works well
-
-### Naming Conventions
-
-- own_functions_like_this
-- MyStructName, myStructInstance
-- variableName
-- #define MACRO_NAME_IN_CAPS
-
 ## Ui
 
 - Atomic modular ui system
 - change button labels back to GPU_Image to be loaded at init
 - Implement a better version of doButton & doMenu
 - move drawing into draw.cpp & ui logic stays in ui.cpp - maybe ?
+- Tooltips: Instant to start with
 
-### Tooltips
-
-- Instant to begin then maybe use a short delay before drawing
-
-## Input
-
-- Key > Action > Events
-- bool check actions(keypress), then call event on success
-
-## Later stuff
-
-### Coordinates
+## Coordinates
 
 - screen + camera = world
 - screen = world - camera
 
-### Time
+## Time
 
 - unhook physics from framerate by using time based movements
 - Timestep

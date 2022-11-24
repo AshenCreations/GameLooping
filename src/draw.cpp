@@ -13,18 +13,18 @@ void present_scene(void)
 }
 
 // load texture
-GPU_Image *load_texture(char *filename)
+GPU_Image *load_image(char *filename)
 {
 	//SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO, "Loading %s", filename);
 
-	GPU_Image *texture = GPU_LoadImage(filename);
-	if (!texture)
+	GPU_Image *image = GPU_LoadImage(filename);
+	if (!image)
 	{
 		SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO, "Failed to load %s. Check path. Exiting app", filename);
 		exit(1);
 	}
 
-	return texture;
+	return image;
 }
 
 // use F1 to take a screenshot

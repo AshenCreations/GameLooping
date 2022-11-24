@@ -2,7 +2,7 @@
 
 void prepare_scene(void);
 void present_scene(void);
-GPU_Image *load_texture(char *filename);
+GPU_Image *load_image(char *filename);
 void do_screenshot(void);
 void blit(GPU_Image *image, f32 x, f32 y);
 void draw_circle_filled(f32 x, f32 y, f32 radius, SDL_Color color);

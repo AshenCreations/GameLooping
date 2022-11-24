@@ -1,24 +1,18 @@
 #include "init.h"
 
-GPU_Image* init(void)
+void init(void)
 {
 	// SDL inits
 	init_SDL();
 	init_SDLttf();
 
 	// App inits
-	GPU_Image *image = init_screen();
-
   	TTF_Font *font = TTF_OpenFont(FONT_PATH, FONT_SIZE);
 	if(font == NULL)
 		printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
 
-	
 	init_buttons(font);
 	init_keybinds();
-
-	printf("Init success...\n");
-	return image;
 }
 
 // inits SDL via SDL_gpu
@@ -49,14 +43,6 @@ void cleanup(void)
 	TTF_Quit();
 	GPU_Quit();
 	SDL_Quit();
-}
-
-// load background & set anchor to top left
-GPU_Image* init_screen(void)
-{
-	GPU_Image *image = load_texture("img/startbg.png");
-	GPU_SetAnchor(image, 0.0f, 0.0f);
-	return image;
 }
 
 // button data
