@@ -8,8 +8,7 @@
 
 struct Menu
 {
-	u8 menuType, widgetList;
-
+	// something something
 };
 
 // menu
@@ -19,10 +18,10 @@ void do_menu(void)
 	u8 numButtons;
 	f32 buttonH, buttonSpacing, menuH, menuW;
 
-	numButtons = 3;
+	numButtons = 4;
 	buttonSpacing = 5.0f;
 	menuW = 250.0f;
-	buttonH = app.button[BUTTON_QUITAPP].texture->h;
+	buttonH = 45.0f;
 	menuH = (numButtons * (buttonH + buttonSpacing)) + buttonSpacing;
 
 	menuRect = {(SCREEN_WIDTH / 2) - menuW / 2, (SCREEN_HEIGHT / 2) - menuH / 2, menuW, menuH};
@@ -30,7 +29,7 @@ void do_menu(void)
 
 	// buttons
 	menuRect = {menuRect.x += buttonSpacing, menuRect.y += buttonSpacing, menuRect.w -= buttonSpacing * 2, buttonH};
-	if(do_button(app.button[BUTTON_QUITAPP].index, menuRect, 2))
+	if(do_button(app.button[UI_BUTTON_QUITAPP].index, menuRect, 2))
 		do_event(EVENT_QUIT);
 }
 
@@ -38,21 +37,21 @@ void do_menu(void)
 bool do_button(s32 index, GPU_Rect rect, u8 bsize)
 {
 	SDL_Color color;
-	f32 bx, by;
+
 	bool result = do_button_logic(index, rect);
 
 	// drawing button
-	draw_ui_component_rectangleF(rect, COLOR_BLACK);
+	GPU_Rectangle2(app.renderTarget, rect, COLOR_BLACK);
 //	do_button_border(rect, bsize, COLOR_RADIO_GREY3);
 
 	// button text - centered
-	bx = rect.x + (rect.w / 2);
-	by = rect.y + (rect.h / 2) - 2;
+	f32 bx = rect.x + (rect.w / 2);
+	f32 by = rect.y + (rect.h / 2) - 2;
 	blit(app.button[index].texture, bx, by);
 
 	// if hot draw a button highlight
 	if(app.ui_context.hot.index == index)
-		do_button_border(rect, bsize, COLOR_ORANGE_DULL);
+		do_button_border(rect, bsize, COLOR_GREEN_DULL);
 
 	// TODO: If hot draw a tooltip
 	return result;
@@ -71,10 +70,10 @@ void do_button_border(GPU_Rect rect, u8 size, SDL_Color color)
 // use menuRect to draw a menu in the style of Pfui
 void draw_menu(GPU_Rect menuRect)
 {
-	GPU_SetShapeBlendMode(GPU_BLEND_NORMAL_ADD_ALPHA);
-	GPU_RectangleFilled2(app.renderTarget, menuRect, {0, 0, 0, 235});
-	GPU_SetShapeBlendMode(GPU_BLEND_NORMAL);
-	do_button_border(menuRect, 2, COLOR_BLACK);
+//	GPU_SetShapeBlendMode(GPU_BLEND_NORMAL_ADD_ALPHA);
+	GPU_RectangleFilled2(app.renderTarget, menuRect, {0, 0, 0, 255});
+//	GPU_SetShapeBlendMode(GPU_BLEND_NORMAL);
+//	do_button_border(menuRect, 2, COLOR_BLACK);
 //	do_button_border({menuRect.x + 2, menuRect.y + 2, menuRect.w - 4, menuRect.h - 4}, 2, COLOR_ORANGE_DULL);
 }
 

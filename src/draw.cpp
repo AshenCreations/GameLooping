@@ -3,7 +3,7 @@
 // Clears the window to RGB
 void prepare_scene(void)
 {
-	GPU_ClearRGB(app.renderTarget, 0, 0, 0);
+	GPU_ClearRGB(app.renderTarget, 35, 0, 35);
 }
 
 // show the window
@@ -61,29 +61,15 @@ void draw_atomic_test(void)
 	GPU_Rect rect;
 	bool state;
 
-	rect.x = 1400.0;
-	rect.y = 200.0;
+	rect.x = SCREEN_WIDTH / 2;
+	rect.y = (SCREEN_HEIGHT / 2);
 	rect.w = rect.h = 20;
 	
+	GPU_SetShapeBlendMode(GPU_BLEND_NORMAL_ADD_ALPHA);
 	draw_ui_molecule_radio(rect, state = 0);
-	rect.y += 50;
+	rect.y += 40;
 	draw_ui_molecule_radio(rect, state = 1);
-}
-
-void draw_ui_component_rectangleF(GPU_Rect rect, SDL_Color color)
-{
-	GPU_RectangleFilled2(app.renderTarget, rect, color);
-}
-
-void draw_ui_component_rectangle(GPU_Rect rect, SDL_Color color)
-{
-	GPU_Rectangle2(app.renderTarget, rect, color);
-}
-
-void draw_ui_component_circle(GPU_Rect rect, SDL_Color color)
-{
-	f32 radius = rect.h / 2;
-	GPU_CircleFilled(app.renderTarget, rect.x, rect.y, radius, color);
+	GPU_SetShapeBlendMode(GPU_BLEND_NORMAL);
 }
 
 void draw_ui_molecule_radio(GPU_Rect rect, bool state)
@@ -93,14 +79,15 @@ void draw_ui_molecule_radio(GPU_Rect rect, bool state)
 	if(state)
 		color = COLOR_RADIO_BLUE;
 	
-	draw_ui_component_rectangleF(rect, color);
+	GPU_RectangleFilled2(app.renderTarget, rect, color);
 
-	rect.y += rect.h / 2;
-	draw_ui_component_circle(rect, color);
+	f32 radius = rect.h / 2;
+	rect.y += radius;
+	GPU_CircleFilled(app.renderTarget, rect.x, rect.y, radius, color);
 	rect.x += rect.w;
-	draw_ui_component_circle(rect, color);
+	GPU_CircleFilled(app.renderTarget, rect.x, rect.y, radius, color);
 
-	rect.h -= 4;
+	radius -= 2;
 	if(state)
 	{
 		color = COLOR_RADIO_BLUE2;
@@ -110,5 +97,5 @@ void draw_ui_molecule_radio(GPU_Rect rect, bool state)
 		rect.x -= rect.w;		
 		color = COLOR_RADIO_GREY2;
 	}
-	draw_ui_component_circle(rect, color);
+	GPU_CircleFilled(app.renderTarget, rect.x, rect.y, radius, color);
 }

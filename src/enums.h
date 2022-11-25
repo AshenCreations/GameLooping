@@ -18,35 +18,22 @@ enum AppEvents
     EVENT_KEYPRESSED_RIGHT,
 };
 
-enum ButtonNames
+enum UiButtonNames
 {
-    BUTTON_QUITAPP,
+    UI_BUTTON_QUITAPP,
 
-    BUTTON_COUNT
+    UI_BUTTON_COUNT
 };
 
-enum uiComponents
+enum uiButtonTypes
 {
-    UI_COMPONENT_LABEL,
-    UI_COMPONENT_RECTANGLE,
-    UI_COMPONENT_CIRCLE,
-    UI_COMPONENT_IMAGE,
+    UI_BUTTONTYPE_LABELBUTTON,
+    UI_BUTTONTYPE_RADIOBUTTON,
 };
 
-enum uiMolecules
+enum uiMenuTypes
 {
-    UI_MOLECULE_RADIO,
-};
-
-enum uiOrganisms
-{
-    UI_ORGANISM_LABELBUTTON,
-    UI_ORGANISM_RADIOBUTTON,
-};
-
-enum uiTemplates
-{
-    UI_TEMPLATE_LIST,
-    UI_TEMPLATE_SCROLL_LIST,
-    UI_TEWMPLATE_DROPDOWN,
+    UI_MENUTYPE_LIST,
+    UI_MENUTYPE_SCROLL_LIST,
+    UI_MENUTYPE_DROPDOWN,
 };

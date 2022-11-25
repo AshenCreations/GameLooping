@@ -7,6 +7,8 @@ void init(void)
 	init_SDLttf();
 
 	// App inits
+	SDL_ShowCursor(SDL_DISABLE);		// disable cursor
+
   	TTF_Font *font = TTF_OpenFont(FONT_PATH, FONT_SIZE);
 	if(font == NULL)
 		printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
@@ -48,7 +50,7 @@ void cleanup(void)
 // button data
 void init_buttons(TTF_Font *font)
 {
-	app.button[0].index = BUTTON_QUITAPP;
+	app.button[0].index = UI_BUTTON_QUITAPP;
 	app.button[0].texture = textureFromFont(font, "Quit", TTF_STYLE_NORMAL, COLOR_WHITE);
 }
 

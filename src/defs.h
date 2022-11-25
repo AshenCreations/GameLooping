@@ -5,6 +5,8 @@
 
 #define FONT_PATH "fonts/continuum.ttf"
 #define FONT_SIZE 36
+#define IMAGEPATH_background "img/startbg.png"
+#define IMAGEPATH_smiley "img/smiley.png"
 
 #define COLOR_BLACK {0, 0, 0, 255}
 #define COLOR_WHITE {255, 255, 255, 255}
@@ -15,3 +17,4 @@
 #define COLOR_RADIO_BLUE2 {125, 125, 230, 255}
 #define COLOR_ORANGE_DULL {125, 75, 25, 255}
 #define COLOR_ORANGE_BRIGHT {200, 100, 0, 255}
+#define COLOR_GREEN_DULL {0, 50, 0, 255}

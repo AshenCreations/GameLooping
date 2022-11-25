@@ -4,12 +4,6 @@ struct Ui_id
     s32 index;
 };
 
-struct Atomic
-{
-    GPU_Rect rect;
-    SDL_Color color;
-};
-
 struct Button
 {
     s32 index;
@@ -39,5 +33,5 @@ typedef struct
     bool keyboard[MAX_KEYBOARD_KEYS];
     Mouse mouse;
     Ui_context ui_context;
-    Button button[BUTTON_COUNT];
+    Button button[UI_BUTTON_COUNT];
 } App;
