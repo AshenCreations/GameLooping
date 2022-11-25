@@ -39,12 +39,6 @@ void do_screenshot(void)
 	GPU_FreeImage(screenshot);
 }
 
-// place image at x, y
-void blit(GPU_Image *image, f32 x, f32 y)
-{
-	GPU_Blit(image, NULL, app.renderTarget, x, y);
-}
-
 // Creates texture from TTF font text
 GPU_Image* textureFromFont(TTF_Font *font, char *text, u8 style, SDL_Color color)
 {

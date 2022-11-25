@@ -15,6 +15,7 @@ void init(void)
 
 	init_buttons(font);
 	init_keybinds();
+	init_spawner();
 }
 
 // inits SDL via SDL_gpu
@@ -52,6 +53,7 @@ void init_buttons(TTF_Font *font)
 {
 	app.button[0].index = UI_BUTTON_QUITAPP;
 	app.button[0].texture = textureFromFont(font, "Quit", TTF_STYLE_NORMAL, COLOR_WHITE);
+//	GPU_SaveImage(app.button[0].texture, "ui_text_quit.png", GPU_FILE_PNG);
 }
 
 // default keybind values
@@ -63,4 +65,11 @@ void init_keybinds(void)
 	app.keybind.down = SDL_SCANCODE_S;
 	app.keybind.left = SDL_SCANCODE_A;
 	app.keybind.right = SDL_SCANCODE_D;
+}
+
+void init_spawner(void)
+{
+	app.eSpawn.pos = SPAWN_1;
+	app.eSpawn.cooldown = 75;
+	app.eSpawn.maxSpawns = 5;
 }

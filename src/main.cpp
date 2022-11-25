@@ -5,23 +5,20 @@ double timeTaken;
 //GPU_Image *background;
 GPU_Image *smiley;
 
-int WinMain(int argc, char *argv[])
+int WinMain(int argc, char **argv)
 {
 	SDL_memset(&app, 0, sizeof(App));
 
 	init();
+	atexit(cleanup);
 
 	//background = load_image(IMAGEPATH_background);
 	//GPU_SetAnchor(background, 0.0f, 0.0f);				// change the image anchor point to top left (bottom right is 1, 1)
 	smiley = load_image(IMAGEPATH_smiley);
 	GPU_SetImageFilter(smiley, GPU_FILTER_NEAREST);		// set the image to nearest filtering
 	
-	atexit(cleanup);
 
-	f32 rotation = 0.0f;
-
-
-	// main gameloop
+	// mainloop
 	while (1)
 	{
 		clockStart = clock();
@@ -32,24 +29,39 @@ int WinMain(int argc, char *argv[])
 
 //	    blit(background, 0, 0);
 
-		do_menu();
+//		do_menu();
+//		draw_atomic_test();
 
-		draw_atomic_test();
 
-//		blit(smiley, (f32)app.mouse.pos.x, (f32)app.mouse.pos.y);		// blit image after menu so is on top
-		GPU_BlitRotate(smiley, NULL, app.renderTarget, (f32)app.mouse.pos.x, (f32)app.mouse.pos.y, rotation);
-		rotation++;
-		if(rotation > 359)
-			rotation = 0.0f;
-		
+
+		if((app.enemyCount < app.eSpawn.maxSpawns) && (app.eSpawn.cooldown == 0))
+		{
+			spawn_enemy();
+			app.eSpawn.cooldown = 75;
+		}
+		app.eSpawn.cooldown -= 1;
+
+		update_enemy();
+		for(int i = 0; i < app.enemyCount; i++)
+		{
+			if(app.enemy[i].alive)
+			{
+				GPU_Blit(smiley, NULL, app.renderTarget, (f32)app.enemy[i].pos.x, (f32)app.enemy[i].pos.y);
+			}
+		}
+
+
+
 		present_scene();
 
-		if(check_keypress(ACTION_KEY_ESCAPE, app.keybind.escape))
+		// check if keys are pressed
+		if(check_keypress(app.keybind.escape))
 			do_event(EVENT_QUIT);
 
-		if(check_keypress(ACTION_SCREENSHOT, app.keybind.printscreen))
+		if(check_keypress(app.keybind.printscreen))
 			do_event(EVENT_KEYPRESSED_SCREENSHOT);
 
+		// calc time taken to get here from start of mainloop
 		clockEnd = clock();
 		timeTaken = (double)(clockEnd - clockStart) / CLOCKS_PER_SEC;
 		printf("Time taken before sleep is: %.3f seconds\n", timeTaken);

@@ -43,7 +43,7 @@ void do_input(void)
 }
 
 // Returns if action carried out or not
-bool check_keypress(u8 action, u8 keybind)
+bool check_keypress(u8 keybind)
 {
 	return (app.keyboard[keybind]) ? true:false;
 }

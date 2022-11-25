@@ -21,6 +21,23 @@ struct Mouse
     u32 buttons;
 };
 
+struct Enemy
+{
+    Vec2 pos;
+    bool alive;
+};
+
+struct entitySpawner
+{
+    Vec2 pos;
+    u32 numberSpawned, maxSpawns, cooldown;
+};
+
+struct Waypoint
+{
+    Vec2 pos;
+};
+
 struct Keybinds
 {
     u8 left, right, up, down, escape, printscreen;
@@ -34,4 +51,8 @@ typedef struct
     Mouse mouse;
     Ui_context ui_context;
     Button button[UI_BUTTON_COUNT];
+    Enemy enemy[MAX_ENEMIES];
+    u32 enemyCount;
+    entitySpawner eSpawn;
+    Waypoint waypoint[3];
 } App;

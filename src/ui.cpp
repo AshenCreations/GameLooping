@@ -6,10 +6,10 @@
 	do_menu(menuType, menuRect, menuState, numButtons, buttonS);
 }*/
 
-struct Menu
+/*struct Menu
 {
 	// something something
-};
+};*/
 
 // menu
 void do_menu(void)
@@ -34,7 +34,7 @@ void do_menu(void)
 }
 
 // button draw logic
-bool do_button(s32 index, GPU_Rect rect, u8 bsize)
+bool do_button(s32 index, GPU_Rect rect, u8 borderSize)
 {
 	SDL_Color color;
 
@@ -42,25 +42,25 @@ bool do_button(s32 index, GPU_Rect rect, u8 bsize)
 
 	// drawing button
 	GPU_Rectangle2(app.renderTarget, rect, COLOR_BLACK);
-//	do_button_border(rect, bsize, COLOR_RADIO_GREY3);
+//	do_button_border(rect, borderSize, COLOR_RADIO_GREY3);
 
 	// button text - centered
 	f32 bx = rect.x + (rect.w / 2);
 	f32 by = rect.y + (rect.h / 2) - 2;
-	blit(app.button[index].texture, bx, by);
+	GPU_Blit(app.button[index].texture, NULL, app.renderTarget, bx, by);
 
 	// if hot draw a button highlight
 	if(app.ui_context.hot.index == index)
-		do_button_border(rect, bsize, COLOR_GREEN_DULL);
+		do_button_border(rect, borderSize, COLOR_GREEN_DULL);
 
 	// TODO: If hot draw a tooltip
 	return result;
 }
 
 // draws an internal border of width size on edge of button
-void do_button_border(GPU_Rect rect, u8 size, SDL_Color color)
+void do_button_border(GPU_Rect rect, u8 borderSize, SDL_Color color)
 {
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < borderSize; i++)
 	{
 		GPU_Rectangle2(app.renderTarget, rect, color);
 		rect.x += 1, rect.y += 1, rect.w -= 2, rect.h -= 2;

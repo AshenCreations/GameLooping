@@ -18,3 +18,9 @@
 #define COLOR_ORANGE_DULL {125, 75, 25, 255}
 #define COLOR_ORANGE_BRIGHT {200, 100, 0, 255}
 #define COLOR_GREEN_DULL {0, 50, 0, 255}
+
+#define MAX_ENEMIES 100
+#define WAYPOINT_1 {1720, 200}
+#define WAYPOINT_2 {1720, 880}
+#define WAYPOINT_3 {200, 880}
+#define SPAWN_1 {200, 200}
