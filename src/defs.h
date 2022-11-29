@@ -24,3 +24,8 @@
 #define WAYPOINT_2 {1720, 880}
 #define WAYPOINT_3 {200, 880}
 #define SPAWN_1 {200, 200}
+
+#define ENEMY_SPEED 2
+
+#define ROOT_2 1.41421356237f
+#define PI_32 3.14159265359f

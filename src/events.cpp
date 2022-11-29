@@ -1,5 +1,8 @@
 #include "events.h"
 
+void do_event(u8 event);
+
+
 // Carries out actions based on input event.
 void do_event(u8 event)
 {

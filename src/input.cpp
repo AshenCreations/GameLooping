@@ -1,5 +1,11 @@
 #include "input.h"
 
+void do_key_up(SDL_KeyboardEvent *event);
+void do_key_down(SDL_KeyboardEvent *event);
+void do_input(void);
+bool is_pressed(u8 keybind);
+
+
 // Set app.keyboard[scancode] to 1
 void do_key_down(SDL_KeyboardEvent *event)
 {
@@ -14,7 +20,7 @@ void do_key_up(SDL_KeyboardEvent *event)
 		app.keyboard[event->keysym.scancode] = 0;
 }
 
-// Get keyboard & mouse input
+// Get keyboard & mouse input via SDL Events
 void do_input(void)
 {
 	SDL_Event event;
@@ -40,10 +46,16 @@ void do_input(void)
 		}
 	}
 	app.mouse.buttons = SDL_GetMouseState(&app.mouse.pos.x, &app.mouse.pos.y);	// get mouse button state, x & y
+
+	if(is_pressed(app.keybind.escape))
+		do_event(EVENT_QUIT);
+
+	if(is_pressed(app.keybind.printscreen))
+		do_event(EVENT_KEYPRESSED_SCREENSHOT);
 }
 
-// Returns if action carried out or not
-bool check_keypress(u8 keybind)
+// Checks if keybind has been pressed
+bool is_pressed(u8 keybind)
 {
 	return (app.keyboard[keybind]) ? true:false;
 }

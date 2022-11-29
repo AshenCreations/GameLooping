@@ -1,5 +1,12 @@
 #include "ui.h"
 
+void do_menu(void);
+bool do_button(s32 index, GPU_Rect rect, u8 borderSize);
+bool do_button_logic(s32 index, GPU_Rect mouseRect);
+void do_button_border(GPU_Rect rect, u8 borderSize, SDL_Color color);
+void draw_menu(GPU_Rect menuRect);
+
+
 // IMGUI system
 /*void update_gui(void)
 {

@@ -1,6 +1,26 @@
+typedef struct
+{
+    f32 x, y;
+}Vec2;
+
+typedef struct
+{
+    f32 x, y, z;
+}Vec3;
+
+typedef struct
+{
+    s32 x, y;
+}IVec2;
+
+typedef struct
+{
+    s32 x, y, z;
+}IVec3;
+
 struct Ui_id
 {
-    //void (*owner)(void);    //! not used currently
+    // void (*owner)(void);    //! not used currently
     s32 index;
 };
 
@@ -33,10 +53,10 @@ struct entitySpawner
     u32 numberSpawned, maxSpawns, cooldown;
 };
 
-struct Waypoint
-{
-    Vec2 pos;
-};
+// struct Waypoint
+// {
+//     Vec2 pos;
+// };
 
 struct Keybinds
 {
@@ -54,5 +74,6 @@ typedef struct
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;
     entitySpawner eSpawn;
-    Waypoint waypoint[3];
+    // Waypoint waypoint[3];
+    GPU_Image *spriteImages[9];
 } App;

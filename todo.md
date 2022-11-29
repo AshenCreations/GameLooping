@@ -13,8 +13,15 @@
 - MyStructName, myStructInstance
 - variableName
 - #define MACRO_NAME_IN_CAPS
+- enums nameLikeDis whilst members are LIKE_MUH_MACROS_SO_FAR
 
 ## Rendering
+
+### Time
+
+- fixed update timestep & variable rendering
+- unhook physics from framerate by using time based movements
+- movespeed(per second) / framerate = distance moved per timestep
 
 ### render sorting layers
 
@@ -37,13 +44,3 @@
 
 - screen + camera = world
 - screen = world - camera
-
-## Time
-
-- unhook physics from framerate by using time based movements
-- Timestep
-- movespeed(per second) / framerate = distance moved per timestep
-- fixed delta time
-- variable delta time
-- semi-fixed delta time
-- unlocked

@@ -1,5 +1,14 @@
 #include "init.h"
 
+void init_SDL(void);
+void init_SDLttf(void);
+void cleanup(void);
+void init_fonts(void);
+void init_buttons(TTF_Font *font);
+void init_keybinds(void);
+void init_spawner(void);
+
+
 void init(void)
 {
 	// SDL inits
@@ -52,8 +61,8 @@ void cleanup(void)
 void init_buttons(TTF_Font *font)
 {
 	app.button[0].index = UI_BUTTON_QUITAPP;
-	app.button[0].texture = textureFromFont(font, "Quit", TTF_STYLE_NORMAL, COLOR_WHITE);
-//	GPU_SaveImage(app.button[0].texture, "ui_text_quit.png", GPU_FILE_PNG);
+	app.button[0].texture = texture_from_font(font, "Quit", TTF_STYLE_NORMAL, COLOR_WHITE);
+	// GPU_SaveImage(app.button[0].texture, "ui_text_quit.png", GPU_FILE_PNG);
 }
 
 // default keybind values

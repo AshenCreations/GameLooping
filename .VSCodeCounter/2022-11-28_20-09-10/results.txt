@@ -1,0 +1,50 @@
+Date : 2022-11-28 20:09:10
+Directory : w:\MyRepos\Ui_Learning
+Total : 23 files,  615 codes, 70 comments, 183 blanks, all 868 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| C++      |         20 |        570 |         70 |        163 |        803 |
+| Markdown |          2 |         35 |          0 |         16 |         51 |
+| Batch    |          1 |         10 |          0 |          4 |         14 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------+------------+------------+------------+------------+------------+
+| path                                    | files      | code       | comment    | blank      | total      |
++-----------------------------------------+------------+------------+------------+------------+------------+
+| .                                       |         23 |        615 |         70 |        183 |        868 |
+| src                                     |         20 |        570 |         70 |        163 |        803 |
++-----------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------+----------+------------+------------+------------+------------+
+| filename                                | language | code       | comment    | blank      | total      |
++-----------------------------------------+----------+------------+------------+------------+------------+
+| w:\MyRepos\Ui_Learning\build.bat        | Batch    |         10 |          0 |          4 |         14 |
+| w:\MyRepos\Ui_Learning\readme.md        | Markdown |          2 |          0 |          2 |          4 |
+| w:\MyRepos\Ui_Learning\src\common.h     | C++      |         22 |          3 |          4 |         29 |
+| w:\MyRepos\Ui_Learning\src\defs.h       | C++      |         26 |          0 |          6 |         32 |
+| w:\MyRepos\Ui_Learning\src\enums.h      | C++      |         34 |          0 |          6 |         40 |
+| w:\MyRepos\Ui_Learning\src\events.cpp   | C++      |         13 |          1 |          5 |         19 |
+| w:\MyRepos\Ui_Learning\src\events.h     | C++      |          3 |          0 |          3 |          6 |
+| w:\MyRepos\Ui_Learning\src\init.cpp     | C++      |         64 |          7 |         14 |         85 |
+| w:\MyRepos\Ui_Learning\src\init.h       | C++      |          4 |          0 |          3 |          7 |
+| w:\MyRepos\Ui_Learning\src\input.cpp    | C++      |         45 |          4 |         13 |         62 |
+| w:\MyRepos\Ui_Learning\src\input.h      | C++      |          3 |          0 |          3 |          6 |
+| w:\MyRepos\Ui_Learning\src\main.cpp     | C++      |         23 |          7 |         12 |         42 |
+| w:\MyRepos\Ui_Learning\src\main.h       | C++      |          9 |          0 |          4 |         13 |
+| w:\MyRepos\Ui_Learning\src\renderer.cpp | C++      |         98 |          8 |         23 |        129 |
+| w:\MyRepos\Ui_Learning\src\renderer.h   | C++      |          6 |          0 |          3 |          9 |
+| w:\MyRepos\Ui_Learning\src\structs.h    | C++      |         61 |          6 |         13 |         80 |
+| w:\MyRepos\Ui_Learning\src\ui.cpp       | C++      |         77 |         25 |         21 |        123 |
+| w:\MyRepos\Ui_Learning\src\ui.h         | C++      |          4 |          0 |          3 |          7 |
+| w:\MyRepos\Ui_Learning\src\update.cpp   | C++      |         28 |          4 |          9 |         41 |
+| w:\MyRepos\Ui_Learning\src\update.h     | C++      |          2 |          0 |          2 |          4 |
+| w:\MyRepos\Ui_Learning\src\utils.cpp    | C++      |         45 |          5 |         13 |         63 |
+| w:\MyRepos\Ui_Learning\src\utils.h      | C++      |          3 |          0 |          3 |          6 |
+| w:\MyRepos\Ui_Learning\todo.md          | Markdown |         33 |          0 |         14 |         47 |
+| Total                                   |          |        615 |         70 |        183 |        868 |
++-----------------------------------------+----------+------------+------------+------------+------------+
