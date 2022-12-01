@@ -6,7 +6,6 @@
 #include <string.h>
 
 #include "SDL_gpu.h"
-#include "SDL.h"
 #include "SDL_ttf.h"
 
 // unsigned integers
@@ -23,6 +22,7 @@ typedef int64_t s64;    // 8-byte signed integer
 typedef float_t f32;    // 4-byte floating point number
 typedef double_t f64;   // 8-byte floating point number
 
+#include "math.h"
 #include "defs.h"
 #include "enums.h"
 #include "structs.h"

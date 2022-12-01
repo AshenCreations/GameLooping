@@ -52,6 +52,15 @@ void do_input(void)
 
 	if(is_pressed(app.keybind.printscreen))
 		do_event(EVENT_KEYPRESSED_SCREENSHOT);
+
+	if(is_pressed(app.keybind.up))
+		app.player.dPos = MOVE_UP;
+	if(is_pressed(app.keybind.down))
+		app.player.dPos = MOVE_DOWN;
+	if(is_pressed(app.keybind.left))
+		app.player.dPos = MOVE_LEFT;
+	if(is_pressed(app.keybind.right))
+		app.player.dPos = MOVE_RIGHT;
 }
 
 // Checks if keybind has been pressed

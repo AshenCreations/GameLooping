@@ -1,22 +1,15 @@
-typedef struct
+struct Vec2
 {
     f32 x, y;
-}Vec2;
 
-typedef struct
-{
-    f32 x, y, z;
-}Vec3;
+    Vec2 &operator*=(f32 A);
+    Vec2 &operator+=(Vec2 A);
+};
 
-typedef struct
+struct IVec2
 {
     s32 x, y;
-}IVec2;
-
-typedef struct
-{
-    s32 x, y, z;
-}IVec3;
+};
 
 struct Ui_id
 {
@@ -44,6 +37,7 @@ struct Mouse
 struct Enemy
 {
     Vec2 pos;
+    Vec2 dPos;
     bool alive;
 };
 
@@ -53,14 +47,20 @@ struct entitySpawner
     u32 numberSpawned, maxSpawns, cooldown;
 };
 
-// struct Waypoint
-// {
-//     Vec2 pos;
-// };
+struct Waypoint
+{
+    Vec2 pos;
+};
 
 struct Keybinds
 {
     u8 left, right, up, down, escape, printscreen;
+};
+
+struct Player
+{
+    Vec2 pos;
+    Vec2 dPos;
 };
 
 typedef struct
@@ -73,7 +73,11 @@ typedef struct
     Button button[UI_BUTTON_COUNT];
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;
+    Player player;
+
+
     entitySpawner eSpawn;
-    // Waypoint waypoint[3];
+    Waypoint waypoint[3];
+
     GPU_Image *spriteImages[9];
 } App;

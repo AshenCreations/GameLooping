@@ -81,4 +81,5 @@ void init_spawner(void)
 	app.eSpawn.pos = SPAWN_1;
 	app.eSpawn.cooldown = 75;
 	app.eSpawn.maxSpawns = 5;
+	app.eSpawn.numberSpawned = 0;
 }

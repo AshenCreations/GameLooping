@@ -1,4 +1,4 @@
-# TO DO
+# TO DO, TO THINK
 
 ## So
 
@@ -13,7 +13,7 @@
 - MyStructName, myStructInstance
 - variableName
 - #define MACRO_NAME_IN_CAPS
-- enums nameLikeDis whilst members are LIKE_MUH_MACROS_SO_FAR
+- enums nameLikeDis whilst members are LIKE_MUH_MACROS
 
 ## Rendering
 
@@ -28,13 +28,13 @@
 - Sorting Layers: Background, Middleground, Foreground
 - Background holds the world: sky, land, etc
 - Middleground holds the action, Npcs & Players
-- Foreground holds anything drawn in front of the action (so that you have "depth"), including "facades" which may fade as the player passes behind them
+- Foreground holds anything drawn in front of the action (so that you have "depth"), including "facades" which may fade as the player passes by them
 - Order in Layer: sublayers numbered as -1, 0, 1 for example. why into -ve tho?
 - first render Background Layer (-1, then 0 then 1 sublayers), then middleground & foreground similarly.
 
-## Ui
+## GUI
 
-- Atomic modular ui system
+- Atomic-ish modular ui system
 - change button labels back to GPU_Image to be loaded at init
 - Implement a better version of doButton & doMenu
 - move drawing into draw.cpp & ui logic stays in ui.cpp - maybe ?

@@ -92,7 +92,7 @@ bool do_button_logic(s32 index, GPU_Rect mouseRect)
 	s32 *actptr = &app.ui_context.active.index;
 
 	// hot/active/activated logic
-	if(get_mouse_zone(mouseRect))	// if mouse inside button
+	if(mouse_in_rect(mouseRect))	// if mouse inside button
 		*hotptr = index;			// set hot
 	else
 		*hotptr = -1;				// set not hot

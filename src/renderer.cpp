@@ -15,8 +15,7 @@ void render(GPU_Image *image)
 {
 	prepare_scene();
 	// do_menu();
-	sprite_anim_to_frames();
-	// draw_enemy(image);
+	draw_enemy(image);
 	present_scene();
 }
 

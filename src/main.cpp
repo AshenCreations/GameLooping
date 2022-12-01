@@ -1,10 +1,73 @@
 #include "main.h"
 
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Operators START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// scalar * vector
+Vec2 operator*(f32 A, Vec2 B)
+{
+	Vec2 result;
+
+	result.x = A * B.x;
+	result.y = A * B.y;
+
+	return result;
+}
+
+// *= for vectors
+Vec2 &Vec2::operator*=(f32 A)
+{
+	*this = A * *this;
+	return *this;
+}
+
+// -ve vector
+Vec2 operator-(Vec2 A)
+{
+	Vec2 result;
+
+	result.x = -A.x;
+	result.y = -A.y;
+
+	return result;
+}
+
+// add vectors
+Vec2 operator+(Vec2 A, Vec2 B)
+{
+    Vec2 result;
+
+    result.x = A.x + B.x;
+    result.y = A.y + B.y;
+
+    return result;
+}
+
+// += for vectors
+Vec2 &Vec2::operator+=(Vec2 A)
+{
+	*this = *this + A;
+	return *this;
+}
+
+// subtract vectors
+Vec2 operator-(Vec2 A, Vec2 B)
+{
+    Vec2 result;
+
+    result.x = A.x - B.x;
+    result.y = A.y - B.y;
+
+    return result;
+}
+
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Operators END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
 clock_t clockStart, clockEnd;
 double timeTaken;
 GPU_Image *smiley;
 
 
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Main START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 int WinMain(int argc, char **argv)
 {
 	SDL_memset(&app, 0, sizeof(App));

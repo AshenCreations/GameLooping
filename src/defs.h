@@ -8,6 +8,7 @@
 #define IMAGEPATH_background "img/startbg.png"
 #define IMAGEPATH_smiley "img/smiley.png"
 
+// Colors
 #define COLOR_BLACK {0, 0, 0, 255}
 #define COLOR_WHITE {255, 255, 255, 255}
 #define COLOR_RADIO_GREY {45, 45, 45, 255}
@@ -27,5 +28,11 @@
 
 #define ENEMY_SPEED 2
 
-#define ROOT_2 1.41421356237f
+#define ROOT_OF_2_32 1.41421356237f
 #define PI_32 3.14159265359f
+
+// Movement vectors
+#define MOVE_UP {0, -1}
+#define MOVE_DOWN {0, 1}
+#define MOVE_LEFT {-1, 0}
+#define MOVE_RIGHT {1, 0}

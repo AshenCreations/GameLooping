@@ -10,4 +10,4 @@ SET optimisationFlags=/O2 /Oi /fp:fast
 SET filename=UiLearning.exe
 
 cd obj
-cl /nologo /EHsc /W2 %debugFlags% %includes% ../src/*.cpp /Fe../bin/%filename% /link -incremental:no %libpaths% %libs%
+cl /nologo /std:c++17 /EHsc /W2 %debugFlags% %includes% ../src/*.cpp /Fe../bin/%filename% /link -incremental:no %libpaths% %libs%
