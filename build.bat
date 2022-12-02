@@ -7,7 +7,7 @@ SET libpaths=/LIBPATH:C:\SDL2\SDL2\lib\x64 /LIBPATH:C:\SDL2\SDL2_ttf\lib\x64 /LI
 SET libs=SDL2main.lib SDL2.lib SDL2_gpu.lib SDL2_ttf.lib
 SET debugFlags=/D /DEBUG:FULL /Zi
 SET optimisationFlags=/O2 /Oi /fp:fast
-SET filename=UiLearning.exe
+SET filename=someThing.exe
 
 cd obj
 cl /nologo /std:c++17 /EHsc /W2 %debugFlags% %includes% ../src/*.cpp /Fe../bin/%filename% /link -incremental:no %libpaths% %libs%
