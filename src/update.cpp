@@ -3,6 +3,10 @@
 void update(void);
 void update_enemy(void);
 void spawn_enemy(void);
+void move_up(void);
+void move_down(void);
+void move_left(void);
+void move_right(void);
 
 
 void update(void)
@@ -22,7 +26,7 @@ void spawn_enemy(void)
         app.enemy[app.eSpawn.numberSpawned].dPos *= ENEMY_SPEED;
 
         app.eSpawn.numberSpawned += 1;
-        app.eSpawn.cooldown = 75;
+        app.eSpawn.cooldown = MS_PER_UPDATE * 30;
         app.enemyCount += 1;
     }
     app.eSpawn.cooldown -= 1;
@@ -48,7 +52,22 @@ void update_enemy(void)
     }
 }
 
-// void move_player(void)
-// {
-//     app.player.pos += app.player.dPos;
-// }
+void move_up(void)
+{
+    app.player.dPos = {0, -1};
+}
+
+void move_down(void)
+{
+    app.player.dPos = {0, 1};
+}
+
+void move_left(void)
+{
+    app.player.dPos = {-1, 0};
+}
+
+void move_right(void)
+{
+    app.player.dPos = {1, 0};
+}

@@ -2,5 +2,5 @@
 .vscode/c_cpp_properties.json
 .vscode/settings.json
 obj/
-bin/UiLearning.pdb
-bin/UiLearning.exe
+.VSCodeCounter/
+bin/someThing.pdb

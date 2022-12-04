@@ -73,7 +73,7 @@ extern void cleanup(void);
 extern GPU_Image *load_image(char *filename);
 extern void do_input(void);
 extern void update(void);
-extern void render(GPU_Image *image);
+extern void render(GPU_Image *image, f64 lag);
 extern s32 round_float2Int(float fNum);
 
 App app;

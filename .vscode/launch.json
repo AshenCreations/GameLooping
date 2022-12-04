@@ -3,7 +3,7 @@
     "configurations": [
         {
             "name": "Run",
-            "program": "${workspaceFolder}/bin/UiLearning.exe",
+            "program": "${workspaceFolder}/bin/someThing.exe",
             "request": "launch",
             "type": "cppvsdbg",
             "cwd": "${workspaceFolder}"

@@ -1,6 +1,6 @@
 #include "renderer.h"
 
-void render(GPU_Image *image);
+void render(GPU_Image *image, f64 lag);
 void prepare_scene(void);
 void present_scene(void);
 GPU_Image *load_image(char *filename);
@@ -8,14 +8,16 @@ void do_screenshot(void);
 GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color color);
 void draw_atomic_test(void);
 void draw_ui_molecule_radio(GPU_Rect rect, bool state);
-void draw_enemy(GPU_Image *image);
+void draw_enemy(GPU_Image *image, f64 lag);
 
 
-void render(GPU_Image *image)
+void render(GPU_Image *image, f64 lag)
 {
 	prepare_scene();
+
 	// do_menu();
-	draw_enemy(image);
+	draw_enemy(image, lag);
+	
 	present_scene();
 }
 
@@ -67,6 +69,11 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 	SDL_Surface *surface = TTF_RenderText_Blended(font, text, color);
 	GPU_Image *image = GPU_CopyImageFromSurface(surface);
 	SDL_FreeSurface(surface);
+	if(image == NULL)
+		{
+			printf("surface not copied to image, exiting\n");
+			exit(2);
+		}
 
 	return image;
 }
@@ -115,13 +122,14 @@ void draw_ui_molecule_radio(GPU_Rect rect, bool state)
 	GPU_CircleFilled(app.renderTarget, rect.x, rect.y, radius, color);
 }
 
-void draw_enemy(GPU_Image *image)
+void draw_enemy(GPU_Image *image, f64 lag)
 {
 	for(int i = 0; i < app.enemyCount; i++)
 	{
 		if(app.enemy[i].alive)
 		{
-			GPU_Blit(image, NULL, app.renderTarget, (f32)app.enemy[i].pos.x, (f32)app.enemy[i].pos.y);
+			app.enemy[i].pos.x += app.enemy[i].dPos.x * lag;
+			GPU_Blit(image, NULL, app.renderTarget, app.enemy[i].pos.x, app.enemy[i].pos.y);
 		}
 	}
 }

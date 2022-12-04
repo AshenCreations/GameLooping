@@ -15,6 +15,12 @@
 - #define MACRO_NAME_IN_CAPS
 - enums nameLikeDis whilst members are LIKE_MUH_MACROS
 
+## Input
+
+## Updating
+
+### Vectors
+
 ## Rendering
 
 ### Time

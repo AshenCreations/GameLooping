@@ -46,7 +46,7 @@ struct Enemy
     bool alive;
 };
 
-struct entitySpawner
+struct enemySpawner
 {
     Vec2 pos;
     u32 numberSpawned, maxSpawns, cooldown;
@@ -64,6 +64,11 @@ struct Player
     bool playerFacing;
 };
 
+struct Command
+{
+    void (*execute)(void);
+};
+
 typedef struct
 {
     GPU_Target *renderTarget;
@@ -74,11 +79,13 @@ typedef struct
     Button button[UI_BUTTON_COUNT];
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;
-    entitySpawner eSpawn;
+    enemySpawner eSpawn;
     
     Player player;
 
     Waypoint waypoint[3];
+
+    Command command;
 
     // GPU_Image *spriteImages[9];
 } App;

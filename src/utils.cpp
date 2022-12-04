@@ -5,7 +5,6 @@ s32 round_float2Int(float fNum);
 f32 get_vector_length(Vec2 vec);
 
 
-
 // checks if the mouse is inside rect
 bool mouse_in_rect(GPU_Rect rect)
 {

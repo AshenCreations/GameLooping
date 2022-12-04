@@ -8,6 +8,8 @@
 #include "SDL_gpu.h"
 #include "SDL_ttf.h"
 
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Basic Types START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 // unsigned integers
 typedef uint8_t u8;     // 1-byte unsigned integer
 typedef uint16_t u16;   // 2-byte unsigned integer
@@ -21,6 +23,8 @@ typedef int64_t s64;    // 8-byte signed integer
 // float & double
 typedef float_t f32;    // 4-byte floating point number
 typedef double_t f64;   // 8-byte floating point number
+
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Basic Types END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 #include "math.h"
 #include "defs.h"

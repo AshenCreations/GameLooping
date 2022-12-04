@@ -45,7 +45,7 @@ void do_input(void)
 				break;
 		}
 	}
-	app.mouse.buttons = SDL_GetMouseState(&app.mouse.pos.x, &app.mouse.pos.y);	// get mouse button state, x & y
+	app.mouse.buttons = SDL_GetMouseState(&app.mouse.pos.x, &app.mouse.pos.y);	// get mouse button pos & button state
 
 	if(is_pressed(app.keybind.escape))
 		do_event(EVENT_QUIT);
@@ -54,13 +54,13 @@ void do_input(void)
 		do_event(EVENT_KEYPRESSED_SCREENSHOT);
 
 	if(is_pressed(app.keybind.up))
-		app.player.dPos = MOVE_UP;
+		app.command.execute = move_up;
 	if(is_pressed(app.keybind.down))
-		app.player.dPos = MOVE_DOWN;
+		app.command.execute = move_down;
 	if(is_pressed(app.keybind.left))
-		app.player.dPos = MOVE_LEFT;
+		app.command.execute = move_left;
 	if(is_pressed(app.keybind.right))
-		app.player.dPos = MOVE_RIGHT;
+		app.command.execute = move_right;
 }
 
 // Checks if keybind has been pressed
@@ -68,3 +68,4 @@ bool is_pressed(u8 keybind)
 {
 	return (app.keyboard[keybind]) ? true:false;
 }
+

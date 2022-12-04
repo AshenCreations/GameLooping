@@ -3,6 +3,8 @@
 #define SCREEN_HEIGHT 1080
 #define MAX_KEYBOARD_KEYS 350
 
+#define MS_PER_UPDATE (1000 / 60)
+
 #define FONT_PATH "fonts/continuum.ttf"
 #define FONT_SIZE 36
 #define IMAGEPATH_background "img/startbg.png"
@@ -26,7 +28,7 @@
 #define WAYPOINT_3 {200, 880}
 #define SPAWN_1 {200, 200}
 
-#define ENEMY_SPEED 2.0f
+#define ENEMY_SPEED 0.3f
 
 #define ROOT_OF_2_32 1.41421356237f
 #define PI_32 3.14159265359f

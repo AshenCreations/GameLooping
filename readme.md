@@ -8,4 +8,4 @@
 
 - VSCode is being used for editing the project & debugging, may move to RemedyBG in the future
 
-- Build using a build.bat with MSVC cl
+- Building the project using a simple build.bat with MSVC cl
