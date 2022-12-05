@@ -74,7 +74,7 @@ Vec2 &Vec2::operator-=(Vec2 A)
 extern void init(void);
 extern void cleanup(void);
 extern GPU_Image *load_image(char *filename);
-extern void do_input(void);
+extern void input(void);
 extern void update(void);
 extern void render(f64 lag);
 extern s32 round_float2Int(float fNum);

@@ -14,6 +14,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	QueryPerformanceCounter(&previous);
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	// while loop just calls in order input, update, render. Uses QueryPerformanceCounter to time the loop in microseconds,
+	// which we convert to milliseconds when we want to use it. It has some printf logging for timing visualisation.
 	while (1)
 	{
 		QueryPerformanceCounter(&current);		// in microseconds
@@ -21,13 +23,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		previous = current;
 		lag += elapsed / 1000.0;	// divide by 1000 to convert to ms
 
-		do_input();
+		input();
 
 		// this loop reduces lag by MS_PER_UPDATE each iteration & leaves it < MS_PER_UPDATE
 		// so that it may be normalised later when divided by MS_PER_UPDATE
 		printf("lag before update %.4f\n", lag);
 
-		int count = 0;
+		int count = 0;						// for counting the number of updates within each iteration of the gameloop
 		while(lag >= MS_PER_UPDATE)			// loop until lag < MS_PER_UPDATE
 		{
 			update();
@@ -37,7 +39,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		}
 
 		lag /= MS_PER_UPDATE;						// here lag is less then MS_PER_UPDATE
-													//so we can divide by MS_PER_UPDATE to normalize (0->1)
+													//so we can divide by MS_PER_UPDATE to normalize (0 to 1)
 		printf("normalised lag is %.4f\n", lag);
 		render(lag);
 		printf("Frame Rendered\n");		// printed so we can see how many updateframes there are between renderframes

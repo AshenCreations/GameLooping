@@ -3,7 +3,7 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 void do_key_up(SDL_KeyboardEvent *event);
 void do_key_down(SDL_KeyboardEvent *event);
-void do_input(void);
+void input(void);
 bool is_pressed(u8 keybind);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -23,7 +23,7 @@ void do_key_up(SDL_KeyboardEvent *event)
 }
 
 // Get keyboard & mouse input via SDL Events
-void do_input(void)
+void input(void)
 {
 	SDL_Event event;
 	
