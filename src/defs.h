@@ -3,7 +3,7 @@
 #define SCREEN_HEIGHT 1080
 #define MAX_KEYBOARD_KEYS 350
 
-#define MS_PER_UPDATE (1000 / 60)
+#define MS_PER_UPDATE 1000 / 60.0
 
 #define FONT_PATH "fonts/continuum.ttf"
 #define FONT_SIZE 36
@@ -22,13 +22,13 @@
 #define COLOR_ORANGE_BRIGHT {200, 100, 0, 255}
 #define COLOR_GREEN_DULL {0, 50, 0, 255}
 
-#define MAX_ENEMIES 100
+#define MAX_ENEMIES 10000
+#define SPAWN_1 {200, 200}
+#define ENEMY_VELOCITY 1.0f
 #define WAYPOINT_1 {1720, 200}
 #define WAYPOINT_2 {1720, 880}
 #define WAYPOINT_3 {200, 880}
-#define SPAWN_1 {200, 200}
 
-#define ENEMY_SPEED 0.3f
 
 #define ROOT_OF_2_32 1.41421356237f
 #define PI_32 3.14159265359f

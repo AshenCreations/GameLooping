@@ -1,9 +1,11 @@
 #include "input.h"
 
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 void do_key_up(SDL_KeyboardEvent *event);
 void do_key_down(SDL_KeyboardEvent *event);
 void do_input(void);
 bool is_pressed(u8 keybind);
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 // Set app.keyboard[scancode] to 1
@@ -30,7 +32,7 @@ void do_input(void)
 		switch (event.type)
 		{
 			case SDL_QUIT:
-				do_event(EVENT_QUIT);
+				exit(0);
 				break;
 				
 			case SDL_KEYDOWN:
@@ -47,11 +49,12 @@ void do_input(void)
 	}
 	app.mouse.buttons = SDL_GetMouseState(&app.mouse.pos.x, &app.mouse.pos.y);	// get mouse button pos & button state
 
+	//! checking keys here is ok for now
 	if(is_pressed(app.keybind.escape))
-		do_event(EVENT_QUIT);
+		exit(0);
 
 	if(is_pressed(app.keybind.printscreen))
-		do_event(EVENT_KEYPRESSED_SCREENSHOT);
+		do_screenshot();;
 
 	if(is_pressed(app.keybind.up))
 		app.command.execute = move_up;

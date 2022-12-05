@@ -1,8 +1,13 @@
 #include "utils.h"
 
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 bool mouse_in_rect(GPU_Rect rect);
 s32 round_float2Int(float fNum);
 f32 get_vector_length(Vec2 vec);
+f32 get_vector_length(Vec2 A, Vec2 B);
+f64 lerp(f64 v0, f64 v1, f64 t);
+Vec2 make_Vec2(f32 x, f32 y);
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 // checks if the mouse is inside rect
@@ -34,4 +39,19 @@ f32 get_vector_length(Vec2 vec)
 {
     f32 length = sqrtf((vec.x * vec.x) + (vec.y * vec.y));
     return length;
+}
+
+f32 get_vector_length(Vec2 A, Vec2 B)
+ {
+    return sqrtf(((A.x + B.x) * (A.x + B.x)) + ((A.y + B.y) * (A.y + B.y)));
+ }
+
+f32 lerp(f32 v0, f32 v1, f32 t)
+{
+  return (1 - t) * v0 + t * v1;
+}
+
+Vec2 make_Vec2(f32 x, f32 y)
+{
+    return {x, y};
 }

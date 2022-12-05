@@ -1,10 +1,12 @@
 #include "ui.h"
 
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 void do_menu(void);
 bool do_button(s32 index, GPU_Rect rect, u8 borderSize);
 bool do_button_logic(s32 index, GPU_Rect mouseRect);
 void do_button_border(GPU_Rect rect, u8 borderSize, SDL_Color color);
 void draw_menu(GPU_Rect menuRect);
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 // IMGUI system
@@ -37,7 +39,7 @@ void do_menu(void)
 	// buttons
 	menuRect = {menuRect.x += buttonSpacing, menuRect.y += buttonSpacing, menuRect.w -= buttonSpacing * 2, buttonH};
 	if(do_button(app.button[UI_BUTTON_QUITAPP].index, menuRect, 2))
-		do_event(EVENT_QUIT);
+		exit(0);
 }
 
 // button draw logic
@@ -54,7 +56,7 @@ bool do_button(s32 index, GPU_Rect rect, u8 borderSize)
 	// button text - centered
 	f32 bx = rect.x + (rect.w / 2);
 	f32 by = rect.y + (rect.h / 2) - 2;
-	GPU_Blit(app.button[index].texture, NULL, app.renderTarget, bx, by);
+	GPU_Blit(app.button[index].image, NULL, app.renderTarget, bx, by);
 
 	// if hot draw a button highlight
 	if(app.ui_context.hot.index == index)

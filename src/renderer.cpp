@@ -1,6 +1,7 @@
 #include "renderer.h"
 
-void render(GPU_Image *image, f64 lag);
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+void render(f64 lag);
 void prepare_scene(void);
 void present_scene(void);
 GPU_Image *load_image(char *filename);
@@ -9,15 +10,20 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 void draw_atomic_test(void);
 void draw_ui_molecule_radio(GPU_Rect rect, bool state);
 void draw_enemy(GPU_Image *image, f64 lag);
+void draw_enemy_count(char* text);
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-void render(GPU_Image *image, f64 lag)
+void render(f64 lag)
 {
 	prepare_scene();
 
 	// do_menu();
-	draw_enemy(image, lag);
-	
+	draw_enemy(app.smiley, lag);
+
+    sprintf(app.enemyCountText, "Enemies: %d", app.enemyCount);
+	draw_enemy_count(app.enemyCountText);
+
 	present_scene();
 }
 
@@ -128,8 +134,16 @@ void draw_enemy(GPU_Image *image, f64 lag)
 	{
 		if(app.enemy[i].alive)
 		{
-			app.enemy[i].pos.x += app.enemy[i].dPos.x * lag;
+			app.enemy[i].pos.x += app.enemy[i].dPos.x * lag;	// change pos by dPos * lag
 			GPU_Blit(image, NULL, app.renderTarget, app.enemy[i].pos.x, app.enemy[i].pos.y);
 		}
 	}
+}
+
+void draw_enemy_count(char* text)
+{
+	app.enemyCounter = texture_from_font(app.font, text, TTF_STYLE_NORMAL, COLOR_WHITE);
+	GPU_SetAnchor(app.enemyCounter, 0.0f, 0.0f);
+	GPU_SetImageFilter(app.enemyCounter, GPU_FILTER_NEAREST);
+	GPU_Blit(app.enemyCounter, NULL, app.renderTarget, 200, 500);
 }

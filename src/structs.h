@@ -2,7 +2,7 @@ struct Vec2
 {
     f32 x, y;
 
-    Vec2 &operator*=(f32 A);
+    Vec2 &operator*=(f64 A);
     Vec2 &operator+=(Vec2 A);
     Vec2 &operator-=(Vec2 A);
 };
@@ -21,7 +21,7 @@ struct Ui_id
 struct Button
 {
     s32 index;
-    GPU_Image *texture;
+    GPU_Image *image;
 };
 
 struct Ui_context
@@ -49,7 +49,8 @@ struct Enemy
 struct enemySpawner
 {
     Vec2 pos;
-    u32 numberSpawned, maxSpawns, cooldown;
+    u32 numberSpawned, maxSpawns;
+    f64 cooldown;
 };
 
 struct Waypoint
@@ -76,16 +77,21 @@ typedef struct
     bool keyboard[MAX_KEYBOARD_KEYS];
     Mouse mouse;
     Ui_context ui_context;
+    TTF_Font *font;
     Button button[UI_BUTTON_COUNT];
+    GPU_Image *smiley;
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;
+    char enemyCountText[15];
     enemySpawner eSpawn;
+    GPU_Image *enemyCounter;
+
+    // Waypoint waypoint[3];
     
     Player player;
-
-    Waypoint waypoint[3];
-
     Command command;
+
+
 
     // GPU_Image *spriteImages[9];
 } App;

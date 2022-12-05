@@ -1,13 +1,15 @@
 #include "init.h"
 
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 void init_SDL(void);
 void init_SDLttf(void);
 void cleanup(void);
 void init_fonts(void);
-void init_buttons(TTF_Font *font);
+void init_buttons(void);
 void init_keybinds(void);
 void init_spawner(void);
-
+void init_player(void);
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 void init(void)
 {
@@ -18,13 +20,18 @@ void init(void)
 	// App inits
 	SDL_ShowCursor(SDL_DISABLE);		// disable cursor
 
-  	TTF_Font *font = TTF_OpenFont(FONT_PATH, FONT_SIZE);
-	if(font == NULL)
+  	app.font = TTF_OpenFont(FONT_PATH, FONT_SIZE);
+	if(app.font == NULL)
 		printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
 
-	init_buttons(font);
+	init_buttons();
 	init_keybinds();
 	init_spawner();
+	init_player();
+
+	app.enemyCounter = NULL;
+	app.smiley = load_image(IMAGEPATH_smiley);
+	GPU_SetImageFilter(app.smiley, GPU_FILTER_NEAREST);
 }
 
 // inits SDL via SDL_gpu
@@ -58,11 +65,11 @@ void cleanup(void)
 }
 
 // button data
-void init_buttons(TTF_Font *font)
+void init_buttons(void)
 {
 	app.button[0].index = UI_BUTTON_QUITAPP;
-	app.button[0].texture = texture_from_font(font, "Quit", TTF_STYLE_NORMAL, COLOR_WHITE);
-	// GPU_SaveImage(app.button[0].texture, "ui_text_quit.png", GPU_FILE_PNG);
+	app.button[0].image = texture_from_font(app.font, "Quit", TTF_STYLE_NORMAL, COLOR_WHITE);
+	// GPU_SaveImage(app.button[0].image, "ui_text_quit.png", GPU_FILE_PNG);
 }
 
 // default keybind values
@@ -76,10 +83,17 @@ void init_keybinds(void)
 	app.keybind.right = SDL_SCANCODE_D;
 }
 
+// this should probably take param(s)
 void init_spawner(void)
 {
 	app.eSpawn.pos = SPAWN_1;
-	app.eSpawn.cooldown = 75;
-	app.eSpawn.maxSpawns = 5;
+	app.eSpawn.cooldown = 600;
+	app.eSpawn.maxSpawns = 5000;
 	app.eSpawn.numberSpawned = 0;
+}
+
+void init_player(void)
+{
+	app.player.pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+	app.player.dPos = {0, 0};
 }

@@ -1,8 +1,9 @@
 #include "common.h"
+#include <Windows.h>
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Operators START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Operators ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // scalar * vector
-Vec2 operator*(f32 A, Vec2 B)
+Vec2 operator*(f64 A, Vec2 B)
 {
 	Vec2 result;
 
@@ -13,7 +14,7 @@ Vec2 operator*(f32 A, Vec2 B)
 }
 
 // scalar vector using *=
-Vec2 &Vec2::operator*=(f32 A)
+Vec2 &Vec2::operator*=(f64 A)
 {
 	*this = A * *this;
 	return *this;
@@ -66,14 +67,20 @@ Vec2 &Vec2::operator-=(Vec2 A)
 	return *this;
 }
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Operators END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Operators^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START EXTERNAL Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 extern void init(void);
 extern void cleanup(void);
 extern GPU_Image *load_image(char *filename);
 extern void do_input(void);
 extern void update(void);
-extern void render(GPU_Image *image, f64 lag);
+extern void render(f64 lag);
 extern s32 round_float2Int(float fNum);
+extern f32 get_vector_length(Vec2 A);
+extern f32 get_vector_length(Vec2 A, Vec2 B);
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END EXTERNAL Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 
 App app;
