@@ -39,7 +39,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			update();
 			lag -= MS_PER_UPDATE;
 			count++;
-			printf("count is %d, lag = %.4f\n",count, lag);	// printed to visualise the interative value reduction
+			printf("count is %d, lag = %.4f\n",count, lag);	// printed to visualise the iterative value reduction
 		}
 		
 		// here lag is less then MS_PER_UPDATE, so we can divide by MS_PER_UPDATE to normalize (0 to 1)

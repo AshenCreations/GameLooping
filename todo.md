@@ -1,4 +1,4 @@
-# TO DO, TO THINK
+# To do, to think about
 
 ## So
 
@@ -33,7 +33,8 @@
 
 ## Rendering
 
-- render(lag) draws an entity something like: ePos += ePos * lag;
+- need window resizing !!
+- render(lag) draws an entity something like: ePos += dPos * lag;
 
 ### render sorting layers
 
