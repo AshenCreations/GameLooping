@@ -8,9 +8,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	init();
 	atexit(cleanup);
 
-	timeBeginPeriod(1);							// set system sleep granularity to 1ms
+	timeBeginPeriod(1);					// set system sleep granularity to 1ms
 	LARGE_INTEGER previous, current;
-	f64 elapsed, lag = 0.0, totalLag = 0.0;
+	f64 elapsed, lag = 0.0;
 	QueryPerformanceCounter(&previous);
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -23,6 +23,7 @@ void init(void)
   	app.font = TTF_OpenFont(FONT_PATH, FONT_SIZE);
 	if(app.font == NULL)
 		printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
+	TTF_SetFontStyle(app.font, TTF_STYLE_NORMAL);
 
 	init_buttons();
 	init_keybinds();
@@ -47,7 +48,7 @@ void init_SDL(void)
 
 void init_SDLttf(void)
 {
-	if(TTF_Init() == -1)
+	if(TTF_Init() < 0)
 	{
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
@@ -58,6 +59,7 @@ void init_SDLttf(void)
 void cleanup(void)
 {
 	GPU_FreeTarget(app.renderTarget);
+	TTF_CloseFont(app.font);
 
 	TTF_Quit();
 	GPU_Quit();
@@ -88,7 +90,7 @@ void init_spawner(void)
 {
 	app.eSpawn.pos = SPAWN_1;
 	app.eSpawn.cooldown = 600;
-	app.eSpawn.maxSpawns = 5000;
+	app.eSpawn.maxSpawns = 500;
 	app.eSpawn.numberSpawned = 0;
 }
 

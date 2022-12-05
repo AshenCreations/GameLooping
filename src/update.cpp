@@ -6,8 +6,6 @@ void update_enemy(void);
 void spawn_enemy(void);
 void draw_enemy_count(char* text);
 
-f64 lerp(f64 v0, f64 v1, f64 t);
-
 void update_player(void);
 
 void move_up(void);
@@ -33,7 +31,6 @@ void spawn_enemy(void)
         app.eSpawn.numberSpawned += 1;
         app.eSpawn.cooldown = 30;
         app.enemyCount += 1;
-
     }
 
     app.eSpawn.cooldown -= 1;

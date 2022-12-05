@@ -10,7 +10,7 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 void draw_atomic_test(void);
 void draw_ui_molecule_radio(GPU_Rect rect, bool state);
 void draw_enemy(GPU_Image *image, f64 lag);
-void draw_enemy_count(char* text);
+void draw_enemy_count(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 //! Coordinates rendering. Takes normalised frameLag value which needs added to drawing operations involving entities which update position in update()
@@ -20,9 +20,8 @@ void render(f64 lag)
 
 	// do_menu();
 	draw_enemy(app.smiley, lag);
-
-    sprintf(app.enemyCountText, "Enemies: %d", app.enemyCount);
-	draw_enemy_count(app.enemyCountText);
+    snprintf(app.enemyCountText, sizeof(app.enemyCountText), "Enemies: %u", app.enemyCount);
+	draw_enemy_count();
 
 	present_scene();
 }
@@ -71,17 +70,21 @@ void do_screenshot(void)
 // Creates texture from TTF font text
 GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color color)
 {
-	TTF_SetFontStyle(font, style);
-	SDL_Surface *surface = TTF_RenderText_Blended(font, text, color);
-	GPU_Image *image = GPU_CopyImageFromSurface(surface);
-	SDL_FreeSurface(surface);
-	if(image == NULL)
-		{
-			printf("surface not copied to image, exiting\n");
-			exit(2);
-		}
+	SDL_Surface *surface = TTF_RenderText_Blended(app.font, text, color);
+	if(surface == NULL)
+	{
+		printf("surface not created, exiting\n");
+		exit(2);		
+	}
+	GPU_Image *temp = GPU_CopyImageFromSurface(surface);
 
-	return image;
+	if(temp == NULL)
+	{
+		printf("surface not copied to image, exiting\n");
+		exit(2);
+	}
+	SDL_FreeSurface(surface);
+	return temp;
 }
 
 void draw_atomic_test(void)
@@ -140,10 +143,11 @@ void draw_enemy(GPU_Image *image, f64 lag)
 	}
 }
 
-void draw_enemy_count(char* text)
+void draw_enemy_count(void)
 {
-	app.enemyCounter = texture_from_font(app.font, text, TTF_STYLE_NORMAL, COLOR_WHITE);
+	app.enemyCounter = texture_from_font(app.font, app.enemyCountText, TTF_STYLE_NORMAL, COLOR_WHITE);
 	GPU_SetAnchor(app.enemyCounter, 0.0f, 0.0f);
 	GPU_SetImageFilter(app.enemyCounter, GPU_FILTER_NEAREST);
 	GPU_Blit(app.enemyCounter, NULL, app.renderTarget, 200, 500);
+	GPU_FreeImage(app.enemyCounter);
 }

@@ -22,7 +22,7 @@
 #define COLOR_ORANGE_BRIGHT {200, 100, 0, 255}
 #define COLOR_GREEN_DULL {0, 50, 0, 255}
 
-#define MAX_ENEMIES 10000
+#define MAX_ENEMIES 1000
 #define SPAWN_1 {200, 200}
 #define ENEMY_VELOCITY 1.0f
 #define WAYPOINT_1 {1720, 200}
