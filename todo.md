@@ -17,9 +17,7 @@
 
 ## Time
 
-- fixed update timestep & variable rendering
-- unhook physics from framerate by using time based movements
-- movespeed(per second) / framerate = distance moved per timestep
+- input -> update loop -> render
 
 ## Input
 

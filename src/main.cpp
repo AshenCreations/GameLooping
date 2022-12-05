@@ -2,7 +2,7 @@
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	SDL_memset(&app, 0, sizeof(App));
+	memset(&app, 0, sizeof(App));
 
 	// Init before mainloop starts, some inits are default settings
 	init();
@@ -21,26 +21,28 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		previous = current;
 		lag += elapsed / 1000.0;	// divide by 1000 to convert to ms
 
-		// input();
 		do_input();
 
-		// update();
 		// this loop reduces lag by MS_PER_UPDATE each iteration & leaves it < MS_PER_UPDATE
 		// so that it may be normalised later when divided by MS_PER_UPDATE
 		printf("lag before update %.4f\n", lag);
 
-		while(lag >= MS_PER_UPDATE)
+		int count = 0;
+		while(lag >= MS_PER_UPDATE)			// loop until lag < MS_PER_UPDATE
 		{
-			update();		//! we know the interval is MS_PER_UPDATE, so what is dis ????
+			update();
 			lag -= MS_PER_UPDATE;
-			printf("lag = %.4f\n", lag);
+			count++;
+			printf("count is %d, lag = %.4f\n",count, lag);	// printed to visualise the interative value reduction
 		}
 
-		// render();
-		render(lag / MS_PER_UPDATE);	// here lag is less then MS_PER_UPDATE so we can divide by MS_PER_UPDATE to normalize (0->1)
-		printf("Frame Rendered\n");
+		lag /= MS_PER_UPDATE;						// here lag is less then MS_PER_UPDATE
+													//so we can divide by MS_PER_UPDATE to normalize (0->1)
+		printf("normalised lag is %.4f\n", lag);
+		render(lag);
+		printf("Frame Rendered\n");		// printed so we can see how many updateframes there are between renderframes
 
-		Sleep(1);
+		Sleep(1);		// and breathe
 	}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }

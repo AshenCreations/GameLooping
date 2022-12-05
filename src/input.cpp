@@ -49,7 +49,7 @@ void do_input(void)
 	}
 	app.mouse.buttons = SDL_GetMouseState(&app.mouse.pos.x, &app.mouse.pos.y);	// get mouse button pos & button state
 
-	//! checking keys here is ok for now
+	//TODO checking keys here ok for now ??
 	if(is_pressed(app.keybind.escape))
 		exit(0);
 
@@ -71,4 +71,3 @@ bool is_pressed(u8 keybind)
 {
 	return (app.keyboard[keybind]) ? true:false;
 }
-

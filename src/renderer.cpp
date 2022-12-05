@@ -13,7 +13,7 @@ void draw_enemy(GPU_Image *image, f64 lag);
 void draw_enemy_count(char* text);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-
+//! Coordinates rendering. Takes normalised frameLag value which needs added to drawing operations involving entities which update position in update()
 void render(f64 lag)
 {
 	prepare_scene();

@@ -4,10 +4,11 @@
 void update(void);
 void update_enemy(void);
 void spawn_enemy(void);
-void update_player(void);
 void draw_enemy_count(char* text);
 
 f64 lerp(f64 v0, f64 v1, f64 t);
+
+void update_player(void);
 
 void move_up(void);
 void move_down(void);
@@ -41,6 +42,7 @@ void spawn_enemy(void)
 // update enemy position
 void update_enemy(void)
 {
+    //TODO move & clip are here for now, will need seperate functions
     for(int i = 0; i < app.enemyCount; i++)
     {
         if(app.enemy[i].pos.x >= 900)
