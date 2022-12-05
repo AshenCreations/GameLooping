@@ -14,4 +14,4 @@ IF NOT EXIST obj mkdir obj
 cd obj
 cl /nologo /std:c++17 /EHsc /W2 %optimisationFlags% %includes% ../src/*.cpp /Fe../%filename% /link -incremental:no %libpaths% %libs%
 
-del "..\someThing.pdb"
+IF EXIST "..\someThing.pdb" del "..\someThing.pdb"

@@ -42,7 +42,7 @@ f32 get_vector_length(Vec2 vec)
 
 f32 lerp(f32 v0, f32 v1, f32 t)
 {
-  return (1 - t) * v0 + t * v1;
+  return ((1 - t) * v0) + (t * v1);
 }
 
 Vec2 make_Vec2(f32 x, f32 y)

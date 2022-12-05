@@ -13,7 +13,9 @@ void draw_enemy(GPU_Image *image, f64 lag);
 void draw_enemy_count(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-//! Coordinates rendering. Takes normalised frameLag value which needs added to drawing operations involving entities which update position in update()
+//! Coordinates rendering. Takes normalised frameLag value which needs added to drawing
+//! operations involving entities which update position in update()
+// does render() need knowledge of gameobjects and thier velocities ???
 void render(f64 lag)
 {
 	prepare_scene();
@@ -61,13 +63,11 @@ void do_screenshot(void)
 
 	if(!success)
 		GPU_LogError("screenshot not saved\n");
-	else
-		printf("Screenshot saved\n");
 
 	GPU_FreeImage(screenshot);
 }
 
-// Creates texture from TTF font text
+// Creates texture from TTF font text, free the image returned before generating another
 GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color color)
 {
 	SDL_Surface *surface = TTF_RenderText_Blended(app.font, text, color);
@@ -87,6 +87,7 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 	return temp;
 }
 
+// first look at making modular butons - kinda low priority
 void draw_atomic_test(void)
 {
 	GPU_Rect rect;
@@ -131,6 +132,7 @@ void draw_ui_molecule_radio(GPU_Rect rect, bool state)
 	GPU_CircleFilled(app.renderTarget, rect.x, rect.y, radius, color);
 }
 
+// blit enemies
 void draw_enemy(GPU_Image *image, f64 lag)
 {
 	for(int i = 0; i < app.enemyCount; i++)
@@ -143,11 +145,12 @@ void draw_enemy(GPU_Image *image, f64 lag)
 	}
 }
 
+// onscreen text counter for enemyCount
 void draw_enemy_count(void)
 {
 	app.enemyCounter = texture_from_font(app.font, app.enemyCountText, TTF_STYLE_NORMAL, COLOR_WHITE);
 	GPU_SetAnchor(app.enemyCounter, 0.0f, 0.0f);
 	GPU_SetImageFilter(app.enemyCounter, GPU_FILTER_NEAREST);
 	GPU_Blit(app.enemyCounter, NULL, app.renderTarget, 200, 500);
-	GPU_FreeImage(app.enemyCounter);
+	GPU_FreeImage(app.enemyCounter);	// this must be freed after use
 }
