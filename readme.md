@@ -7,3 +7,7 @@
 - I'm using C & SDL2 & compiling with a build.bat in CL. Only really using some simple operator overloading from C++
 
 - VSCode is being used for editing the project & debugging
+
+# Running
+
+- copy the .exe into same folder as the SDL dll's
