@@ -3,7 +3,7 @@
     "configurations": [
         {
             "name": "Run",
-            "program": "${workspaceFolder}/bin/someThing.exe",
+            "program": "${workspaceFolder}/someThing.exe",
             "request": "launch",
             "type": "cppvsdbg",
             "cwd": "${workspaceFolder}"

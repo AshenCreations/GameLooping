@@ -10,7 +10,8 @@ SET optimisationFlags=/O2 /Oi /fp:fast
 SET filename=someThing.exe
 
 IF NOT EXIST obj mkdir obj
-IF NOT EXIST bin mkdir bin
 
 cd obj
-cl /nologo /std:c++17 /EHsc /W2 %debugFlags% %includes% ../src/*.cpp /Fe../bin/%filename% /link -incremental:no %libpaths% %libs%
+cl /nologo /std:c++17 /EHsc /W2 %debugFlags% %includes% ../src/*.cpp /Fe../%filename% /link -incremental:no %libpaths% %libs%
+
+REM del "..\someThing.pdb"
