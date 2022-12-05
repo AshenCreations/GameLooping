@@ -7,3 +7,5 @@
 - I'm using C & SDL2 & compiling with a build.bat in CL. Only really using some simple operator overloading from C++
 
 - VSCode is being used for editing the project & debugging
+
+- should run as long as the SDL dll's & .exe are in same folder
