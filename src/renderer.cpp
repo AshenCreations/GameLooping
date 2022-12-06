@@ -13,9 +13,9 @@ void draw_enemy(GPU_Image *image, f64 lag);
 void draw_enemy_count(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-//! Coordinates rendering. Takes normalised frameLag value which needs added to drawing
+//! Takes normalised frameLag value which needs added to drawing
 //! operations involving entities which update position in update()
-// does render() need knowledge of gameobjects and thier velocities ???
+// so does render() need knowledge of gameobjects and thier velocities ???
 void render(f64 lag)
 {
 	prepare_scene();

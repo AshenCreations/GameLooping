@@ -1,4 +1,4 @@
-#define WINDOW_TITLE "Ui_Learning_Window"
+#define WINDOW_TITLE "someThing"
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 #define MAX_KEYBOARD_KEYS 350
@@ -7,7 +7,6 @@
 
 #define FONT_PATH "fonts/continuum.ttf"
 #define FONT_SIZE 36
-#define IMAGEPATH_background "img/startbg.png"
 #define IMAGEPATH_smiley "img/smiley.png"
 
 // Colors
@@ -24,7 +23,9 @@
 
 #define MAX_ENEMIES 1000
 #define SPAWN_1 {200, 200}
-#define ENEMY_VELOCITY 1.0f
+#define ENEMY_VELOCITY 0.5f
+
+//! not used yet
 #define WAYPOINT_1 {1720, 200}
 #define WAYPOINT_2 {1720, 880}
 #define WAYPOINT_3 {200, 880}

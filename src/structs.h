@@ -53,11 +53,13 @@ struct enemySpawner
     f64 cooldown;
 };
 
+//! not used
 struct Waypoint
 {
     Vec2 pos;
 };
 
+//! not used
 struct Player
 {
     Vec2 pos;
@@ -65,11 +67,13 @@ struct Player
     bool playerFacing;
 };
 
+//! not used
 struct Command
 {
     void (*execute)(void);
 };
 
+// main app struct
 typedef struct
 {
     GPU_Target *renderTarget;

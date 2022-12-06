@@ -2,7 +2,7 @@
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 void init_SDL(void);
-void init_SDLttf(void);
+void init_SDL_ttf(void);
 void cleanup(void);
 void init_fonts(void);
 void init_buttons(void);
@@ -15,15 +15,16 @@ void init(void)
 {
 	// SDL inits
 	init_SDL();
-	init_SDLttf();
+	init_SDL_ttf();
 
-	// App inits
-	SDL_ShowCursor(SDL_DISABLE);		// disable cursor
-
-  	app.font = TTF_OpenFont(FONT_PATH, FONT_SIZE);
+  	// open the font: will close at exit
+	app.font = TTF_OpenFont(FONT_PATH, FONT_SIZE);
 	if(app.font == NULL)
 		printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
 	TTF_SetFontStyle(app.font, TTF_STYLE_NORMAL);
+
+	// App inits
+	SDL_ShowCursor(SDL_DISABLE);		// disable cursor
 
 	init_buttons();
 	init_keybinds();
@@ -35,7 +36,8 @@ void init(void)
 	GPU_SetImageFilter(app.smiley, GPU_FILTER_NEAREST);
 }
 
-// inits SDL via SDL_gpu
+// inits SDL via SDL_gpu. much simpler than the normal window & renderer init using SDL
+//TODO may need to use GPU_SetInitWindow & GPU_SetPreInitFlags
 void init_SDL(void)
 {
 	app.renderTarget = GPU_Init((u16)SCREEN_WIDTH, (u16)SCREEN_HEIGHT, GPU_DEFAULT_INIT_FLAGS);
@@ -46,7 +48,8 @@ void init_SDL(void)
 	}
 }
 
-void init_SDLttf(void)
+// simple init for SDL_ttf
+void init_SDL_ttf(void)
 {
 	if(TTF_Init() < 0)
 	{
@@ -67,6 +70,7 @@ void cleanup(void)
 }
 
 // button data
+//TODO needs to change with button rework
 void init_buttons(void)
 {
 	app.button[0].index = UI_BUTTON_QUITAPP;

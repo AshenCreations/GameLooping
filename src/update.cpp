@@ -29,7 +29,7 @@ void spawn_enemy(void)
         app.enemy[app.eSpawn.numberSpawned].pos = app.eSpawn.pos;
 
         app.eSpawn.numberSpawned += 1;
-        app.eSpawn.cooldown = 30;
+        app.eSpawn.cooldown = 300;
         app.enemyCount += 1;
     }
 
@@ -37,9 +37,9 @@ void spawn_enemy(void)
 }
 
 // update enemy position
+//TODO move & clip are here for now, will need seperate functions
 void update_enemy(void)
 {
-    //TODO move & clip are here for now, will need seperate functions
     for(int i = 0; i < app.enemyCount; i++)
     {
         if(app.enemy[i].pos.x >= 900)
