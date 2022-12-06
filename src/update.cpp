@@ -29,7 +29,7 @@ void spawn_enemy(void)
         app.enemy[app.eSpawn.numberSpawned].pos = app.eSpawn.pos;
 
         app.eSpawn.numberSpawned += 1;
-        app.eSpawn.cooldown = 300;
+        app.eSpawn.cooldown = 12;
         app.enemyCount += 1;
     }
 
