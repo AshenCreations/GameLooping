@@ -86,9 +86,12 @@ typedef struct
     GPU_Image *smiley;
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;
-    char enemyCountText[15];
+    char enemyCountText[30];
     enemySpawner eSpawn;
     GPU_Image *enemyCounter;
+
+    GPU_Image *instruction;
+    char instructionText[50];
 
     // Waypoint waypoint[3];
     

@@ -34,6 +34,10 @@ void init(void)
 	app.enemyCounter = NULL;
 	app.smiley = load_image(IMAGEPATH_smiley);
 	GPU_SetImageFilter(app.smiley, GPU_FILTER_NEAREST);
+	
+	app.instruction = texture_from_font(app.font, INSTRUCTIONS, TTF_STYLE_NORMAL, COLOR_WHITE);
+	GPU_SetAnchor(app.instruction, 0.0f, 0.0f);
+	GPU_SetImageFilter(app.instruction, GPU_FILTER_NEAREST);
 }
 
 // inits SDL via SDL_gpu. much simpler than the normal window & renderer init using SDL

@@ -54,7 +54,7 @@ void input(void)
 		exit(0);
 
 	if(is_pressed(app.keybind.printscreen))
-		do_screenshot();;
+		do_screenshot();
 
 	if(is_pressed(app.keybind.up))
 		app.command.execute = move_up;

@@ -9,3 +9,5 @@
 - VSCode is being used for editing the project & debugging
 
 - should run as long as the SDL dll's,  the .exe , img folder & fonts folder are together
+
+- Esc: quits, F1: takes screenshot

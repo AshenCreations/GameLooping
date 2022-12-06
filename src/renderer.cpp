@@ -11,6 +11,7 @@ void draw_atomic_test(void);
 void draw_ui_molecule_radio(GPU_Rect rect, bool state);
 void draw_enemy(GPU_Image *image, f64 lag);
 void draw_enemy_count(void);
+void draw_instructions(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 //! Takes normalised frameLag value which needs added to drawing
@@ -22,8 +23,11 @@ void render(f64 lag)
 
 	// do_menu();
 	draw_enemy(app.smiley, lag);
-    snprintf(app.enemyCountText, sizeof(app.enemyCountText), "Enemies: %u", app.enemyCount);
+    
+	snprintf(app.enemyCountText, sizeof(app.enemyCountText), "Enemies: %u / 10000", app.enemyCount);
 	draw_enemy_count();
+	
+	draw_instructions();
 
 	present_scene();
 }
@@ -153,4 +157,9 @@ void draw_enemy_count(void)
 	GPU_SetImageFilter(app.enemyCounter, GPU_FILTER_NEAREST);
 	GPU_Blit(app.enemyCounter, NULL, app.renderTarget, 200, 500);
 	GPU_FreeImage(app.enemyCounter);	// this must be freed after use
+}
+
+void draw_instructions(void)
+{
+	GPU_Blit(app.instruction, NULL, app.renderTarget, 200, 600);
 }

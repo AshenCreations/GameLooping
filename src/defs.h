@@ -39,3 +39,5 @@
 #define MOVE_DOWN {0, 1}
 #define MOVE_LEFT {-1, 0}
 #define MOVE_RIGHT {1, 0}
+
+#define INSTRUCTIONS "Press Esc to quit, F1 to screenshot"

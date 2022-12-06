@@ -42,7 +42,7 @@ void update_enemy(void)
 {
     for(int i = 0; i < app.enemyCount; i++)
     {
-        if(app.enemy[i].pos.x >= 900)
+        if(app.enemy[i].pos.x >= SCREEN_WIDTH - 200)
         {
             app.enemy[i].pos.x = 900;
             app.enemy[i].dPos = MOVE_LEFT;
