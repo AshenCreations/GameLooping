@@ -6,6 +6,7 @@ s32 round_float2Int(float fNum);
 f32 get_vector_length(Vec2 vec);
 f64 lerp(f64 v0, f64 v1, f64 t);
 Vec2 make_Vec2(f32 x, f32 y);
+u8 ms_value(msSetting msSetting);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
@@ -48,4 +49,23 @@ f32 lerp(f32 v0, f32 v1, f32 t)
 Vec2 make_Vec2(f32 x, f32 y)
 {
     return {x, y};
+}
+
+u8 ms_value(msSetting msSetting)
+{
+    switch (msSetting)
+    {
+        case MS_PER_UPDATE_8: return 8;
+        case MS_PER_UPDATE_12: return 12;
+        case MS_PER_UPDATE_16: return 16;
+        case MS_PER_UPDATE_20: return 20;
+        case MS_PER_UPDATE_25: return 25;
+        case MS_PER_UPDATE_33: return 33;
+        case MS_PER_UPDATE_45: return 45;
+        case MS_PER_UPDATE_60: return 60;
+        
+        default:
+            assert("unknown msSetting");
+            return 99;
+    }
 }

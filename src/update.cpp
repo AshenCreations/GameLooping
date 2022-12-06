@@ -6,7 +6,8 @@ void update_enemy(void);
 void spawn_enemy(void);
 void draw_enemy_count(char* text);
 
-void update_player(void);
+// void update_player(void);
+// void pathing(void);
 
 void move_up(void);
 void move_down(void);
@@ -29,7 +30,7 @@ void spawn_enemy(void)
         app.enemy[app.eSpawn.numberSpawned].pos = app.eSpawn.pos;
 
         app.eSpawn.numberSpawned += 1;
-        app.eSpawn.cooldown = 12;
+        app.eSpawn.cooldown = 120;
         app.enemyCount += 1;
     }
 
@@ -44,7 +45,7 @@ void update_enemy(void)
     {
         if(app.enemy[i].pos.x >= SCREEN_WIDTH - 200)
         {
-            app.enemy[i].pos.x = 900;
+            app.enemy[i].pos.x = SCREEN_WIDTH - 200;
             app.enemy[i].dPos = MOVE_LEFT;
             app.enemy[i].dPos *= ENEMY_VELOCITY;
         }
@@ -58,10 +59,17 @@ void update_enemy(void)
     }
 }
 
-void update_player(void)
-{
+// void update_player(void)
+// {
 
-}
+// }
+
+// void pathing(void)
+// {
+
+// }
+
+
 
 void move_up(void)
 {

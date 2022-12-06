@@ -4,6 +4,7 @@
 #include <math.h>
 #include <time.h>
 #include <string.h>
+#include <assert.h>
 
 #include "SDL_gpu.h"
 #include "SDL_ttf.h"

@@ -17,3 +17,15 @@ enum uiMenuTypes
     UI_MENUTYPE_SCROLL_LIST,
     UI_MENUTYPE_DROPDOWN,
 };
+
+enum msSetting
+{
+    MS_PER_UPDATE_8 = 8,
+    MS_PER_UPDATE_12 = 12,
+    MS_PER_UPDATE_16 = 16,
+    MS_PER_UPDATE_20 = 20,
+    MS_PER_UPDATE_25 = 25,
+    MS_PER_UPDATE_33 = 33,
+    MS_PER_UPDATE_45 = 45,
+    MS_PER_UPDATE_60 = 60,
+};

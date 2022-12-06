@@ -43,6 +43,7 @@ struct Keybinds
 struct Enemy
 {
     Vec2 pos, dPos;
+    f32 speed;
     bool alive;
 };
 
@@ -80,18 +81,22 @@ typedef struct
     Keybinds keybind;
     bool keyboard[MAX_KEYBOARD_KEYS];
     Mouse mouse;
+    u32 keypressCooldown;
+
+    u8 ms_per_update;
+
     Ui_context ui_context;
     TTF_Font *font;
     Button button[UI_BUTTON_COUNT];
     GPU_Image *smiley;
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;
-    char enemyCountText[30];
     enemySpawner eSpawn;
-    GPU_Image *enemyCounter;
 
+    GPU_Image *statsImage;
+    char statsText[100];
     GPU_Image *instruction;
-    char instructionText[50];
+    char instructionText[100];
 
     // Waypoint waypoint[3];
     

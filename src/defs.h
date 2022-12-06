@@ -2,8 +2,7 @@
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 #define MAX_KEYBOARD_KEYS 350
-
-#define MS_PER_UPDATE 1000 / 60.0
+#define KEYPRESS_COOLDOWN 10
 
 #define FONT_PATH "fonts/continuum.ttf"
 #define FONT_SIZE 36
@@ -40,4 +39,7 @@
 #define MOVE_LEFT {-1, 0}
 #define MOVE_RIGHT {1, 0}
 
-#define INSTRUCTIONS "Press Esc to quit, F1 to screenshot"
+#define INSTRUCTIONS "Esc: quit\nW: +ms\nS: -ms "
+
+#define MS_PER_UPDATE_MAX 33
+#define MS_PER_UPDATE_MIN 8

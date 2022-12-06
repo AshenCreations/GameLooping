@@ -31,7 +31,8 @@ void init(void)
 	init_spawner();
 	init_player();
 
-	app.enemyCounter = NULL;
+	app.keypressCooldown = KEYPRESS_COOLDOWN;
+	app.statsImage = NULL;
 	app.smiley = load_image(IMAGEPATH_smiley);
 	GPU_SetImageFilter(app.smiley, GPU_FILTER_NEAREST);
 	

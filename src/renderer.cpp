@@ -10,7 +10,7 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 void draw_atomic_test(void);
 void draw_ui_molecule_radio(GPU_Rect rect, bool state);
 void draw_enemy(GPU_Image *image, f64 lag);
-void draw_enemy_count(void);
+void draw_stats(void);
 void draw_instructions(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -23,10 +23,10 @@ void render(f64 lag)
 
 	// do_menu();
 	draw_enemy(app.smiley, lag);
-    
-	snprintf(app.enemyCountText, sizeof(app.enemyCountText), "Enemies: %u / 10000", app.enemyCount);
-	draw_enemy_count();
-	
+
+	snprintf(app.statsText, sizeof(app.statsText), "Enemies: %u / 10000\nms_per_update: %d", app.enemyCount, app.ms_per_update);
+	draw_stats();
+
 	draw_instructions();
 
 	present_scene();
@@ -74,7 +74,7 @@ void do_screenshot(void)
 // Creates texture from TTF font text, free the image returned before generating another
 GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color color)
 {
-	SDL_Surface *surface = TTF_RenderText_Blended(app.font, text, color);
+	SDL_Surface *surface = TTF_RenderText_Blended_Wrapped(app.font, text, color, 600);
 	if(surface == NULL)
 	{
 		printf("surface not created, exiting\n");
@@ -143,20 +143,21 @@ void draw_enemy(GPU_Image *image, f64 lag)
 	{
 		if(app.enemy[i].alive)
 		{
-			app.enemy[i].pos.x += app.enemy[i].dPos.x * lag;	// change pos by dPos * lag
+			app.enemy[i].pos.x += app.enemy[i].dPos.x * lag;
+			app.enemy[i].pos.y += app.enemy[i].dPos.y * lag;
 			GPU_Blit(image, NULL, app.renderTarget, app.enemy[i].pos.x, app.enemy[i].pos.y);
 		}
 	}
 }
 
 // onscreen text counter for enemyCount
-void draw_enemy_count(void)
+void draw_stats(void)
 {
-	app.enemyCounter = texture_from_font(app.font, app.enemyCountText, TTF_STYLE_NORMAL, COLOR_WHITE);
-	GPU_SetAnchor(app.enemyCounter, 0.0f, 0.0f);
-	GPU_SetImageFilter(app.enemyCounter, GPU_FILTER_NEAREST);
-	GPU_Blit(app.enemyCounter, NULL, app.renderTarget, 200, 500);
-	GPU_FreeImage(app.enemyCounter);	// this must be freed after use
+	app.statsImage = texture_from_font(app.font, app.statsText, TTF_STYLE_NORMAL, COLOR_WHITE);
+	GPU_SetAnchor(app.statsImage, 0.0f, 0.0f);
+	GPU_SetImageFilter(app.statsImage, GPU_FILTER_NEAREST);
+	GPU_Blit(app.statsImage, NULL, app.renderTarget, 200, 500);
+	GPU_FreeImage(app.statsImage);	// this must be freed after use
 }
 
 void draw_instructions(void)

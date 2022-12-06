@@ -4,6 +4,7 @@
 void do_key_up(SDL_KeyboardEvent *event);
 void do_key_down(SDL_KeyboardEvent *event);
 void input(void);
+void check_keys(void);
 bool is_pressed(u8 keybind);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -49,21 +50,88 @@ void input(void)
 	}
 	app.mouse.buttons = SDL_GetMouseState(&app.mouse.pos.x, &app.mouse.pos.y);	// get mouse button pos & button state
 
-	//TODO checking keys here ok for now ??
+	if(app.keypressCooldown == 0)
+	{
+		check_keys();
+		app.keypressCooldown = KEYPRESS_COOLDOWN;
+	}
+	app.keypressCooldown--;
+}
+
+void check_keys(void)
+{
 	if(is_pressed(app.keybind.escape))
 		exit(0);
 
-	if(is_pressed(app.keybind.printscreen))
-		do_screenshot();
+	// if(is_pressed(app.keybind.printscreen))
+	// 	do_screenshot();
+
 
 	if(is_pressed(app.keybind.up))
-		app.command.execute = move_up;
+	{
+		switch(app.ms_per_update)
+		{
+			case MS_PER_UPDATE_8:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_12);
+				break;
+			case MS_PER_UPDATE_12:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_16);
+				break;
+			case MS_PER_UPDATE_16:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_20);
+				break;
+			case MS_PER_UPDATE_20:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_25);
+				break;
+			case MS_PER_UPDATE_25:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_33);
+				break;
+			case MS_PER_UPDATE_33:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_45);
+				break;
+			case MS_PER_UPDATE_45:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_60);
+				break;
+		}
+	}
+
 	if(is_pressed(app.keybind.down))
-		app.command.execute = move_down;
+	{
+		switch(app.ms_per_update)
+		{
+			case MS_PER_UPDATE_12:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_8);
+				break;
+			case MS_PER_UPDATE_16:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_12);
+				break;
+			case MS_PER_UPDATE_20:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_16);
+				break;
+			case MS_PER_UPDATE_25:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_20);
+				break;
+			case MS_PER_UPDATE_33:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_25);
+				break;
+			case MS_PER_UPDATE_45:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_33);
+				break;
+			case MS_PER_UPDATE_60:
+				app.ms_per_update = ms_value(MS_PER_UPDATE_45);
+				break;
+		}
+	}
+
 	if(is_pressed(app.keybind.left))
+	{
 		app.command.execute = move_left;
+	}
+
 	if(is_pressed(app.keybind.right))
+	{
 		app.command.execute = move_right;
+	}
 }
 
 // Checks if keybind has been pressed
