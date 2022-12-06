@@ -8,4 +8,4 @@
 
 - VSCode is being used for editing the project & debugging
 
-- should run as long as the SDL dll's & .exe are in same folder
+- should run as long as the SDL dll's,  the .exe , img folder & fonts folder are together
