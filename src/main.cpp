@@ -12,15 +12,11 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	timeBeginPeriod(1);			// set system sleep granularity to 1ms: winmm.lib
 	LARGE_INTEGER newTime, currentTime;
     f64 t = 0.0;
-    f64 dt = 0.01;
+    f64 dt = 0.02;
 	f64 frameTime;
 
 	QueryPerformanceCounter(&currentTime);
-	f64 tempTime = currentTime.QuadPart / (1000.0 * 1000.0);
 	f64 accumulator = 0.0;
-
-    // State previous;
-    // State current;
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	while (1)
@@ -29,8 +25,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
  		frameTime = (f64)((newTime.QuadPart  / 1000) - (currentTime.QuadPart / 1000));
 		currentTime = newTime;
 
-		if(frameTime > 0.25)
-			frameTime = 0.25;
+		if(frameTime > 0.35)
+			frameTime = 0.35;
 
 		accumulator += frameTime;
 
@@ -38,9 +34,9 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 		while(accumulator >= dt)
 		{
-			// previousState = currentState;
-			update(t, dt);
-			// update(currentState, t, dt);
+			app.previousState = app.currentState;
+			// update(t, dt);
+			update(app.currentState, t, dt);
 			t += dt;
 			accumulator -= dt;
 			printf("loop:\n");
@@ -49,11 +45,23 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		const f64 alpha = accumulator / dt;
 		printf("alpha: %.2f\n", alpha);
 
-		// State state = currentState * alpha + 
-		// previousState * ( 1.0 - alpha );
+/*		
+		app.previousState.position = {1.0f, 6.3f};
+		app.previousState.velocity = 3.0f;
+		app.currentState.position = {14.0, 8.7f};
+		app.currentState.velocity = 0.14f;
 
-		render(alpha);	//! not using alpha, just testing
-		// render(state);
+		// testing operators for state + state, & state * scalar
+		State temp = app.previousState + app.currentState;
+		printf("pos: {%.3f, %.3f}\n", temp.position.x, temp.position.y);
+		printf("vel: %.3f\n", temp.velocity);
+		temp = temp * alpha;
+		printf("pos: {%.3f, %.3f}\n", temp.position.x, temp.position.y);
+		printf("vel: %.3f\n", temp.velocity);
+*/
+		State state = (app.currentState * alpha) + (app.previousState * ( 1.0 - alpha ));
+
+		render(state);
 		printf("Frame Rendered\n");
 
 		Sleep(1);		// and breathe

@@ -32,7 +32,7 @@ void init(void)
 	GPU_SetImageFilter(app.smiley, GPU_FILTER_NEAREST);
 }
 
-// inits SDL via SDL_gpu. much simpler than the normal window & renderer init using SDL
+// inits SDL window with SDL, then the renderer using SDL_GPU
 //TODO may need to use GPU_SetInitWindow & GPU_SetPreInitFlags
 void init_SDL(void)
 {

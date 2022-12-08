@@ -1,7 +1,7 @@
 #include "update.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ BEGIN DECLARATIONS ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-void update(f64 t, f64 dt);
+void update(State currentState, f64 t, f64 dt);
 void spawn_enemy(void);
 void move_enemy(f64 dt);
 void clip_enemy(void);
@@ -13,7 +13,7 @@ Vec2 move_left(void);
 Vec2 move_right(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END DECLARATIONS ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-void update(f64 t, f64 dt)
+void update(State currentState, f64 t, f64 dt)
 {
     spawn_enemy();
     move_enemy(dt);
@@ -31,8 +31,9 @@ void spawn_enemy(void)
         app.enemy[app.eSpawn.numberSpawned].alive = true;
         app.enemy[app.eSpawn.numberSpawned].pos = app.eSpawn.pos;
         app.enemy[app.eSpawn.numberSpawned].dest = WAYPOINT_2;
+        app.enemy[app.eSpawn.numberSpawned].velocity *= ENEMY_VELOCITY;
         
-        app.enemy[app.eSpawn.numberSpawned].velocity = move_right() + move_up();
+        // app.enemy[app.eSpawn.numberSpawned].velocity = move_right() + move_up();
         // Vec2 something = move_to(WAYPOINT_1, WAYPOINT_2);
        
        

@@ -22,8 +22,8 @@ extern void init(void);
 extern void cleanup(void);
 extern GPU_Image *load_image(char *filename);
 extern void input(void);
-extern void update(f64 t, f64 dt);
-extern void render(f64 alpha);
+extern void update(State currentState, f64 t, f64 dt);
+extern void render(State state);
 extern f32 get_vector_length(Vec2 A);
 extern f32 get_vector_length(Vec2 A, Vec2 B);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END EXTERNAL Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

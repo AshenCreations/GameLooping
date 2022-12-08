@@ -62,6 +62,10 @@ void check_keys(void)
 {
 	if(is_pressed(app.keybind.escape))
 		exit(0);
+	if(is_pressed(app.keybind.right))
+		app.enemy->velocity = move_right();
+	if(is_pressed(app.keybind.left))
+		app.enemy->velocity = move_left();
 }
 
 // Checks if keybind has been pressed

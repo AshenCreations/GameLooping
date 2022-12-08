@@ -1,8 +1,8 @@
-#define WINDOW_TITLE "someThing"
+#define WINDOW_TITLE "Game Looping Learning"
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 #define MAX_KEYBOARD_KEYS 350
-#define KEYPRESS_COOLDOWN 10
+#define KEYPRESS_COOLDOWN 1
 
 #define FONT_PATH "fonts/continuum.ttf"
 #define FONT_SIZE 36
@@ -21,7 +21,7 @@
 #define COLOR_GREEN_DULL {0, 50, 0, 255}
 
 #define MAX_ENEMIES 100
-#define ENEMY_VELOCITY 2.5f
+#define ENEMY_VELOCITY 100.0f
 
 #define WAYPOINT_1 {200, 200}
 #define WAYPOINT_2 {1720, 200}

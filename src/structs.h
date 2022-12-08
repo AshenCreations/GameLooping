@@ -37,6 +37,7 @@ struct Vec2
         result.y = y * other;
         return result;
     }
+
     Vec2 operator-=(Vec2 A)
     {
         Vec2 result;
@@ -75,9 +76,32 @@ struct enemySpawner
     f64 cooldown;
 };
 
+struct State
+{
+    Vec2 position;
+    f32 velocity;
+
+    State operator*(f64 scalar)
+    {
+        State result;
+        result.position = position * scalar;
+        result.velocity = velocity * scalar;
+        return result;
+    }
+
+    State operator+(const State &other)
+    {
+        State result;
+        result.position = position + other.position;
+        result.velocity = velocity + other.velocity;
+        return result;
+    }
+};
+
 // main app struct
 typedef struct
 {
+    SDL_Window *window;
     GPU_Target *renderTarget;
     Keybinds keybind;
     bool keyboard[MAX_KEYBOARD_KEYS];
@@ -89,6 +113,8 @@ typedef struct
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;
     enemySpawner eSpawn;
+
+    State previousState, currentState;
 
     GPU_Image *statsImage;
     char statsText[100];

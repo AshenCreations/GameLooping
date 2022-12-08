@@ -1,23 +1,23 @@
 #include "renderer.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-void render(f64 alpha);
+void render(State state);
 void prepare_scene(void);
 void present_scene(void);
 GPU_Image *load_image(char *filename);
 GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color color);
-void draw_enemy(f64 alpha);
+void draw_enemy(State state);
 void draw_stats(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 //! Takes normalised frameLag value which needs added to drawing
 //! operations involving entities which update position in update()
 // so does render() need knowledge of gameobjects and thier velocities ???
-void render(f64 alpha)
+void render(State state)
 {
 	prepare_scene();
 
-	draw_enemy(alpha);
+	draw_enemy(state);
 
 	snprintf(app.statsText, sizeof(app.statsText), "Enemies: %u / 10000", app.enemyCount);
 	draw_stats();
@@ -73,7 +73,7 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 }
 
 // blit enemies
-void draw_enemy(f64 alpha)
+void draw_enemy(State state)
 {
 	for(int i = 0; i < app.enemyCount; i++)
 	{
