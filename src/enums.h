@@ -1,23 +1,3 @@
-enum UiButtonNames
-{
-    UI_BUTTON_QUITAPP,
-
-    UI_BUTTON_COUNT
-};
-
-enum uiButtonTypes
-{
-    UI_BUTTONTYPE_LABELBUTTON,
-    UI_BUTTONTYPE_RADIOBUTTON,
-};
-
-enum uiMenuTypes
-{
-    UI_MENUTYPE_LIST,
-    UI_MENUTYPE_SCROLL_LIST,
-    UI_MENUTYPE_DROPDOWN,
-};
-
 enum msSetting
 {
     MS_PER_UPDATE_8 = 8,

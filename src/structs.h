@@ -2,31 +2,53 @@ struct Vec2
 {
     f32 x, y;
 
-    Vec2 &operator*=(f64 A);
-    Vec2 &operator+=(Vec2 A);
-    Vec2 &operator-=(Vec2 A);
+    // vector + vector
+    Vec2 operator+(const Vec2 &other)
+    {
+        Vec2 result;
+        result.x = x + other.x;
+        result.y = y + other.y;
+        return result;
+    }
+
+    // vector * scalar
+    Vec2 operator*(f32 scalar)
+    {
+        Vec2 result;
+        result.x = x * scalar;
+        result.y = y * scalar;
+        return result;
+    }
+
+    // vector - vector
+    Vec2 operator-(const Vec2 &other)
+    {
+        Vec2 result;
+        result.x = x - other.x;
+        result.y = y - other.y;
+        return result;
+    }
+
+    // does this operator even work ???
+    Vec2 operator*=(const f32 &other)
+    {
+        Vec2 result;
+        result.x = x * other;
+        result.y = y * other;
+        return result;
+    }
+    Vec2 operator-=(Vec2 A)
+    {
+        Vec2 result;
+        result.x -= A.x;
+        result.y -= A.y;
+        return result;
+    }
 };
 
 struct IVec2
 {
     s32 x, y;
-};
-
-struct Ui_id
-{
-    // void (*owner)(void);    //! not used currently
-    s32 index;
-};
-
-struct Button
-{
-    s32 index;
-    GPU_Image *image;
-};
-
-struct Ui_context
-{
-    Ui_id hot, active;
 };
 
 struct Mouse
@@ -42,8 +64,7 @@ struct Keybinds
 
 struct Enemy
 {
-    Vec2 pos, dPos;
-    f32 speed;
+    Vec2 pos, velocity, dest;
     bool alive;
 };
 
@@ -52,26 +73,6 @@ struct enemySpawner
     Vec2 pos;
     u32 numberSpawned, maxSpawns;
     f64 cooldown;
-};
-
-//! not used
-struct Waypoint
-{
-    Vec2 pos;
-};
-
-//! not used
-struct Player
-{
-    Vec2 pos;
-    Vec2 dPos;
-    bool playerFacing;
-};
-
-//! not used
-struct Command
-{
-    void (*execute)(void);
 };
 
 // main app struct
@@ -83,11 +84,7 @@ typedef struct
     Mouse mouse;
     u32 keypressCooldown;
 
-    u8 ms_per_update;
-
-    Ui_context ui_context;
     TTF_Font *font;
-    Button button[UI_BUTTON_COUNT];
     GPU_Image *smiley;
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;
@@ -95,15 +92,4 @@ typedef struct
 
     GPU_Image *statsImage;
     char statsText[100];
-    GPU_Image *instruction;
-    char instructionText[100];
-
-    // Waypoint waypoint[3];
-    
-    Player player;
-    Command command;
-
-
-
-    // GPU_Image *spriteImages[9];
 } App;

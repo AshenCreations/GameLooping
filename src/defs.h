@@ -20,26 +20,13 @@
 #define COLOR_ORANGE_BRIGHT {200, 100, 0, 255}
 #define COLOR_GREEN_DULL {0, 50, 0, 255}
 
-#define MAX_ENEMIES 10000
-#define SPAWN_1 {200, 200}
-#define ENEMY_VELOCITY 1.0f
+#define MAX_ENEMIES 100
+#define ENEMY_VELOCITY 2.5f
 
-//! not used yet
-#define WAYPOINT_1 {1720, 200}
-#define WAYPOINT_2 {1720, 880}
-#define WAYPOINT_3 {200, 880}
-
+#define WAYPOINT_1 {200, 200}
+#define WAYPOINT_2 {1720, 200}
+#define WAYPOINT_3 {1720, 880}
+#define WAYPOINT_4 {200, 880}
 
 #define ROOT_OF_2_32 1.41421356237f
 #define PI_32 3.14159265359f
-
-// Movement vectors
-#define MOVE_UP {0, -1}
-#define MOVE_DOWN {0, 1}
-#define MOVE_LEFT {-1, 0}
-#define MOVE_RIGHT {1, 0}
-
-#define INSTRUCTIONS "Esc: quit\nW: +ms\nS: -ms "
-
-#define MS_PER_UPDATE_MAX 33
-#define MS_PER_UPDATE_MIN 8

@@ -4,11 +4,8 @@
 void init_SDL(void);
 void init_SDL_ttf(void);
 void cleanup(void);
-void init_fonts(void);
-void init_buttons(void);
 void init_keybinds(void);
 void init_spawner(void);
-void init_player(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 void init(void)
@@ -26,19 +23,13 @@ void init(void)
 	// App inits
 	SDL_ShowCursor(SDL_DISABLE);		// disable cursor
 
-	init_buttons();
 	init_keybinds();
 	init_spawner();
-	init_player();
 
 	app.keypressCooldown = KEYPRESS_COOLDOWN;
 	app.statsImage = NULL;
 	app.smiley = load_image(IMAGEPATH_smiley);
 	GPU_SetImageFilter(app.smiley, GPU_FILTER_NEAREST);
-	
-	app.instruction = texture_from_font(app.font, INSTRUCTIONS, TTF_STYLE_NORMAL, COLOR_WHITE);
-	GPU_SetAnchor(app.instruction, 0.0f, 0.0f);
-	GPU_SetImageFilter(app.instruction, GPU_FILTER_NEAREST);
 }
 
 // inits SDL via SDL_gpu. much simpler than the normal window & renderer init using SDL
@@ -74,15 +65,6 @@ void cleanup(void)
 	SDL_Quit();
 }
 
-// button data
-//TODO needs to change with button rework
-void init_buttons(void)
-{
-	app.button[0].index = UI_BUTTON_QUITAPP;
-	app.button[0].image = texture_from_font(app.font, "Quit", TTF_STYLE_NORMAL, COLOR_WHITE);
-	// GPU_SaveImage(app.button[0].image, "ui_text_quit.png", GPU_FILE_PNG);
-}
-
 // default keybind values
 void init_keybinds(void)
 {
@@ -97,14 +79,8 @@ void init_keybinds(void)
 // this should probably take param(s)
 void init_spawner(void)
 {
-	app.eSpawn.pos = SPAWN_1;
-	app.eSpawn.cooldown = 600;
-	app.eSpawn.maxSpawns = 10000;
+	app.eSpawn.pos = WAYPOINT_1;
+	app.eSpawn.cooldown = 150;
+	app.eSpawn.maxSpawns = 1;
 	app.eSpawn.numberSpawned = 0;
-}
-
-void init_player(void)
-{
-	app.player.pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
-	app.player.dPos = {0, 0};
 }

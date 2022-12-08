@@ -1,33 +1,26 @@
 #include "renderer.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-void render(f64 lag);
+void render(f64 alpha);
 void prepare_scene(void);
 void present_scene(void);
 GPU_Image *load_image(char *filename);
-void do_screenshot(void);
 GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color color);
-void draw_atomic_test(void);
-void draw_ui_molecule_radio(GPU_Rect rect, bool state);
-void draw_enemy(GPU_Image *image, f64 lag);
+void draw_enemy(f64 alpha);
 void draw_stats(void);
-void draw_instructions(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 //! Takes normalised frameLag value which needs added to drawing
 //! operations involving entities which update position in update()
 // so does render() need knowledge of gameobjects and thier velocities ???
-void render(f64 lag)
+void render(f64 alpha)
 {
 	prepare_scene();
 
-	// do_menu();
-	draw_enemy(app.smiley, lag);
+	draw_enemy(alpha);
 
-	snprintf(app.statsText, sizeof(app.statsText), "Enemies: %u / 10000\nms_per_update: %d", app.enemyCount, app.ms_per_update);
+	snprintf(app.statsText, sizeof(app.statsText), "Enemies: %u / 10000", app.enemyCount);
 	draw_stats();
-
-	draw_instructions();
 
 	present_scene();
 }
@@ -59,18 +52,6 @@ GPU_Image* load_image(char *filename)
 	return image;
 }
 
-// use F1 to take a screenshot
-void do_screenshot(void)
-{
-	GPU_Image *screenshot = GPU_CopyImageFromTarget(app.renderTarget);
-	bool success = GPU_SaveImage(screenshot, "screeny.png", GPU_FILE_PNG);
-
-	if(!success)
-		GPU_LogError("screenshot not saved\n");
-
-	GPU_FreeImage(screenshot);
-}
-
 // Creates texture from TTF font text, free the image returned before generating another
 GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color color)
 {
@@ -91,61 +72,16 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 	return temp;
 }
 
-// first look at making modular butons - kinda low priority
-void draw_atomic_test(void)
-{
-	GPU_Rect rect;
-	bool state;
-
-	rect.x = SCREEN_WIDTH / 2;
-	rect.y = (SCREEN_HEIGHT / 2);
-	rect.w = rect.h = 20;
-	
-	GPU_SetShapeBlendMode(GPU_BLEND_NORMAL_ADD_ALPHA);
-	draw_ui_molecule_radio(rect, state = 0);
-	rect.y += 40;
-	draw_ui_molecule_radio(rect, state = 1);
-	GPU_SetShapeBlendMode(GPU_BLEND_NORMAL);
-}
-
-void draw_ui_molecule_radio(GPU_Rect rect, bool state)
-{
-	SDL_Color color = COLOR_RADIO_GREY;
-
-	if(state)
-		color = COLOR_RADIO_BLUE;
-	
-	GPU_RectangleFilled2(app.renderTarget, rect, color);
-
-	f32 radius = rect.h / 2;
-	rect.y += radius;
-	GPU_CircleFilled(app.renderTarget, rect.x, rect.y, radius, color);
-	rect.x += rect.w;
-	GPU_CircleFilled(app.renderTarget, rect.x, rect.y, radius, color);
-
-	radius -= 2;
-	if(state)
-	{
-		color = COLOR_RADIO_BLUE2;
-	}
-	else
-	{
-		rect.x -= rect.w;		
-		color = COLOR_RADIO_GREY2;
-	}
-	GPU_CircleFilled(app.renderTarget, rect.x, rect.y, radius, color);
-}
-
 // blit enemies
-void draw_enemy(GPU_Image *image, f64 lag)
+void draw_enemy(f64 alpha)
 {
 	for(int i = 0; i < app.enemyCount; i++)
 	{
 		if(app.enemy[i].alive)
 		{
-			app.enemy[i].pos.x += app.enemy[i].dPos.x * lag;
-			app.enemy[i].pos.y += app.enemy[i].dPos.y * lag;
-			GPU_Blit(image, NULL, app.renderTarget, app.enemy[i].pos.x, app.enemy[i].pos.y);
+			GPU_Blit(app.smiley, NULL, app.renderTarget,
+					app.enemy[i].pos.x,
+					app.enemy[i].pos.y);
 		}
 	}
 }
@@ -158,9 +94,4 @@ void draw_stats(void)
 	GPU_SetImageFilter(app.statsImage, GPU_FILTER_NEAREST);
 	GPU_Blit(app.statsImage, NULL, app.renderTarget, 200, 500);
 	GPU_FreeImage(app.statsImage);	// this must be freed after use
-}
-
-void draw_instructions(void)
-{
-	GPU_Blit(app.instruction, NULL, app.renderTarget, 200, 600);
 }
