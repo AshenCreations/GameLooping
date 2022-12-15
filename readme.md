@@ -21,7 +21,7 @@
 
 - opens a fixed size 1600 x 900 window
 
-- Tries to use desktop displaymode to find refresh rate & auto adjusts for 60Hz, 75Hz, 120Hz, 144Hz and 165Hz
+- Tries to use desktop displaymode to find refresh rate & auto adjusts for 60Hz, 75Hz, 120Hz, 144Hz and 165Hz. Uses refresh rate found then scales the deltatime & player speed, using 60Hz as the base.
 
 - No resolution size changes
 
