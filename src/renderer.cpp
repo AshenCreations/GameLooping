@@ -1,26 +1,23 @@
 #include "renderer.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-void render(State state);
+void render(State *state);
 void prepare_scene(void);
 void present_scene(void);
 GPU_Image *load_image(char *filename);
 GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color color);
-void draw_enemy(State state);
-void draw_stats(void);
+void draw_enemy(State *state);
+void draw_stats(State *state);
+void draw_player(State *state);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-//! Takes normalised frameLag value which needs added to drawing
-//! operations involving entities which update position in update()
-// so does render() need knowledge of gameobjects and thier velocities ???
-void render(State state)
+void render(State *state)
 {
 	prepare_scene();
 
 	draw_enemy(state);
-
-	snprintf(app.statsText, sizeof(app.statsText), "Enemies: %u / 10000", app.enemyCount);
-	draw_stats();
+	draw_player(state);
+	draw_stats(state);
 
 	present_scene();
 }
@@ -73,7 +70,7 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 }
 
 // blit enemies
-void draw_enemy(State state)
+void draw_enemy(State *state)
 {
 	for(int i = 0; i < app.enemyCount; i++)
 	{
@@ -87,11 +84,27 @@ void draw_enemy(State state)
 }
 
 // onscreen text counter for enemyCount
-void draw_stats(void)
+void draw_stats(State *state)
 {
-	app.statsImage = texture_from_font(app.font, app.statsText, TTF_STYLE_NORMAL, COLOR_WHITE);
-	GPU_SetAnchor(app.statsImage, 0.0f, 0.0f);
-	GPU_SetImageFilter(app.statsImage, GPU_FILTER_NEAREST);
-	GPU_Blit(app.statsImage, NULL, app.renderTarget, 200, 500);
-	GPU_FreeImage(app.statsImage);	// this must be freed after use
+	GPU_RectangleFilled2(app.renderTarget, {140, 500, 500, 200}, {0, 0, 0, 150});
+	
+	char textBuffer[100];
+	memset(&textBuffer, 0, sizeof(textBuffer));
+
+	snprintf(textBuffer, sizeof(textBuffer), "Enemy not fixed for effect\nplayer vector: {%.2f, %.2f}\nRefresh Rate: %dHz\ndt: %.3f",
+											state->player.vel.x, state->player.vel.y,
+											app.appHz, app.dt);
+	
+	GPU_Image *statsImage = texture_from_font(app.font, textBuffer, TTF_STYLE_NORMAL, COLOR_WHITE);
+	GPU_SetAnchor(statsImage, 0.0f, 0.0f);
+	GPU_SetImageFilter(statsImage, GPU_FILTER_NEAREST);
+	GPU_Blit(statsImage, NULL, app.renderTarget, 150, 500);
+	GPU_FreeImage(statsImage);	// this must be freed after use
+}
+
+void draw_player(State *state)
+{
+	GPU_Blit(app.playerSprite, NULL, app.renderTarget,
+			state->player.pos.x,
+			state->player.pos.y);
 }

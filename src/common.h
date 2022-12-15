@@ -7,9 +7,10 @@
 #include <assert.h>
 
 #include "SDL_gpu.h"
+#include "SDL.h"
 #include "SDL_ttf.h"
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Basic Types START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Basic numerical types START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 // unsigned integers
 typedef uint8_t u8;     // 1-byte unsigned integer
@@ -25,9 +26,8 @@ typedef int64_t s64;    // 8-byte signed integer
 typedef float_t f32;    // 4-byte floating point number
 typedef double_t f64;   // 8-byte floating point number
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Basic Types END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Basic numerical types END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-#include "math.h"
 #include "defs.h"
 #include "enums.h"
 #include "structs.h"

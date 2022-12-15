@@ -7,11 +7,12 @@ SET libpaths=/LIBPATH:C:\SDL2\SDL2\lib\x64 /LIBPATH:C:\SDL2\SDL2_ttf\lib\x64 /LI
 SET libs=SDL2main.lib SDL2.lib SDL2_gpu.lib SDL2_ttf.lib winmm.lib
 SET debugFlags=/D /DEBUG:FULL /Zi
 SET optimisationFlags=/O2 /Oi /fp:fast
-SET filename=someThing.exe
+SET filename=GameLooping.exe
 
 IF NOT EXIST obj mkdir obj
 
 cd obj
 cl /nologo /std:c++17 /EHsc /W2 %debugFlags% %includes% ../src/*.cpp /Fe../%filename% /link -incremental:no %libpaths% %libs%
+REM cl /nologo /std:c++17 /EHsc /W2 %optimisationFlags% %includes% ../src/*.cpp /Fe../%filename% /link -incremental:no %libpaths% %libs%
 
-REM IF EXIST "..\someThing.pdb" del "..\someThing.pdb"
+REM IF EXIST "..\GameLooping.pdb" del "..\GameLooping.pdb"

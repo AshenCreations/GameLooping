@@ -1,70 +1,62 @@
 #include "main.h"
 
-// windows entry point: since SDL is platform agnostic most tutorials don't show this,
-// then people have problems running the .exe from icon or even trying to include <windows.h>
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	memset(&app, 0, sizeof(App));
 
-	init();
-	atexit(cleanup);			
+	init(&app.currentState);
+	atexit(cleanup);
 
-	timeBeginPeriod(1);			// set system sleep granularity to 1ms: winmm.lib
+	// timeBeginPeriod(1);			// set system sleep granularity to 1ms: winmm.lib
 	LARGE_INTEGER newTime, currentTime;
-    f64 t = 0.0;
-    f64 dt = 0.02;
-	f64 frameTime;
+    app.t = 0.0;
+    app.dt = 0.01 * app.dtMulti;
+	f64 updateTimeFrame;
 
 	QueryPerformanceCounter(&currentTime);
 	f64 accumulator = 0.0;
 
+	app.Dev.frameCounter = 0;
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	while (1)
+	while (true)
 	{
 		QueryPerformanceCounter(&newTime);
- 		frameTime = (f64)((newTime.QuadPart  / 1000) - (currentTime.QuadPart / 1000));
+ 		updateTimeFrame = (newTime.QuadPart / 1000.0) - (currentTime.QuadPart / 1000.0);
+		// printf("updateTimeFrame: %.3f\n", updateTimeFrame);
 		currentTime = newTime;
 
-		if(frameTime > 0.35)
-			frameTime = 0.35;
+		if(updateTimeFrame > 0.25)
+			updateTimeFrame = 0.25;
+		accumulator += updateTimeFrame;
 
-		accumulator += frameTime;
+		// handle input
+		input(&app.currentState);					//! input
 
-		input();
-
-		while(accumulator >= dt)
+		// update loop
+		while(accumulator >= app.dt)
 		{
 			app.previousState = app.currentState;
-			// update(t, dt);
-			update(app.currentState, t, dt);
-			t += dt;
-			accumulator -= dt;
-			printf("loop:\n");
+			update(&app.currentState, app.t, app.dt);				//! update
+			app.t += app.dt;
+			accumulator -= app.dt;
+			printf("updates\n");
 		}
 
-		const f64 alpha = accumulator / dt;
+		// accumulator / dt is in the range 0 to 1
+		const f64 alpha = accumulator / app.dt;
 		printf("alpha: %.2f\n", alpha);
 
-/*		
-		app.previousState.position = {1.0f, 6.3f};
-		app.previousState.velocity = 3.0f;
-		app.currentState.position = {14.0, 8.7f};
-		app.currentState.velocity = 0.14f;
+		// state blending
+		State state = (app.currentState * alpha) + (app.previousState * (1.0 - alpha));
 
-		// testing operators for state + state, & state * scalar
-		State temp = app.previousState + app.currentState;
-		printf("pos: {%.3f, %.3f}\n", temp.position.x, temp.position.y);
-		printf("vel: %.3f\n", temp.velocity);
-		temp = temp * alpha;
-		printf("pos: {%.3f, %.3f}\n", temp.position.x, temp.position.y);
-		printf("vel: %.3f\n", temp.velocity);
-*/
-		State state = (app.currentState * alpha) + (app.previousState * ( 1.0 - alpha ));
+		// render the state
+		render(&state);								//! render
+		
+		app.Dev.frameCounter++;
+		printf("Frame Rendered: %d\n", app.Dev.frameCounter);
 
-		render(state);
-		printf("Frame Rendered\n");
-
-		Sleep(1);		// and breathe
+		// dont need if vsync
+		Sleep(1);
 	}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }

@@ -29,7 +29,7 @@ struct Vec2
         return result;
     }
 
-    // does this operator even work ???
+    //! vector *= scalar not working
     Vec2 operator*=(const f32 &other)
     {
         Vec2 result;
@@ -37,12 +37,13 @@ struct Vec2
         result.y = y * other;
         return result;
     }
-
-    Vec2 operator-=(Vec2 A)
+    
+    //! vector /= scalar not working
+    Vec2 operator/=(const f32 &other)
     {
         Vec2 result;
-        result.x -= A.x;
-        result.y -= A.y;
+        result.x = x / other;
+        result.y = y / other;
         return result;
     }
 };
@@ -50,6 +51,12 @@ struct Vec2
 struct IVec2
 {
     s32 x, y;
+};
+
+struct Circle
+{
+    Vec2 pos;
+    f32 radius;
 };
 
 struct Mouse
@@ -63,12 +70,6 @@ struct Keybinds
     u8 left, right, up, down, escape, printscreen;
 };
 
-struct Enemy
-{
-    Vec2 pos, velocity, dest;
-    bool alive;
-};
-
 struct enemySpawner
 {
     Vec2 pos;
@@ -76,24 +77,45 @@ struct enemySpawner
     f64 cooldown;
 };
 
+struct Waypoint
+{
+    Vec2 pos;
+};
+
+struct Enemy
+{
+    Vec2 pos, velocity, dest;
+    f32 speed;
+    bool alive;
+};
+
+struct Player
+{
+    Vec2 pos, vel;
+    f32 speed;
+};
+
+// A State struct only contains any data which is linked to movement/physics
+// any Images or Sounds will be distorted by state blending & therefore unreadable
 struct State
 {
-    Vec2 position;
-    f32 velocity;
+    Player player;
 
+    // state * scalar
     State operator*(f64 scalar)
     {
         State result;
-        result.position = position * scalar;
-        result.velocity = velocity * scalar;
+        result.player.pos = player.pos * scalar;
+        result.player.vel = player.vel * scalar;
         return result;
     }
 
+    // state + state
     State operator+(const State &other)
     {
         State result;
-        result.position = position + other.position;
-        result.velocity = velocity + other.velocity;
+        result.player.pos = player.pos + other.player.pos;
+        result.player.vel = player.vel + other.player.vel;
         return result;
     }
 };
@@ -106,16 +128,24 @@ typedef struct
     Keybinds keybind;
     bool keyboard[MAX_KEYBOARD_KEYS];
     Mouse mouse;
-    u32 keypressCooldown;
+
+    f64 t, dt;
+    f32 dtMulti;
+    u8 appHz;
 
     TTF_Font *font;
     GPU_Image *smiley;
+    GPU_Image *playerSprite;
+    Waypoint waypoint[3];
+
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;
     enemySpawner eSpawn;
 
     State previousState, currentState;
 
-    GPU_Image *statsImage;
-    char statsText[100];
+    struct
+    {
+        u32 frameCounter;
+    }Dev;
 } App;

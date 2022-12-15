@@ -3,8 +3,8 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 void do_key_up(SDL_KeyboardEvent *event);
 void do_key_down(SDL_KeyboardEvent *event);
-void input(void);
-void check_keys(void);
+void input(State *state);
+void check_keys(State *state);
 bool is_pressed(u8 keybind);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -24,7 +24,7 @@ void do_key_up(SDL_KeyboardEvent *event)
 }
 
 // Get keyboard & mouse input via SDL Events
-void input(void)
+void input(State *state)
 {
 	SDL_Event event;
 	
@@ -50,22 +50,29 @@ void input(void)
 	}
 	app.mouse.buttons = SDL_GetMouseState(&app.mouse.pos.x, &app.mouse.pos.y);	// get mouse button pos & button state
 
-	if(app.keypressCooldown == 0)
-	{
-		check_keys();
-		app.keypressCooldown = KEYPRESS_COOLDOWN;
-	}
-	app.keypressCooldown--;
+	check_keys(state);
 }
 
-void check_keys(void)
+void check_keys(State *state)
 {
 	if(is_pressed(app.keybind.escape))
 		exit(0);
+
+	// player movement
+	app.currentState.player.vel = {0.0f, 0.0f};
+	
 	if(is_pressed(app.keybind.right))
-		app.enemy->velocity = move_right();
+		state->player.vel = state->player.vel + move_right();
 	if(is_pressed(app.keybind.left))
-		app.enemy->velocity = move_left();
+		state->player.vel = state->player.vel + move_left();
+	if(is_pressed(app.keybind.up))
+		state->player.vel = state->player.vel + move_up();
+	if(is_pressed(app.keybind.down))
+		state->player.vel = state->player.vel + move_down();
+	
+	//diagonal player movement
+	if(state->player.vel.x != 0 && state->player.vel.y != 0)
+		state->player.vel = state->player.vel * INVERSE_ROOT_2;
 }
 
 // Checks if keybind has been pressed

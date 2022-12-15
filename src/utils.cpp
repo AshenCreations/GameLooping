@@ -4,7 +4,8 @@
 bool mouse_in_rect(GPU_Rect rect);
 s32 round_float2Int(f32 fNum);
 f32 get_vector_length(Vec2 vec);
-f32 lerp(f32 v0, f32 v1, f32 t);
+f32 lerp(f32 v0, f32 v1, f64 t);
+Vec2 lerp_Vec2(Vec2 start, Vec2 end, f64 t);
 Vec2 make_Vec2(f32 x, f32 y);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -36,13 +37,17 @@ s32 round_float2Int(f32 fNum)
 // returns vector magnitude from Vec2 input
 f32 get_vector_length(Vec2 vec)
 {
-    f32 length = sqrtf((vec.x * vec.x) + (vec.y * vec.y));
-    return length;
+    return sqrtf((vec.x * vec.x) + (vec.y * vec.y));
 }
 
-f32 lerp(f32 v0, f32 v1, f32 t)
+f32 lerp(f32 v0, f32 v1, f64 t)
 {
-  return ((1 - t) * v0) + (t * v1);
+    return ((1 - t) * v0) + (t * v1);
+}
+
+Vec2 lerp_Vec2(Vec2 start, Vec2 end, f64 t)
+{
+    return (start * (1 - t)) + (end * t);    
 }
 
 Vec2 make_Vec2(f32 x, f32 y)

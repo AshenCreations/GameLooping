@@ -22,19 +22,19 @@
 ## Input
 
 - basic key input: store all keyboard input in bool[MAX_KEYS], keypress down = 1, keypress up = 0
+- player diagonal movement
 
 ## Updating
 
-- update position
-- clipping
-- collision
+- update position: calculus, vectors
+- clipping: screen, reflecting vectors
+- collision:
 
 ### Vectors
 
 ## Rendering
 
 - need window resizing !!
-- render(lag) draws an entity something like: ePos += dPos * lag;
 
 ### render sorting layers
 
