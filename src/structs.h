@@ -138,7 +138,7 @@ typedef struct
     TTF_Font *font;
     GPU_Image *smiley;
     GPU_Image *playerSprite;
-    Waypoint waypoint[3];
+    Waypoint waypoint[4];
 
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;

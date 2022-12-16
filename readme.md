@@ -9,6 +9,12 @@
 
 - VSCode is being used for editing the project & debugging
 
+## libs used
+
+- SDL2
+- SDL_gpu
+- SDL_ttf
+
 ## To Run
 
 - .exe
@@ -25,4 +31,4 @@
 
 - No resolution size changes
 
-- Player sprite is, (seems to be), adjusted to be frame rate independant. The enemy sprite (smiley) is not for testing
+- Player sprite is adjusted to be frame rate independant. The enemy sprite (smiley) is not for testing

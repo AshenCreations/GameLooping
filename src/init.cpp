@@ -70,7 +70,7 @@ void init(State *state)
 	app.waypoint[0] = {100, 100};
 	app.waypoint[1] = {SCREEN_WIDTH - 100, 100};
 	app.waypoint[2] = {SCREEN_WIDTH - 100, SCREEN_HEIGHT - 100};
-	app.waypoint[4] = {100, SCREEN_HEIGHT - 100};
+	app.waypoint[3] = {100, SCREEN_HEIGHT - 100};
 	
 	init_spawner();
 }

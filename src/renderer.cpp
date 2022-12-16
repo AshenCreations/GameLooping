@@ -86,15 +86,15 @@ void draw_enemy(State *state)
 // onscreen text counter for enemyCount
 void draw_stats(State *state)
 {
-	GPU_RectangleFilled2(app.renderTarget, {140, 500, 500, 200}, {0, 0, 0, 100});
+	GPU_RectangleFilled2(app.renderTarget, {140, 500, 370, 170}, {0, 0, 0, 100});
 	
 	char textBuffer[100];
 	memset(&textBuffer, 0, sizeof(textBuffer));
 
-	snprintf(textBuffer, sizeof(textBuffer), "Refresh Rate: %dHz\ndt: %.3f\n\nplayer move vector: {%.2f, %.2f}\nplayer speed: %.2f\n",
+	snprintf(textBuffer, sizeof(textBuffer), "Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\n\nplayer move vector: {%.2f, %.2f}\n",
 											app.appHz, app.dt,
-											state->player.vel.x, state->player.vel.y,
-											state->player.speed);
+											state->player.speed,
+											state->player.vel.x, state->player.vel.y);
 	
 	GPU_Image *statsImage = texture_from_font(app.font, textBuffer, TTF_STYLE_NORMAL, COLOR_WHITE);
 	GPU_SetAnchor(statsImage, 0.0f, 0.0f);
