@@ -7,10 +7,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	init(&app.currentState);
 	atexit(cleanup);
 
-	// timeBeginPeriod(1);			// set system sleep granularity to 1ms: winmm.lib
+	timeBeginPeriod(1);			// set system sleep granularity to 1ms: winmm.lib
 	LARGE_INTEGER newTime, currentTime;
     app.t = 0.0;
-    app.dt = 0.01 * app.dtMulti;
+    app.dt = 0.01 * app.dtMulti;	// dt * multiplier based on refresh rate
 	f64 updateTimeFrame;
 
 	QueryPerformanceCounter(&currentTime);
@@ -22,7 +22,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	{
 		QueryPerformanceCounter(&newTime);
  		updateTimeFrame = (newTime.QuadPart / 1000.0) - (currentTime.QuadPart / 1000.0);
-		// printf("updateTimeFrame: %.3f\n", updateTimeFrame);
 		currentTime = newTime;
 
 		if(updateTimeFrame > 0.25)
@@ -55,7 +54,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		app.Dev.frameCounter++;
 		printf("Frame Rendered: %d\n", app.Dev.frameCounter);
 
-		// dont need if vsync
 		Sleep(1);
 	}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -5,7 +5,7 @@
 #define KEYPRESS_COOLDOWN 1
 
 #define FONT_PATH "fonts/continuum.ttf"
-#define FONT_SIZE 36
+#define FONT_SIZE 24
 #define IMAGEPATH_smiley "img/smiley.png"
 #define IMAGEPATH_player "img/monakS_64x64.png"
 

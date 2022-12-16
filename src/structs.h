@@ -107,6 +107,7 @@ struct State
         State result;
         result.player.pos = player.pos * scalar;
         result.player.vel = player.vel * scalar;
+        result.player.speed = player.speed * scalar;
         return result;
     }
 
@@ -116,6 +117,7 @@ struct State
         State result;
         result.player.pos = player.pos + other.player.pos;
         result.player.vel = player.vel + other.player.vel;
+        result.player.speed = player.speed + other.player.speed;
         return result;
     }
 };
