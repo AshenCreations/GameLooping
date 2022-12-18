@@ -1,56 +1,89 @@
+#pragma once
+
 struct Vec2
 {
     f32 x, y;
-
-    // vector + vector
-    Vec2 operator+(const Vec2 &other)
-    {
-        Vec2 result;
-        result.x = x + other.x;
-        result.y = y + other.y;
-        return result;
-    }
-
-    // vector * scalar
-    Vec2 operator*(f32 scalar)
-    {
-        Vec2 result;
-        result.x = x * scalar;
-        result.y = y * scalar;
-        return result;
-    }
-
-    // vector - vector
-    Vec2 operator-(const Vec2 &other)
-    {
-        Vec2 result;
-        result.x = x - other.x;
-        result.y = y - other.y;
-        return result;
-    }
-
-    //! vector *= scalar not working
-    Vec2 operator*=(const f32 &other)
-    {
-        Vec2 result;
-        result.x = x * other;
-        result.y = y * other;
-        return result;
-    }
-    
-    //! vector /= scalar not working
-    Vec2 operator/=(const f32 &other)
-    {
-        Vec2 result;
-        result.x = x / other;
-        result.y = y / other;
-        return result;
-    }
 };
+
+internal Vec2 operator+(Vec2 a, Vec2 other)
+{
+  return Vec2{
+    a.x + other.x,
+    a.y + other.y};
+}
+
+internal Vec2 operator+(Vec2 a, float scalar)
+{
+  return Vec2{
+    a.x + scalar,
+    a.y + scalar};
+}
+
+internal Vec2& operator+=(Vec2& a, Vec2 b)
+{
+  a = a + b;
+  return a;
+}
+
+internal Vec2 operator-(Vec2 a, Vec2 other)
+{
+  return Vec2{
+    a.x - other.x,
+    a.y - other.y};
+}
+
+internal Vec2& operator-=(Vec2& a, Vec2 b)
+{
+  a = a - b;
+  return a;
+}
+
+internal Vec2 operator*(Vec2 a, Vec2 other)
+{
+  return Vec2{
+    a.x * other.x,
+    a.y * other.y};
+}
+
+internal Vec2 operator*(Vec2 a, float scalar)
+{
+  return Vec2{
+    a.x * scalar,
+    a.y * scalar};
+}
+
+internal Vec2 operator/(Vec2 a, Vec2 other)
+{
+  return Vec2{
+    a.x / other.x,
+    a.y / other.y};
+}
+
+internal Vec2 operator/(Vec2 a, float scalar)
+{
+  return Vec2{
+    a.x / scalar,
+    a.y / scalar};
+}
+
+internal Vec2 vec_2(float x, float y)
+{
+  return {x, y};
+}
+
+internal Vec2 vec_2(float val)
+{
+  return {val, val};
+}
 
 struct IVec2
 {
     s32 x, y;
+};
+
+struct Point
+{
+    f32 x, y;
 };
 
 struct Circle
@@ -67,14 +100,15 @@ struct Mouse
 
 struct Keybinds
 {
-    u8 left, right, up, down, escape, printscreen;
+    u8 left, right, up, down, escape, printscreen, space;
 };
 
 struct enemySpawner
 {
     Vec2 pos;
     u32 numberSpawned, maxSpawns;
-    f64 cooldown;
+    f32 cooldown;
+    f32 spawnedSpeed;
 };
 
 struct Waypoint
@@ -84,7 +118,7 @@ struct Waypoint
 
 struct Enemy
 {
-    Vec2 pos, velocity, dest;
+    Vec2 nextPos, pos, vel, dest;
     f32 speed;
     bool alive;
 };
@@ -95,31 +129,18 @@ struct Player
     f32 speed;
 };
 
-// A State struct only contains any data which is linked to movement/physics
-// any Images or Sounds will be distorted by state blending & therefore unreadable
-struct State
+// struct Entity
+// {
+//     Vec2 pos, vel;
+//     f32 speed;
+//     enum EntityType type;
+//     u8 healthMax, healthCurrent;
+// };
+
+struct Soundboard
 {
-    Player player;
-
-    // state * scalar
-    State operator*(f64 scalar)
-    {
-        State result;
-        result.player.pos = player.pos * scalar;
-        result.player.vel = player.vel * scalar;
-        result.player.speed = player.speed * scalar;
-        return result;
-    }
-
-    // state + state
-    State operator+(const State &other)
-    {
-        State result;
-        result.player.pos = player.pos + other.player.pos;
-        result.player.vel = player.vel + other.player.vel;
-        result.player.speed = player.speed + other.player.speed;
-        return result;
-    }
+    Mix_Chunk *nope, *bruh;
+    // Mix_Music *track1;
 };
 
 // main app struct
@@ -143,8 +164,9 @@ typedef struct
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;
     enemySpawner eSpawn;
+    Player player;
 
-    State previousState, currentState;
+    Soundboard sounds;
 
     struct
     {

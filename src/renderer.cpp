@@ -1,23 +1,23 @@
 #include "renderer.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-void render(State *state);
+void render(f64 alpha);
 void prepare_scene(void);
 void present_scene(void);
 GPU_Image *load_image(char *filename);
 GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color color);
-void draw_enemy(State *state);
-void draw_stats(State *state);
-void draw_player(State *state);
+void draw_enemy(f64 alpha);
+void draw_player(f64 alpha);
+void draw_stats(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-void render(State *state)
+void render(f64 alpha)
 {
 	prepare_scene();
 
-	draw_enemy(state);
-	draw_player(state);
-	draw_stats(state);
+	draw_enemy(alpha);
+	draw_player(alpha);
+	draw_stats();
 
 	present_scene();
 }
@@ -70,8 +70,9 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 }
 
 // blit enemies
-void draw_enemy(State *state)
+void draw_enemy(f64 alpha)
 {
+	
 	for(int i = 0; i < app.enemyCount; i++)
 	{
 		if(app.enemy[i].alive)
@@ -83,29 +84,30 @@ void draw_enemy(State *state)
 	}
 }
 
+void draw_player(f64 alpha)
+{
+	GPU_Blit(app.playerSprite, NULL, app.renderTarget,
+			app.player.pos.x,
+			app.player.pos.y);
+}
+
 // onscreen text counter for enemyCount
-void draw_stats(State *state)
+void draw_stats(void)
 {
 	GPU_RectangleFilled2(app.renderTarget, {140, 500, 370, 170}, {0, 0, 0, 100});
 	
-	char textBuffer[100];
+	char textBuffer[150];
 	memset(&textBuffer, 0, sizeof(textBuffer));
 
-	snprintf(textBuffer, sizeof(textBuffer), "Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\n\nplayer move vector: {%.2f, %.2f}\n",
+	snprintf(textBuffer, sizeof(textBuffer), "Refresh Rate: %uHz\ndelta time: %.3f\nplayer speed: %.2f\nplayer move vector: {%.2f, %.2f}\nenemies: %u/%u\n",
 											app.appHz, app.dt,
-											state->player.speed,
-											state->player.vel.x, state->player.vel.y);
+											app.player.speed,
+											app.player.vel.x, app.player.vel.y,
+											app.enemyCount, app.eSpawn.maxSpawns);
 	
 	GPU_Image *statsImage = texture_from_font(app.font, textBuffer, TTF_STYLE_NORMAL, COLOR_WHITE);
 	GPU_SetAnchor(statsImage, 0.0f, 0.0f);
 	GPU_SetImageFilter(statsImage, GPU_FILTER_NEAREST);
 	GPU_Blit(statsImage, NULL, app.renderTarget, 150, 500);
 	GPU_FreeImage(statsImage);	// this must be freed after use
-}
-
-void draw_player(State *state)
-{
-	GPU_Blit(app.playerSprite, NULL, app.renderTarget,
-			state->player.pos.x,
-			state->player.pos.y);
 }

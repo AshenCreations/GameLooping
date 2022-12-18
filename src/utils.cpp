@@ -7,8 +7,8 @@ f32 get_vector_length(Vec2 vec);
 f32 lerp(f32 v0, f32 v1, f64 t);
 Vec2 lerp_Vec2(Vec2 start, Vec2 end, f64 t);
 Vec2 make_Vec2(f32 x, f32 y);
+f32 dot_product(Vec2 a, Vec2 b);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 
 // checks if the mouse is inside rect
 bool mouse_in_rect(GPU_Rect rect)
@@ -53,4 +53,10 @@ Vec2 lerp_Vec2(Vec2 start, Vec2 end, f64 t)
 Vec2 make_Vec2(f32 x, f32 y)
 {
     return {x, y};
+}
+
+f32 dot_product(Vec2 a, Vec2 b)
+{
+    f32 result = (a.x * b.x) + (a.y * b.y);
+    return result;
 }

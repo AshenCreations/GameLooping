@@ -9,8 +9,8 @@
 
 ## Naming Conventions
 
-- own_functions_like_this
-- MyStructName, myStructInstance
+- own_functions_like_this :snek
+- MyStructName, myStructInstance :hamL
 - variableName
 - #define MACRO_NAME_IN_CAPS
 - enums nameLikeDis whilst members are LIKE_MUH_MACROS

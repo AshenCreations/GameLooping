@@ -4,10 +4,12 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 {
 	memset(&app, 0, sizeof(App));
 
-	init(&app.currentState);
+	init();
 	atexit(cleanup);
 
-	timeBeginPeriod(1);			// set system sleep granularity to 1ms: winmm.lib
+	//! not needed if we don't use Sleep()
+	// timeBeginPeriod(1);			// set system sleep granularity to 1ms: winmm.lib
+
 	LARGE_INTEGER newTime, currentTime;
     app.t = 0.0;
     app.dt = 0.01 * app.dtMulti;	// dt * multiplier based on refresh rate
@@ -29,32 +31,28 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		accumulator += updateTimeFrame;
 
 		// handle input
-		input(&app.currentState);					//! input
-
+		input();					//* input
+		
 		// update loop
 		while(accumulator >= app.dt)
 		{
-			app.previousState = app.currentState;
-			update(&app.currentState, app.t, app.dt);				//! update
+			update();				//* update
 			app.t += app.dt;
 			accumulator -= app.dt;
-			printf("updates\n");
 		}
 
 		// accumulator / dt is in the range 0 to 1
 		const f64 alpha = accumulator / app.dt;
 		printf("alpha: %.2f\n", alpha);
 
-		// state blending
-		State state = (app.currentState * alpha) + (app.previousState * (1.0 - alpha));
+		// render offset frame
+		render(alpha);								//* render
 
-		// render the state
-		render(&state);								//! render
-		
 		app.Dev.frameCounter++;
-		printf("Frame Rendered: %d\n", app.Dev.frameCounter);
+		printf("Frame Rendered: %u\n", app.Dev.frameCounter);
 
-		Sleep(1);
+		//! is this needed if we use Vsync??
+		// Sleep(1);
 	}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }
