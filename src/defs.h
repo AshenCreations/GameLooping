@@ -18,7 +18,7 @@
 #define IMAGEPATH_player "img/monakS_64x64.png"
 
 // sounds
-#define SOUNDPATH_NOPE "sound/nope.mp3"
+#define SOUNDPATH_NOPE "sound/nope.wav"
 #define SOUNDPATH_BRUH "sound/bruh.wav"
 
 // Colors

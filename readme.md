@@ -9,19 +9,19 @@
 
 - VSCode is being used for editing the project & debugging
 
-## libs used
+## SDL addons used
 
-- SDL2
 - SDL_gpu
 - SDL_ttf
+- SDL_mixer
 
 ## To Run
 
 - .exe
 
-- the 3 SDL dll's
+- the 4 SDL dll's & libmpg123-0.dll
 
-- img folder & fonts folders
+- The 3 folders: img, font, sound.
 
 ## When running
 
@@ -30,5 +30,3 @@
 - Tries to use desktop displaymode to find refresh rate & auto adjusts for 60Hz, 75Hz, 120Hz, 144Hz and 165Hz. Uses refresh rate found then scales the deltatime & player speed, using 60Hz as the base.
 
 - No resolution size changes
-
-- Player sprite is adjusted to be frame rate independant. The enemy sprite (smiley) is not for testing
