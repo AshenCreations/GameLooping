@@ -50,7 +50,7 @@ void spawn_enemy(void)
 // update enemy position
 void update_enemy(void)
 {
-    for(int i = 0; i < app.enemyCount; i++)
+    for(u32 i = 0; i < app.enemyCount; i++)
     {
        	// diagonal movement
         if(app.enemy[i].vel.x != 0 && app.enemy[i].vel.y != 0)
@@ -64,9 +64,9 @@ void update_enemy(void)
 
 void screenclip_enemy(void)
 {
-	Vec2 r;
+	Vec2 r = {0};
 
-    for(int i = 0; i < app.enemyCount; i++)
+    for(u32 i = 0; i < app.enemyCount; i++)
     {
         bool collide = false;
         if(app.enemy[i].pos.x < 0 + app.smiley->w / 2.0f)
@@ -109,7 +109,7 @@ void update_player(void)
 
 void screenclip_player(void)
 {
-	Vec2 r;
+	Vec2 r = {0};
     bool collide = false;
 
     if(app.player.pos.x < 0 + app.playerSprite->w / 2.0f)
@@ -168,4 +168,3 @@ Vec2 move_stop(void)
 {
     return {0, 0}; 
 }
-

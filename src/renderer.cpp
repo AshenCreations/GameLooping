@@ -72,7 +72,7 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 // render the  enemies
 void draw_enemy(f64 alpha)
 {
-	for(int i = 0; i < app.enemyCount; i++)
+	for(u32 i = 0; i < app.enemyCount; i++)
 	{
 		if(app.enemy[i].alive)
 		{
@@ -110,7 +110,7 @@ void draw_stats(void)
 	char textBuffer[256];
 	memset(&textBuffer, 0, sizeof(textBuffer));
 
-	snprintf(textBuffer, sizeof(textBuffer), "Refresh Rate: %uHz\ndelta time: %.3f\nplayer speed: %.2f\nplayer move vector: {%.2f, %.2f}\nenemies: %u/%u\n",
+	snprintf(textBuffer, sizeof(textBuffer), "Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\nplayer move vector: {%.2f, %.2f}\nenemies: %u/%u\n",
 											app.appHz, app.dt,
 											app.player.speed,
 											app.player.vel.x, app.player.vel.y,

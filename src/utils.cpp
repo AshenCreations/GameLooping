@@ -42,13 +42,13 @@ f32 get_vector_length(Vec2 vec)
 // float lerp
 f32 lerp(f32 v0, f32 v1, f64 t)
 {
-    return ((1 - t) * v0) + (t * v1);
+    return ((1 - (f32)t) * v0) + ((f32)t * v1);
 }
 
 // vector lerp
 Vec2 lerp_Vec2(Vec2 start, Vec2 end, f64 t)
 {
-    return (start * (1 - t)) + (end * t);    
+    return (start * (1 - (f32)t)) + (end * (f32)t);    
 }
 
 // make 2 floats into a Vec2

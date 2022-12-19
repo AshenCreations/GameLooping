@@ -148,9 +148,10 @@ typedef struct
     bool keyboard[MAX_KEYBOARD_KEYS];
     Mouse mouse;
 
-    f64 t, dt;
+    f64 t;
+    f32 dt;
     f32 dtMulti;
-    u8 appHz;
+    s32 appHz;
 
     TTF_Font *font;
     GPU_Image *smiley;
