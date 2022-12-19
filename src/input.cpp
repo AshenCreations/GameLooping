@@ -62,13 +62,23 @@ void check_keys(void)
 	app.player.vel = {0.0f, 0.0f};
 	
 	if(is_pressed(app.keybind.right))
-		app.player.vel = app.player.vel + move_right();
+	{
+		app.player.vel += move_right();
+		app.player.facing = true;
+	}
 	if(is_pressed(app.keybind.left))
-		app.player.vel = app.player.vel + move_left();
+	{
+		app.player.vel += move_left();
+		app.player.facing = false;
+	}
 	if(is_pressed(app.keybind.up))
-		app.player.vel = app.player.vel + move_up();
+	{
+		app.player.vel += move_up();
+	}
 	if(is_pressed(app.keybind.down))
-		app.player.vel = app.player.vel + move_down();
+	{
+		app.player.vel += move_down();
+	}
 	
 	//diagonal player movement
 	if(app.player.vel.x != 0 && app.player.vel.y != 0)

@@ -3,6 +3,7 @@
 
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START EXTERNAL Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 extern void init(void);
 extern void cleanup(void);
 extern GPU_Image *load_image(char *filename);

@@ -3,11 +3,12 @@
 #define internal static
 #define global_variable static
 
+// window
 #define WINDOW_TITLE "Game Looping Learning"
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
+
 #define MAX_KEYBOARD_KEYS 350
-#define KEYPRESS_COOLDOWN 1
 
 // fonts
 #define FONT_PATH "fonts/continuum.ttf"
@@ -25,17 +26,21 @@
 #define COLOR_BLACK {0, 0, 0, 255}
 #define COLOR_WHITE {255, 255, 255, 255}
 
-#define PLAYER_SPEED 18.0f
-#define MAX_ENEMIES 100
-#define ENEMY_SPEED 12.0f
-
+// locations
 #define SPAWN_POINT {100, 100}
 #define WAYPOINT_1 {SCREEN_WIDTH - 100, 100}
 #define WAYPOINT_2 {SCREEN_WIDTH - 100, SCREEN_HEIGHT - 100}
 #define WAYPOINT_3 {100, SCREEN_HEIGHT - 100}
 
+// math
 #define INVERSE_ROOT_2 0.707106781186f
 #define PI_32 3.14159265359f
+
+#define PLAYER_SPEED 18.0f
+#define MAX_ENEMIES 100
+#define ENEMY_SPEED 12.0f
+
+
 
 
 // templated bound-checked array

@@ -122,6 +122,7 @@ struct Player
 {
     Vec2 pos, vel;
     f32 speed;
+    bool facing;
 };
 
 // struct Entity

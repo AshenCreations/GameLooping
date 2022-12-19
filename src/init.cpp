@@ -28,6 +28,8 @@ void init(void)
 	app.playerSprite = load_image(IMAGEPATH_player);
 	GPU_SetImageFilter(app.playerSprite, GPU_FILTER_NEAREST);
 	app.player.pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+
+	app.player.facing = true;
 }
 
 // init SDL

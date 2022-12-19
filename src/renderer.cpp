@@ -72,7 +72,6 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 // render the  enemies
 void draw_enemy(f64 alpha)
 {
-	
 	for(int i = 0; i < app.enemyCount; i++)
 	{
 		if(app.enemy[i].alive)
@@ -87,9 +86,20 @@ void draw_enemy(f64 alpha)
 // render the player
 void draw_player(f64 alpha)
 {
-	GPU_Blit(app.playerSprite, NULL, app.renderTarget,
-			app.player.pos.x,
-			app.player.pos.y);
+	GPU_Rect dest;
+	dest.x = app.player.pos.x - app.playerSprite->w / 2.0f;
+	dest.y = app.player.pos.y - app.playerSprite->h / 2.0f;
+	dest.w = app.playerSprite->w;
+	dest.h = app.playerSprite->h;
+
+	GPU_FlipEnum flipflag;
+	if(app.player.facing)
+		flipflag = GPU_FLIP_NONE;
+	if(!app.player.facing)
+		flipflag = GPU_FLIP_HORIZONTAL;
+
+	GPU_BlitRectX(app.playerSprite, NULL, app.renderTarget, &dest,
+				0.0f, app.playerSprite->w / 2.0f, app.playerSprite->h / 2.0f, flipflag);
 }
 
 // onscreen text overlay

@@ -31,7 +31,7 @@ void spawn_enemy(void)
     {
         app.enemy[app.eSpawn.numberSpawned].alive = true;
         app.enemy[app.eSpawn.numberSpawned].pos = app.eSpawn.pos;
-        app.enemy[app.eSpawn.numberSpawned].vel = move_down() + (move_right() * 0.58f);
+        app.enemy[app.eSpawn.numberSpawned].vel = move_down() + (move_right() * 1.58f);
         app.enemy[app.eSpawn.numberSpawned].speed = app.eSpawn.spawnedSpeed;
 
         app.enemy[app.eSpawn.numberSpawned].dest = WAYPOINT_1;
@@ -50,13 +50,12 @@ void spawn_enemy(void)
 // update enemy position
 void update_enemy(void)
 {
-    // TODO redo moving enemy
     for(int i = 0; i < app.enemyCount; i++)
     {
-       	if(app.enemy[i].vel.x != 0 && app.enemy[i].vel.y != 0)
+       	// diagonal movement
+        if(app.enemy[i].vel.x != 0 && app.enemy[i].vel.y != 0)
         {
-            f32 h = get_vector_length(app.enemy[i].vel);
-            app.enemy[i].vel = {app.enemy[i].vel.x / h, app.enemy[i].vel.y / h};
+            app.enemy[i].vel = unit_Vec2(app.enemy[i].vel);
         }
 
         app.enemy[i].pos += app.enemy[i].vel * (app.enemy[i].speed * app.dt);
@@ -104,6 +103,7 @@ void screenclip_enemy(void)
 
 void update_player(void)
 {
+    // update position    
     app.player.pos = app.player.pos + app.player.vel * (app.player.speed * app.dt);
 }
 
@@ -168,3 +168,4 @@ Vec2 move_stop(void)
 {
     return {0, 0}; 
 }
+

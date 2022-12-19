@@ -8,6 +8,7 @@ f32 lerp(f32 v0, f32 v1, f64 t);
 Vec2 lerp_Vec2(Vec2 start, Vec2 end, f64 t);
 Vec2 make_Vec2(f32 x, f32 y);
 f32 dot_product(Vec2 a, Vec2 b);
+Vec2 unit_Vec2(Vec2 a);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 // checks if the mouse is inside rect
@@ -27,10 +28,8 @@ bool mouse_in_rect(GPU_Rect rect)
 s32 round_float2Int(f32 fNum)
 {
     f32 deez = 0.5f;
-
     if(fNum < 0)
         deez = -0.5f;
-
     return (s32)(fNum + deez);
 }
 
@@ -40,23 +39,32 @@ f32 get_vector_length(Vec2 vec)
     return sqrtf((vec.x * vec.x) + (vec.y * vec.y));
 }
 
+// float lerp
 f32 lerp(f32 v0, f32 v1, f64 t)
 {
     return ((1 - t) * v0) + (t * v1);
 }
 
+// vector lerp
 Vec2 lerp_Vec2(Vec2 start, Vec2 end, f64 t)
 {
     return (start * (1 - t)) + (end * t);    
 }
 
+// make 2 floats into a Vec2
 Vec2 make_Vec2(f32 x, f32 y)
 {
     return {x, y};
 }
 
+// return inner product of 2 Vec2's
 f32 dot_product(Vec2 a, Vec2 b)
 {
-    f32 result = (a.x * b.x) + (a.y * b.y);
-    return result;
+    return (a.x * b.x) + (a.y * b.y);
+}
+
+// returns a Vec2 input as a unit vector
+Vec2 unit_Vec2(Vec2 a)
+{
+    return (a / get_vector_length(a));
 }
