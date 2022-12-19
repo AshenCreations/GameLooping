@@ -57,7 +57,7 @@ void check_keys(void)
 {
 	if(is_pressed(app.keybind.escape))
 		exit(0);
-
+	
 	// player movement
 	app.player.vel = {0.0f, 0.0f};
 	
@@ -72,7 +72,9 @@ void check_keys(void)
 	
 	//diagonal player movement
 	if(app.player.vel.x != 0 && app.player.vel.y != 0)
+	{
 		app.player.vel = app.player.vel * INVERSE_ROOT_2;
+	}
 }
 
 // Checks if keybind has been pressed

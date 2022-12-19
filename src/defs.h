@@ -25,14 +25,51 @@
 #define COLOR_BLACK {0, 0, 0, 255}
 #define COLOR_WHITE {255, 255, 255, 255}
 
-#define PLAYER_SPEED 12.0f
+#define PLAYER_SPEED 18.0f
 #define MAX_ENEMIES 100
-#define ENEMY_SPEED 18.0f
+#define ENEMY_SPEED 12.0f
 
 #define SPAWN_POINT {100, 100}
-#define WAYPOINT_1 {1200, 100}
-#define WAYPOINT_2 {1200, 700}
-#define WAYPOINT_3 {800, 500}
+#define WAYPOINT_1 {SCREEN_WIDTH - 100, 100}
+#define WAYPOINT_2 {SCREEN_WIDTH - 100, SCREEN_HEIGHT - 100}
+#define WAYPOINT_3 {100, SCREEN_HEIGHT - 100}
 
 #define INVERSE_ROOT_2 0.707106781186f
 #define PI_32 3.14159265359f
+
+
+// templated bound-checked array
+template <typename T, int N>
+struct Array
+{
+  static constexpr int maxElements = N;
+  
+  int count = 0;
+  T elements[N];
+  
+  T& operator[](int idx)
+  {
+    //CAKEZ_ASSERT(idx >= 0, "Idx negative!");
+    //CAKEZ_ASSERT(idx < count, "Idx out of bounds!");
+    assert(idx >= 0);
+    assert(idx < count);
+    return elements[idx];
+  }
+  
+  int add(T element)
+  {
+    //CAKEZ_ASSERT(count < maxElements, "Array Full!");
+    assert(count < maxElements);
+    elements[count] = element;
+    return count++;
+  }
+  
+  void remove_and_swap(int idx)
+  {
+    //CAKEZ_ASSERT(idx >= 0, "Idx negative!");
+    //CAKEZ_ASSERT(idx < count, "Idx out of bounds!");
+    assert(idx >= 0);
+    assert(idx < count);
+    elements[idx] = elements[--count];
+  }
+};

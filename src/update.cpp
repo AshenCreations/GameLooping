@@ -31,7 +31,7 @@ void spawn_enemy(void)
     {
         app.enemy[app.eSpawn.numberSpawned].alive = true;
         app.enemy[app.eSpawn.numberSpawned].pos = app.eSpawn.pos;
-        app.enemy[app.eSpawn.numberSpawned].vel = move_down() + move_right() * 0.5f;
+        app.enemy[app.eSpawn.numberSpawned].vel = move_down() + (move_right() * 0.58f);
         app.enemy[app.eSpawn.numberSpawned].speed = app.eSpawn.spawnedSpeed;
 
         app.enemy[app.eSpawn.numberSpawned].dest = WAYPOINT_1;
@@ -40,7 +40,7 @@ void spawn_enemy(void)
         app.eSpawn.cooldown = 1000;
         app.enemyCount++;
         
-        // nope @ max enemies
+        // nope @ last enemy spawned
         if(app.enemyCount == app.eSpawn.maxSpawns)
             play_sound(app.sounds.nope);
     }
@@ -53,6 +53,12 @@ void update_enemy(void)
     // TODO redo moving enemy
     for(int i = 0; i < app.enemyCount; i++)
     {
+       	if(app.enemy[i].vel.x != 0 && app.enemy[i].vel.y != 0)
+        {
+            f32 h = get_vector_length(app.enemy[i].vel);
+            app.enemy[i].vel = {app.enemy[i].vel.x / h, app.enemy[i].vel.y / h};
+        }
+
         app.enemy[i].pos += app.enemy[i].vel * (app.enemy[i].speed * app.dt);
     }
 }

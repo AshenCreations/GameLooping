@@ -111,11 +111,6 @@ struct enemySpawner
     f32 spawnedSpeed;
 };
 
-struct Waypoint
-{
-    Vec2 pos;
-};
-
 struct Enemy
 {
     Vec2 nextPos, pos, vel, dest;
@@ -159,7 +154,6 @@ typedef struct
     TTF_Font *font;
     GPU_Image *smiley;
     GPU_Image *playerSprite;
-    Waypoint waypoint[4];
 
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;

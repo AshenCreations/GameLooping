@@ -7,28 +7,34 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	init();
 	atexit(cleanup);
 
-	//! not needed if we don't use Sleep()
+	//! only needed if use Sleep()
 	// timeBeginPeriod(1);			// set system sleep granularity to 1ms: winmm.lib
 
-	LARGE_INTEGER newTime, currentTime;
+	LARGE_INTEGER newTime, currentTime, countFrequency;
     app.t = 0.0;
     app.dt = 0.01 * app.dtMulti;	// dt * multiplier based on refresh rate
-	f64 updateTimeFrame;
+	f64 timeFrame;
 
 	QueryPerformanceCounter(&currentTime);
 	f64 accumulator = 0.0;
 
 	app.Dev.frameCounter = 0;
+	bool running = true;
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	while (true)
+	while (running)
 	{
 		QueryPerformanceCounter(&newTime);
- 		updateTimeFrame = (newTime.QuadPart / 1000.0) - (currentTime.QuadPart / 1000.0);
+		
+		// get timeFrame in milliseconds
+		// divide by 10k since value of QueryPerformanceFrequency is 10,000,000
+		// when doing very small amounts of work the timeFrame = vsynced frame length
+		timeFrame = (newTime.QuadPart - currentTime.QuadPart) / 10000.0;
 		currentTime = newTime;
 
-		if(updateTimeFrame > 0.25)
-			updateTimeFrame = 0.25;
-		accumulator += updateTimeFrame;
+		// set update loop length
+		if(timeFrame > 0.25)
+			timeFrame = 0.25;
+		accumulator += timeFrame;
 
 		// handle input
 		input();					//* input
@@ -39,6 +45,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			update();				//* update
 			app.t += app.dt;
 			accumulator -= app.dt;
+			printf("updates\n");
 		}
 
 		// accumulator / dt is in the range 0 to 1
@@ -51,7 +58,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		app.Dev.frameCounter++;
 		printf("Frame Rendered: %u\n", app.Dev.frameCounter);
 
-		//! is this needed if we use Vsync??
+		//! not needed if use Vsync
 		// Sleep(1);
 	}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,7 +1,6 @@
 #include "sound.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ declarations BEGIN ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-void do_sound(void);
 Mix_Music* load_music(const char* file);
 Mix_Chunk* load_sound(const char* file);
 void play_music(Mix_Music *music);

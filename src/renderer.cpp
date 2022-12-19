@@ -69,7 +69,7 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 	return temp;
 }
 
-// blit enemies
+// render the  enemies
 void draw_enemy(f64 alpha)
 {
 	
@@ -84,6 +84,7 @@ void draw_enemy(f64 alpha)
 	}
 }
 
+// render the player
 void draw_player(f64 alpha)
 {
 	GPU_Blit(app.playerSprite, NULL, app.renderTarget,
@@ -91,12 +92,12 @@ void draw_player(f64 alpha)
 			app.player.pos.y);
 }
 
-// onscreen text counter for enemyCount
+// onscreen text overlay
 void draw_stats(void)
 {
 	GPU_RectangleFilled2(app.renderTarget, {140, 500, 370, 170}, {0, 0, 0, 100});
-	
-	char textBuffer[150];
+
+	char textBuffer[256];
 	memset(&textBuffer, 0, sizeof(textBuffer));
 
 	snprintf(textBuffer, sizeof(textBuffer), "Refresh Rate: %uHz\ndelta time: %.3f\nplayer speed: %.2f\nplayer move vector: {%.2f, %.2f}\nenemies: %u/%u\n",
