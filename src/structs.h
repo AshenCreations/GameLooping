@@ -113,9 +113,12 @@ struct enemySpawner
 
 struct Enemy
 {
-    Vec2 nextPos, pos, vel, dest;
+    Vec2 pos, vel;
+    // Vec2 dest;
     f32 speed;
     bool alive;
+    bool facing;
+    GPU_Rect renderRect;
 };
 
 struct Player
@@ -123,6 +126,7 @@ struct Player
     Vec2 pos, vel;
     f32 speed;
     bool facing;
+    GPU_Rect renderRect;
 };
 
 // struct Entity
@@ -154,7 +158,7 @@ typedef struct
     s32 appHz;
 
     TTF_Font *font;
-    GPU_Image *smiley;
+    GPU_Image *enemySprite;
     GPU_Image *playerSprite;
 
     Enemy enemy[MAX_ENEMIES];

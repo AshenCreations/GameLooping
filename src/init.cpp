@@ -7,6 +7,8 @@ void cleanup(void);
 void init_keybinds(void);
 void init_spawner(void);
 void init_sound(void);
+void init_player(void);
+void init_enemies(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 void init(void)
@@ -19,17 +21,11 @@ void init(void)
 	init_keybinds();
 	init_sound();
 
+	init_player();
+	init_enemies();
 	init_spawner();
 
 	// SDL_ShowCursor(SDL_DISABLE);
-	app.smiley = load_image(IMAGEPATH_smiley);
-	GPU_SetImageFilter(app.smiley, GPU_FILTER_NEAREST);
-
-	app.playerSprite = load_image(IMAGEPATH_player);
-	GPU_SetImageFilter(app.playerSprite, GPU_FILTER_NEAREST);
-	app.player.pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
-
-	app.player.facing = true;
 }
 
 // init SDL
@@ -171,4 +167,20 @@ void init_sound(void)
     app.sounds.nope = load_sound(SOUNDPATH_NOPE);
 	app.sounds.bruh = load_sound(SOUNDPATH_BRUH);
 	Mix_Volume(-1, 20);
+}
+
+void init_player(void)
+{
+	app.playerSprite = load_image(IMAGEPATH_player);
+	GPU_SetImageFilter(app.playerSprite, GPU_FILTER_NEAREST);
+	
+	app.player.pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+
+	app.player.facing = true;
+}
+
+void init_enemies(void)
+{
+	app.enemySprite = load_image(IMAGEPATH_smiley);
+	GPU_SetImageFilter(app.enemySprite, GPU_FILTER_NEAREST);
 }

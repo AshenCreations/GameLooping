@@ -76,9 +76,19 @@ void draw_enemy(f64 alpha)
 	{
 		if(app.enemy[i].alive)
 		{
-			GPU_Blit(app.smiley, NULL, app.renderTarget,
-					app.enemy[i].pos.x,
-					app.enemy[i].pos.y);
+			app.enemy[i].renderRect.x = app.enemy[i].pos.x - app.enemySprite->w / 2.0f;
+			app.enemy[i].renderRect.y = app.enemy[i].pos.y - app.enemySprite->h / 2.0f;
+			app.enemy[i].renderRect.w = app.enemySprite->w;
+			app.enemy[i].renderRect.h = app.enemySprite->h;
+
+			GPU_FlipEnum flipflag;
+			if(app.enemy[i].facing)
+				flipflag = GPU_FLIP_NONE;
+			if(!app.enemy[i].facing)
+				flipflag = GPU_FLIP_HORIZONTAL;
+
+			GPU_BlitRectX(app.enemySprite, NULL, app.renderTarget, &app.enemy[i].renderRect,
+				0.0f, app.enemySprite->w / 2.0f, app.enemySprite->h / 2.0f, flipflag);
 		}
 	}
 }
@@ -86,19 +96,18 @@ void draw_enemy(f64 alpha)
 // render the player
 void draw_player(f64 alpha)
 {
-	GPU_Rect dest;
-	dest.x = app.player.pos.x - app.playerSprite->w / 2.0f;
-	dest.y = app.player.pos.y - app.playerSprite->h / 2.0f;
-	dest.w = app.playerSprite->w;
-	dest.h = app.playerSprite->h;
-
+	app.player.renderRect.x = app.player.pos.x - app.playerSprite->w / 2.0f;
+	app.player.renderRect.y = app.player.pos.y - app.playerSprite->h / 2.0f;
+	app.player.renderRect.w = app.playerSprite->w;
+	app.player.renderRect.h = app.playerSprite->h;
+	
 	GPU_FlipEnum flipflag;
 	if(app.player.facing)
 		flipflag = GPU_FLIP_NONE;
 	if(!app.player.facing)
 		flipflag = GPU_FLIP_HORIZONTAL;
 
-	GPU_BlitRectX(app.playerSprite, NULL, app.renderTarget, &dest,
+	GPU_BlitRectX(app.playerSprite, NULL, app.renderTarget, &app.player.renderRect,
 				0.0f, app.playerSprite->w / 2.0f, app.playerSprite->h / 2.0f, flipflag);
 }
 

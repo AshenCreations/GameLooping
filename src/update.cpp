@@ -33,8 +33,8 @@ void spawn_enemy(void)
         app.enemy[app.eSpawn.numberSpawned].pos = app.eSpawn.pos;
         app.enemy[app.eSpawn.numberSpawned].vel = move_down() + (move_right() * 1.58f);
         app.enemy[app.eSpawn.numberSpawned].speed = app.eSpawn.spawnedSpeed;
-
-        app.enemy[app.eSpawn.numberSpawned].dest = WAYPOINT_1;
+        app.enemy[app.eSpawn.numberSpawned].facing = false;
+        // app.enemy[app.eSpawn.numberSpawned].dest = WAYPOINT_1;
         
         app.eSpawn.numberSpawned++;
         app.eSpawn.cooldown = 1000;
@@ -59,6 +59,11 @@ void update_enemy(void)
         }
 
         app.enemy[i].pos += app.enemy[i].vel * (app.enemy[i].speed * app.dt);
+
+        if(app.enemy[i].vel.x > 0)
+            app.enemy[i].facing = false;
+        if(app.enemy[i].vel.x < 0)
+            app.enemy[i].facing = true;
     }
 }
 
@@ -69,22 +74,22 @@ void screenclip_enemy(void)
     for(u32 i = 0; i < app.enemyCount; i++)
     {
         bool collide = false;
-        if(app.enemy[i].pos.x < 0 + app.smiley->w / 2.0f)
+        if(app.enemy[i].pos.x < 0 + app.enemySprite->w / 2.0f)
         {
             r = {1, 0};
             collide = true;
         }
-        if(app.enemy[i].pos.x > SCREEN_WIDTH - app.smiley->w / 2.0f)
+        if(app.enemy[i].pos.x > SCREEN_WIDTH - app.enemySprite->w / 2.0f)
         {
             r = {-1, 0};
             collide = true;
         }
-        if(app.enemy[i].pos.y < 0 + app.smiley->h / 2.0f)
+        if(app.enemy[i].pos.y < 0 + app.enemySprite->h / 2.0f)
         {
             r = {0, 1};
             collide = true;
         }
-        if(app.enemy[i].pos.y > SCREEN_HEIGHT - app.smiley->h / 2.0f)
+        if(app.enemy[i].pos.y > SCREEN_HEIGHT - app.enemySprite->h / 2.0f)
         {
             r = {0, -1};
             collide = true;
