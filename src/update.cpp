@@ -27,22 +27,19 @@ void update(void)
 // spawn enemies
 void spawn_enemy(void)
 {
-    if((app.eSpawn.numberSpawned < app.eSpawn.maxSpawns) && (app.eSpawn.cooldown < 0))
+    if((app.eSpawn.numberSpawned < app.eSpawn.maxSpawns) && (app.eSpawn.cooldown <= 0))
     {
         app.enemy[app.eSpawn.numberSpawned].alive = true;
         app.enemy[app.eSpawn.numberSpawned].pos = app.eSpawn.pos;
-        app.enemy[app.eSpawn.numberSpawned].vel = move_down() + (move_right() * 1.58f);
+        // app.enemy[app.eSpawn.numberSpawned].vel = move_down() + move_right() * 1.58f;
         app.enemy[app.eSpawn.numberSpawned].speed = app.eSpawn.spawnedSpeed;
         app.enemy[app.eSpawn.numberSpawned].facing = false;
-        // app.enemy[app.eSpawn.numberSpawned].dest = WAYPOINT_1;
-        
+        app.enemy[app.eSpawn.numberSpawned].targetWaypoint = app.waypoint[app.enemy[app.eSpawn.numberSpawned].WpIdx].pos;
+        app.enemy[app.eSpawn.numberSpawned].minDistance = 0.9f;
+
         app.eSpawn.numberSpawned++;
         app.eSpawn.cooldown = 1000;
         app.enemyCount++;
-        
-        // nope @ last enemy spawned
-        if(app.enemyCount == app.eSpawn.maxSpawns)
-            play_sound(app.sounds.nope);
     }
     app.eSpawn.cooldown--;
 }
@@ -52,10 +49,17 @@ void update_enemy(void)
 {
     for(u32 i = 0; i < app.enemyCount; i++)
     {
-       	// diagonal movement
-        if(app.enemy[i].vel.x != 0 && app.enemy[i].vel.y != 0)
+        app.enemy[i].vel = unit_Vec2(app.enemy[i].targetWaypoint - app.enemy[i].pos);
+
+        f32 distance = check_distance(app.enemy[i].pos, app.enemy[i].targetWaypoint);
+        if(distance < app.enemy[i].minDistance)
         {
-            app.enemy[i].vel = unit_Vec2(app.enemy[i].vel);
+            app.enemy[i].WpIdx++;
+            if(app.enemy[i].WpIdx == WAYPOINT_COUNT)
+                app.enemy[i].WpIdx = 0;
+            app.enemy[i].targetWaypoint = app.waypoint[app.enemy[i].WpIdx].pos;
+            // bruh
+            play_sound(app.sounds.bruh);
         }
 
         app.enemy[i].pos += app.enemy[i].vel * (app.enemy[i].speed * app.dt);
@@ -98,10 +102,6 @@ void screenclip_enemy(void)
         if(collide)
         {
             app.enemy[i].vel = app.enemy[i].vel - (r * 2.0f) * dot_product(app.enemy[i].vel, r);
-            
-            // bruh on screenedge reflect
-            if(app.enemyCount < app.eSpawn.maxSpawns)
-                play_sound(app.sounds.bruh);
         }
     }
 }

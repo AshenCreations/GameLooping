@@ -4,7 +4,7 @@
 #define global_variable static
 
 // window
-#define WINDOW_TITLE "Game Looping Learning"
+#define WINDOW_TITLE "Game Looping"
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
 
@@ -27,7 +27,8 @@
 #define COLOR_WHITE {255, 255, 255, 255}
 
 // locations
-#define SPAWN_POINT {100, 100}
+#define SPAWN_POINT {400, 300}
+#define WAYPOINT_0 {100, 100}
 #define WAYPOINT_1 {SCREEN_WIDTH - 100, 100}
 #define WAYPOINT_2 {SCREEN_WIDTH - 100, SCREEN_HEIGHT - 100}
 #define WAYPOINT_3 {100, SCREEN_HEIGHT - 100}
@@ -37,8 +38,8 @@
 #define PI_32 3.14159265359f
 
 #define PLAYER_SPEED 18.0f
-#define MAX_ENEMIES 100
 #define ENEMY_SPEED 12.0f
+#define MAX_ENEMIES 100
 
 
 

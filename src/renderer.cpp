@@ -6,8 +6,8 @@ void prepare_scene(void);
 void present_scene(void);
 GPU_Image *load_image(char *filename);
 GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color color);
-void draw_enemy(f64 alpha);
-void draw_player(f64 alpha);
+void draw_enemy(void);
+void draw_player(void);
 void draw_stats(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -15,8 +15,8 @@ void render(f64 alpha)
 {
 	prepare_scene();
 
-	draw_enemy(alpha);
-	draw_player(alpha);
+	draw_enemy();
+	draw_player();
 	draw_stats();
 
 	present_scene();
@@ -70,7 +70,7 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color col
 }
 
 // render the  enemies
-void draw_enemy(f64 alpha)
+void draw_enemy(void)
 {
 	for(u32 i = 0; i < app.enemyCount; i++)
 	{
@@ -94,8 +94,9 @@ void draw_enemy(f64 alpha)
 }
 
 // render the player
-void draw_player(f64 alpha)
+void draw_player(void)
 {
+	// TODO make_rect(sprite); get rid of some globals
 	app.player.renderRect.x = app.player.pos.x - app.playerSprite->w / 2.0f;
 	app.player.renderRect.y = app.player.pos.y - app.playerSprite->h / 2.0f;
 	app.player.renderRect.w = app.playerSprite->w;
@@ -120,7 +121,8 @@ void draw_stats(void)
 	memset(&textBuffer, 0, sizeof(textBuffer));
 
 	snprintf(textBuffer, sizeof(textBuffer), "Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\nplayer move vector: {%.2f, %.2f}\nenemies: %u/%u\n",
-											app.appHz, app.dt,
+											app.appHz,
+											 app.dt,
 											app.player.speed,
 											app.player.vel.x, app.player.vel.y,
 											app.enemyCount, app.eSpawn.maxSpawns);

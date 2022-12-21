@@ -3,6 +3,7 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 bool mouse_in_rect(GPU_Rect rect);
 s32 round_float2Int(f32 fNum);
+f32 check_distance(Vec2 posA, Vec2 posB);
 f32 get_vector_length(Vec2 vec);
 f32 lerp(f32 v0, f32 v1, f64 t);
 Vec2 lerp_Vec2(Vec2 start, Vec2 end, f64 t);
@@ -31,6 +32,11 @@ s32 round_float2Int(f32 fNum)
     if(fNum < 0)
         deez = -0.5f;
     return (s32)(fNum + deez);
+}
+
+f32 check_distance(Vec2 a, Vec2 b)
+{
+    return sqrtf((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
 }
 
 // returns vector magnitude from Vec2 input

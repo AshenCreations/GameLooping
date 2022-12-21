@@ -107,14 +107,21 @@ struct enemySpawner
 {
     Vec2 pos;
     u32 numberSpawned, maxSpawns;
-    f32 cooldown;
+    s32 cooldown;
     f32 spawnedSpeed;
+};
+
+struct Waypoint
+{
+  Vec2 pos;
 };
 
 struct Enemy
 {
     Vec2 pos, vel;
-    // Vec2 dest;
+    Vec2 targetWaypoint;
+    u8 WpIdx;
+    f32 minDistance;
     f32 speed;
     bool alive;
     bool facing;
@@ -167,6 +174,8 @@ typedef struct
     Player player;
 
     Soundboard sounds;
+
+    Waypoint waypoint[4];
 
     struct
     {

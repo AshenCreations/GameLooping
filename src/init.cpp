@@ -25,6 +25,12 @@ void init(void)
 	init_enemies();
 	init_spawner();
 
+	app.waypoint[0].pos = WAYPOINT_0;
+	app.waypoint[1].pos = WAYPOINT_1;
+	app.waypoint[2].pos = WAYPOINT_2;
+	app.waypoint[3].pos = WAYPOINT_3;
+	
+	
 	// SDL_ShowCursor(SDL_DISABLE);
 }
 
