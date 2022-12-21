@@ -19,9 +19,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	f32 accumulator = 0.0;
 
 	app.Dev.frameCounter = 0;
-	bool running = true;
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	while (running)
+	while(1)
 	{
 		QueryPerformanceCounter(&newTime);
 		
@@ -53,7 +52,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		printf("alpha: %.2f\n", alpha);
 
 		// render offset frame
-		render(alpha);								//* render
+		// use alpha as param //! not atm
+		render();								//* render
 
 		app.Dev.frameCounter++;
 		printf("Frame Rendered: %u\n", app.Dev.frameCounter);

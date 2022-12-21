@@ -9,7 +9,7 @@ extern void cleanup(void);
 extern GPU_Image *load_image(char *filename);
 extern void input(void);
 extern void update(void);
-extern void render(f64 alpha);
+extern void render(void);
 
 
 

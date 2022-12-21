@@ -9,6 +9,7 @@ void init_spawner(void);
 void init_sound(void);
 void init_player(void);
 void init_enemies(void);
+void init_waypoints(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 void init(void)
@@ -23,14 +24,9 @@ void init(void)
 
 	init_player();
 	init_enemies();
+	init_waypoints();
 	init_spawner();
 
-	app.waypoint[0].pos = WAYPOINT_0;
-	app.waypoint[1].pos = WAYPOINT_1;
-	app.waypoint[2].pos = WAYPOINT_2;
-	app.waypoint[3].pos = WAYPOINT_3;
-	
-	
 	// SDL_ShowCursor(SDL_DISABLE);
 }
 
@@ -161,10 +157,10 @@ void init_keybinds(void)
 // this should probably take param(s)
 void init_spawner(void)
 {
-	app.eSpawn.pos = SPAWN_POINT;
+	app.eSpawn.pos = {400, 300};
 	app.eSpawn.cooldown = 150;
 	app.eSpawn.maxSpawns = 30;
-	app.eSpawn.numberSpawned = 0;
+	app.eSpawn.targetWaypoint = app.waypoint[WAYPOINT_0].pos;
 }
 
 // load sounds & set volumes
@@ -189,4 +185,17 @@ void init_enemies(void)
 {
 	app.enemySprite = load_image(IMAGEPATH_smiley);
 	GPU_SetImageFilter(app.enemySprite, GPU_FILTER_NEAREST);
+}
+
+void init_waypoints(void)
+{
+	app.waypoint[0].pos = {100, 100};
+	app.waypoint[1].pos = {SCREEN_WIDTH - 100, 100};
+	app.waypoint[2].pos = {SCREEN_WIDTH - 100, SCREEN_HEIGHT - 100};
+	app.waypoint[3].pos = {100, SCREEN_HEIGHT - 100};
+
+	app.waypoint[0].name = "WP 0";
+	app.waypoint[1].name = "WP 1";
+	app.waypoint[2].name = "WP 2";
+	app.waypoint[3].name = "WP 3";
 }

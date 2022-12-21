@@ -23,6 +23,14 @@
 
 - The 3 folders: img, font, sound.
 
+## The app
+
+- Enemies are spawned then moved by vectors to follow waypoints round & round
+- Player moves by vectors with WASD, screen clipped by relection vector
+- Both player & enemies change facing based on x component of velocity vector
+- There may be some short sound played
+- Quit by pressing Esc or window close button
+
 ## When running
 
 - opens a fixed size 1600 x 900 window

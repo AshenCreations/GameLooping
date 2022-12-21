@@ -34,6 +34,7 @@ s32 round_float2Int(f32 fNum)
     return (s32)(fNum + deez);
 }
 
+// returns the distance between Vec2 positions
 f32 check_distance(Vec2 a, Vec2 b)
 {
     return sqrtf((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));

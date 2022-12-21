@@ -103,26 +103,27 @@ struct Keybinds
     u8 left, right, up, down, escape, printscreen, space;
 };
 
-struct enemySpawner
-{
-    Vec2 pos;
-    u32 numberSpawned, maxSpawns;
-    s32 cooldown;
-    f32 spawnedSpeed;
-};
-
 struct Waypoint
 {
   Vec2 pos;
+  char *name;
+};
+
+struct enemySpawner
+{
+    Vec2 pos, targetWaypoint;
+    u32 spawnedIdx, maxSpawns;
+    s32 cooldown;
+    f32 spawnedSpeed;
 };
 
 struct Enemy
 {
     Vec2 pos, vel;
     Vec2 targetWaypoint;
-    u8 WpIdx;
     f32 minDistance;
     f32 speed;
+    u8 WpIdx;
     bool alive;
     bool facing;
     GPU_Rect renderRect;
@@ -175,7 +176,7 @@ typedef struct
 
     Soundboard sounds;
 
-    Waypoint waypoint[4];
+    Waypoint waypoint[WAYPOINT_COUNT];
 
     struct
     {

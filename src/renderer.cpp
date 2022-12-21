@@ -1,23 +1,25 @@
 #include "renderer.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-void render(f64 alpha);
+void render();
 void prepare_scene(void);
 void present_scene(void);
 GPU_Image *load_image(char *filename);
-GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color color);
+GPU_Image* texture_from_font(TTF_Font *font, char *text, SDL_Color color);
 void draw_enemy(void);
 void draw_player(void);
 void draw_stats(void);
+void label_waypoints(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-void render(f64 alpha)
+void render()
 {
 	prepare_scene();
 
 	draw_enemy();
 	draw_player();
 	draw_stats();
+	label_waypoints();
 
 	present_scene();
 }
@@ -50,9 +52,9 @@ GPU_Image* load_image(char *filename)
 }
 
 // Creates texture from TTF font text, free the image returned before generating another
-GPU_Image* texture_from_font(TTF_Font *font, char *text, u8 style, SDL_Color color)
+GPU_Image* texture_from_font(TTF_Font *font, char *text, SDL_Color color)
 {
-	SDL_Surface *surface = TTF_RenderText_Blended_Wrapped(app.font, text, color, 600);
+	SDL_Surface *surface = TTF_RenderText_Blended_Wrapped(font, text, color, 600);
 	if(surface == NULL)
 	{
 		printf("surface not created, exiting\n");
@@ -81,7 +83,7 @@ void draw_enemy(void)
 			app.enemy[i].renderRect.w = app.enemySprite->w;
 			app.enemy[i].renderRect.h = app.enemySprite->h;
 
-			GPU_FlipEnum flipflag;
+			GPU_FlipEnum flipflag = 0;
 			if(app.enemy[i].facing)
 				flipflag = GPU_FLIP_NONE;
 			if(!app.enemy[i].facing)
@@ -102,7 +104,7 @@ void draw_player(void)
 	app.player.renderRect.w = app.playerSprite->w;
 	app.player.renderRect.h = app.playerSprite->h;
 	
-	GPU_FlipEnum flipflag;
+	GPU_FlipEnum flipflag = 0;
 	if(app.player.facing)
 		flipflag = GPU_FLIP_NONE;
 	if(!app.player.facing)
@@ -122,14 +124,29 @@ void draw_stats(void)
 
 	snprintf(textBuffer, sizeof(textBuffer), "Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\nplayer move vector: {%.2f, %.2f}\nenemies: %u/%u\n",
 											app.appHz,
-											 app.dt,
+											app.dt,
 											app.player.speed,
 											app.player.vel.x, app.player.vel.y,
 											app.enemyCount, app.eSpawn.maxSpawns);
-	
-	GPU_Image *statsImage = texture_from_font(app.font, textBuffer, TTF_STYLE_NORMAL, COLOR_WHITE);
+
+	GPU_Image *statsImage = texture_from_font(app.font, textBuffer, COLOR_WHITE);
 	GPU_SetAnchor(statsImage, 0.0f, 0.0f);
 	GPU_SetImageFilter(statsImage, GPU_FILTER_NEAREST);
 	GPU_Blit(statsImage, NULL, app.renderTarget, 150, 500);
 	GPU_FreeImage(statsImage);	// this must be freed after use
+}
+
+void label_waypoints(void)
+{
+	for(u8 i = 0; i < WAYPOINT_COUNT; i++)
+	{
+		GPU_Rect rect = GPU_MakeRect(app.waypoint[i].pos.x - 5, app.waypoint[i].pos.y, 65.0f, 30.0f);
+		GPU_RectangleFilled2(app.renderTarget, rect, {0, 0, 0, 100});
+
+		GPU_Image *text = texture_from_font(app.font, app.waypoint[i].name, COLOR_WHITE);
+		GPU_SetAnchor(text, 0.0f, 0.0f);
+		GPU_SetImageFilter(text, GPU_FILTER_NEAREST);
+		GPU_Blit(text, NULL, app.renderTarget, app.waypoint[i].pos.x, app.waypoint[i].pos.y);
+		GPU_FreeImage(text);
+	}
 }

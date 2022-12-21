@@ -21,8 +21,8 @@
 
 ## Input
 
-- basic key input: store all keyboard input in bool[MAX_KEYS], keypress down = 1, keypress up = 0
-- player diagonal movement
+- ~~basic key input: store all keyboard input in bool[MAX_KEYS], keypress down = 1, keypress up = 0~~
+- ~~player diagonal movement~~
 
 ## Updating
 
@@ -32,11 +32,15 @@
 
 ### Vectors
 
+- ~~vec2 to represent velocity vector~~
+- ~~Vec2 operators~~
+
 ## Rendering
 
-- need window resizing !!
+- ~~open window with SDL then open renderer with SDL_gpu~~
+- need window resizing !! ONE DAY
 
-### render sorting layers
+### render sorting layers. ONE DAY
 
 - Sorting Layers: Background, Middleground, Foreground
 - Background holds the world: sky, land, etc
@@ -45,12 +49,12 @@
 - Order in Layer: sublayers numbered as -1, 0, 1 for example. why into -ve tho ????????
 - first render Background Layer (-1, then 0 then 1 sublayers), then middleground & foreground similarly.
 
-## Coordinates
+## Coordinates. ONE DAY
 
 - screen + camera = world
 - screen = world - camera
 
-## GUI
+## GUI. LOW PRIORITY
 
 - Atomic-ish modular ui system
 - change button labels back to GPU_Image to be loaded at init
