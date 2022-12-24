@@ -3,11 +3,13 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 bool mouse_in_rect(GPU_Rect rect);
 s32 round_float2Int(f32 fNum);
-f32 check_distance(Vec2 posA, Vec2 posB);
+f32 square(f32 num);
+f32 check_distance(Vec2 a, Vec2 b);
 f32 get_vector_length(Vec2 vec);
 f32 lerp(f32 v0, f32 v1, f64 t);
 Vec2 lerp_Vec2(Vec2 start, Vec2 end, f64 t);
 Vec2 make_Vec2(f32 x, f32 y);
+Vec2 IVec2_to_Vec2(IVec2 a);
 f32 dot_product(Vec2 a, Vec2 b);
 Vec2 unit_Vec2(Vec2 a);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -32,6 +34,12 @@ s32 round_float2Int(f32 fNum)
     if(fNum < 0)
         deez = -0.5f;
     return (s32)(fNum + deez);
+}
+
+// return the square of float
+f32 square(f32 num)
+{
+    return num * num;
 }
 
 // returns the distance between Vec2 positions
@@ -62,6 +70,11 @@ Vec2 lerp_Vec2(Vec2 start, Vec2 end, f64 t)
 Vec2 make_Vec2(f32 x, f32 y)
 {
     return {x, y};
+}
+
+Vec2 IVec2_to_Vec2(IVec2 a)
+{
+    return {(f32)a.x, (f32)a.y};
 }
 
 // return inner product of 2 Vec2's

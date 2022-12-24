@@ -13,7 +13,7 @@ SET filename=GameLooping.exe
 IF NOT EXIST obj mkdir obj
 cd obj
 
-REM cl /nologo /std:c++17 -Oi /EHsc /W3 %debugFlags% %includes% ../src/*.cpp /Fe../%filename% /link -opt:ref -incremental:no %libpaths% %libs%
-cl /nologo /std:c++17 -Oi /EHsc %optimisationFlags% %includes% ../src/*.cpp /Fe../%filename% /link -opt:ref -incremental:no %libpaths% %libs%
+cl /nologo /std:c++17 -Oi /EHsc /W3 %debugFlags% %includes% ../src/*.cpp /Fe../%filename% /link -opt:ref -incremental:no %libpaths% %libs%
+REM cl /nologo /std:c++17 -Oi /EHsc %optimisationFlags% %includes% ../src/*.cpp /Fe../%filename% /link -opt:ref -incremental:no %libpaths% %libs%
 
-IF EXIST "..\GameLooping.pdb" del "..\GameLooping.pdb"
+REM IF EXIST "..\GameLooping.pdb" del "..\GameLooping.pdb"

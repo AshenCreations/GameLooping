@@ -2,18 +2,22 @@
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ BEGIN DECLARATIONS ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 void update(void);
+
+// void check_gamestate(void);
+
 void spawn_enemy(void);
 void update_enemy(void);
 void screenclip_enemy(void);
 void update_player(void);
 void screenclip_player(void);
-
+void player_collision(void);
 
 Vec2 move_up(void);
 Vec2 move_down(void);
 Vec2 move_left(void);
 Vec2 move_right(void);
 Vec2 move_stop(void);
+// Vec2 move_to(Vec2 startPos, Vec2 endPos);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END DECLARATIONS ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 void update(void)
@@ -24,7 +28,13 @@ void update(void)
 
     update_player();
     screenclip_player();
+    player_collision();
 }
+
+// void check_gamestate(void)
+// {
+
+// }
 
 // spawn enemies
 void spawn_enemy(void)
@@ -35,7 +45,7 @@ void spawn_enemy(void)
         app.enemy[app.eSpawn.spawnedIdx].pos = app.eSpawn.pos;
         app.enemy[app.eSpawn.spawnedIdx].speed = app.eSpawn.spawnedSpeed;
         app.enemy[app.eSpawn.spawnedIdx].facing = false;
-        app.enemy[app.eSpawn.spawnedIdx].targetWaypoint = app.eSpawn.targetWaypoint;
+        app.enemy[app.eSpawn.spawnedIdx].targetPos = app.eSpawn.targetWaypoint;
         app.enemy[app.eSpawn.spawnedIdx].minDistance = 0.9f;
 
         app.eSpawn.spawnedIdx++;
@@ -51,9 +61,9 @@ void update_enemy(void)
     for(u32 i = 0; i < app.enemyCount; i++)
     {
         // waypoint following
-        app.enemy[i].vel = unit_Vec2(app.enemy[i].targetWaypoint - app.enemy[i].pos);
+        app.enemy[i].vel = unit_Vec2(app.enemy[i].targetPos - app.enemy[i].pos);
 
-        f32 distance = check_distance(app.enemy[i].pos, app.enemy[i].targetWaypoint);
+        f32 distance = check_distance(app.enemy[i].pos, app.enemy[i].targetPos);
         
         // when waypoint reached, set next waypoint
         if(distance < app.enemy[i].minDistance)
@@ -63,7 +73,7 @@ void update_enemy(void)
             if(app.enemy[i].WpIdx == WAYPOINT_COUNT)
                 app.enemy[i].WpIdx = 0;
             
-            app.enemy[i].targetWaypoint = app.waypoint[app.enemy[i].WpIdx].pos;
+            app.enemy[i].targetPos = app.waypoint[app.enemy[i].WpIdx].pos;
             
             // bruh
             play_sound(app.sounds.bruh);
@@ -79,6 +89,20 @@ void update_enemy(void)
             app.enemy[i].facing = true;
     }
 }
+
+
+// Vec2 move_to(Entity e, Vec2 targetPos)
+// {
+//     Vec2 temp = unit_Vec2(targetPos - e.pos);
+
+//     f32 distance = check_distance(e.pos, targetPos);
+
+//     // when waypoint reached, set next waypoint
+//     if(distance < e.minDistance)
+//     {
+//         e.vel = move_stop();
+//     }
+// }
 
 // clip enemy position to to bounds of the screen
 void screenclip_enemy(void)
@@ -117,10 +141,8 @@ void screenclip_enemy(void)
 }
 
 // update player position
-// TODO can add update velocity by acceleration later when it is used
 void update_player(void)
 {
-    // update position    
     app.player.pos = app.player.pos + app.player.vel * (app.player.speed * app.dt);
 }
 
@@ -162,6 +184,19 @@ void screenclip_player(void)
         app.player.vel = app.player.vel - (r * 2.0f) * dot_product(app.player.vel, r);
 }
 
+void player_collision(void)
+{
+    for(u32 i = 0; i < app.enemyCount; i++)
+    {
+        // check how close player is to enemies
+        f32 distance = check_distance(app.player.pos, app.enemy[i].pos);
+        if(distance < ((app.playerSprite->w / 2) + (app.enemySprite->w / 2)))
+        {
+            // what happens here
+        }
+    }
+}
+
 
 //^^^^^^^^^^^^^^^^^ basic move instructions ^^^^^^^^^^^^^^^^^^^^^^^^^
 Vec2 move_up(void)
@@ -186,5 +221,5 @@ Vec2 move_right(void)
 
 Vec2 move_stop(void)
 {
-    return {0, 0}; 
+    return {0, 0};
 }

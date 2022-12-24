@@ -1,8 +1,8 @@
-// enum EntityType
-// {
-//     ENTITY_TYPE_PLAYER,
-//     ENTITY_TYPE_ENEMY,
-// };
+enum EntityType
+{
+    ENTITY_TYPE_PLAYER,
+    ENTITY_TYPE_ENEMY,
+};
 
 enum WaypointIdx
 {

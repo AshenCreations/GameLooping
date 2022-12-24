@@ -31,5 +31,5 @@ void play_music(Mix_Music *music)
 
 void play_sound(Mix_Chunk *sound)
 {
-    Mix_PlayChannel(1, sound, 0);
+    Mix_PlayChannel(-1, sound, 0);
 }

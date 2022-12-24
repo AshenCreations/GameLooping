@@ -154,27 +154,19 @@ void init_keybinds(void)
 	app.keybind.space = SDL_SCANCODE_SPACE;
 }
 
-// this should probably take param(s)
-void init_spawner(void)
-{
-	app.eSpawn.pos = {400, 300};
-	app.eSpawn.cooldown = 150;
-	app.eSpawn.maxSpawns = 30;
-	app.eSpawn.targetWaypoint = app.waypoint[WAYPOINT_0].pos;
-}
-
 // load sounds & set volumes
 void init_sound(void)
 {
     app.sounds.nope = load_sound(SOUNDPATH_NOPE);
 	app.sounds.bruh = load_sound(SOUNDPATH_BRUH);
-	Mix_Volume(-1, 20);
+	Mix_Volume(-1, 15);
 }
 
 void init_player(void)
 {
 	app.playerSprite = load_image(IMAGEPATH_player);
 	GPU_SetImageFilter(app.playerSprite, GPU_FILTER_NEAREST);
+	app.player.collideCircle = {{app.player.pos.x, app.player.pos.y,}, (f32)app.playerSprite->w};
 	
 	app.player.pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
 
@@ -185,8 +177,10 @@ void init_enemies(void)
 {
 	app.enemySprite = load_image(IMAGEPATH_smiley);
 	GPU_SetImageFilter(app.enemySprite, GPU_FILTER_NEAREST);
+	// app.enemy->collideCircle = {{app.enemy->pos.x, app.enemy->pos.y}, (f32)app.enemySprite->h};
 }
 
+// init wapoint positions & names
 void init_waypoints(void)
 {
 	app.waypoint[0].pos = {100, 100};
@@ -198,4 +192,13 @@ void init_waypoints(void)
 	app.waypoint[1].name = "WP 1";
 	app.waypoint[2].name = "WP 2";
 	app.waypoint[3].name = "WP 3";
+}
+
+// this should probably take param(s)
+void init_spawner(void)
+{
+	app.eSpawn.pos = {400, 300};
+	app.eSpawn.cooldown = 150;
+	app.eSpawn.maxSpawns = 30;
+	app.eSpawn.targetWaypoint = app.waypoint[WAYPOINT_0].pos;
 }

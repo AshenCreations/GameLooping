@@ -5,6 +5,7 @@ struct Vec2
     f32 x, y;
 };
 
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Vec2 operators ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 internal Vec2 operator+(Vec2 a, Vec2 other)
 {
   return Vec2{
@@ -75,6 +76,7 @@ internal Vec2 vec_2(float val)
 {
   return {val, val};
 }
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 struct IVec2
 {
@@ -100,7 +102,7 @@ struct Mouse
 
 struct Keybinds
 {
-    u8 left, right, up, down, escape, printscreen, space;
+    u16 left, right, up, down, escape, printscreen, space;
 };
 
 struct Waypoint
@@ -119,33 +121,38 @@ struct enemySpawner
 
 struct Enemy
 {
-    Vec2 pos, vel;
-    Vec2 targetWaypoint;
+    Vec2 pos, vel, targetPos;
     f32 minDistance;
     f32 speed;
-    u8 WpIdx;
+    u16 WpIdx;
     bool alive;
     bool facing;
     GPU_Rect renderRect;
+    Circle collideCircle;
 };
 
 struct Player
 {
-    Vec2 pos, vel;
+    Vec2 pos, vel, targetPos;
     f32 speed;
     bool facing;
     GPU_Rect renderRect;
+    Circle collideCircle;
 };
 
-// struct Entity
-// {
-//     Vec2 pos, vel;
-//     f32 speed;
-//     enum EntityType type;
-//     u8 healthMax, healthCurrent;
-// };
+struct Entity
+{
+    Vec2 pos, vel;
+    f32 speed, minDistance;
+    bool alive;
+    bool facing;
+    GPU_Rect renderRect;
+    Circle collideCircle;
+    enum EntityType type;
+    u16 healthMax, healthCurrent;
+};
 
-struct Soundboard
+struct Soundbank
 {
     Mix_Chunk *nope, *bruh;
     // Mix_Music *track1;
@@ -168,18 +175,21 @@ typedef struct
     TTF_Font *font;
     GPU_Image *enemySprite;
     GPU_Image *playerSprite;
+    Soundbank sounds;
 
+    Waypoint waypoint[WAYPOINT_COUNT];
     Enemy enemy[MAX_ENEMIES];
     u32 enemyCount;
     enemySpawner eSpawn;
     Player player;
-
-    Soundboard sounds;
-
-    Waypoint waypoint[WAYPOINT_COUNT];
 
     struct
     {
         u32 frameCounter;
     }Dev;
 } App;
+
+struct command
+{
+  
+};

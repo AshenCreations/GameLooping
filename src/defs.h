@@ -30,6 +30,7 @@
 #define INVERSE_ROOT_2 0.707106781186f
 #define PI_32 3.14159265359f
 
+// stats
 #define PLAYER_SPEED 18.0f
 #define ENEMY_SPEED 12.0f
 #define MAX_ENEMIES 100

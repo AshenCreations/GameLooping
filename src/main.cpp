@@ -51,8 +51,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		const f64 alpha = accumulator / app.dt;
 		printf("alpha: %.2f\n", alpha);
 
-		// render offset frame
+		//! state blending as per "Fix Your Timestep" not being done right now
+
 		// use alpha as param //! not atm
+		// render the scene
 		render();								//* render
 
 		app.Dev.frameCounter++;
