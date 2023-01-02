@@ -1,23 +1,23 @@
 #include "renderer.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-void render();
+void render(f64 alpha);
 void prepare_scene(void);
 void present_scene(void);
 GPU_Image *load_image(char *filename);
 GPU_Image* texture_from_font(TTF_Font *font, char *text, SDL_Color color);
-void draw_enemy(void);
-void draw_player(void);
+void draw_enemy(f64 alpha);
+void draw_player(f64 alpha);
 void draw_stats(void);
 void label_waypoints(void);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-void render()
+void render(f64 alpha)
 {
 	prepare_scene();
 
-	draw_enemy();
-	draw_player();
+	draw_enemy(alpha);
+	draw_player(alpha);
 	draw_stats();
 	label_waypoints();
 
@@ -72,12 +72,15 @@ GPU_Image* texture_from_font(TTF_Font *font, char *text, SDL_Color color)
 }
 
 // render the  enemies
-void draw_enemy(void)
+void draw_enemy(f64 alpha)
 {
 	for(u32 i = 0; i < app.enemyCount; i++)
 	{
 		if(app.enemy[i].alive)
 		{
+			//frame offset
+			app.enemy[i].pos = app.enemy[i].pos + (app.enemy[i].dPos * (f32)alpha);
+
 			app.enemy[i].renderRect.x = app.enemy[i].pos.x - app.enemySprite->w / 2.0f;
 			app.enemy[i].renderRect.y = app.enemy[i].pos.y - app.enemySprite->h / 2.0f;
 			app.enemy[i].renderRect.w = app.enemySprite->w;
@@ -96,14 +99,17 @@ void draw_enemy(void)
 }
 
 // render the player
-void draw_player(void)
+void draw_player(f64 alpha)
 {
-	// TODO make_rect(sprite); get rid of some globals
+	//frame offset
+	app.player.pos = app.player.pos + (app.player.dPos * (f32)alpha);	
+
+	// TODO could init rects to get rid of some globals(& rendertime calculation)
 	app.player.renderRect.x = app.player.pos.x - app.playerSprite->w / 2.0f;
 	app.player.renderRect.y = app.player.pos.y - app.playerSprite->h / 2.0f;
 	app.player.renderRect.w = app.playerSprite->w;
 	app.player.renderRect.h = app.playerSprite->h;
-	
+
 	GPU_FlipEnum flipflag = 0;
 	if(app.player.facing)
 		flipflag = GPU_FLIP_NONE;

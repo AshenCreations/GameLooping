@@ -8,7 +8,6 @@ void check_keys(void);
 bool is_pressed(u16 keybind);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-
 // Set app.keyboard[scancode] to 1
 void do_key_down(SDL_KeyboardEvent *event)
 {
@@ -58,26 +57,38 @@ void check_keys(void)
 	if(is_pressed(app.keybind.escape))
 		exit(0);
 
-	// player movement
+	// zero player velocity for when no keys pressed
 	app.player.vel = {0.0f, 0.0f};
 
+	// set target pos to mouse pos by left clicking
+	if(app.mouse.buttons == SDL_BUTTON_LEFT)
+	{
+		app.player.targetPos = {(f32)app.mouse.pos.x, (f32)app.mouse.pos.y};
+		app.player.hasTarget = true;
+	}
+
+	// movement keys
 	if(is_pressed(app.keybind.right))
 	{
 		app.player.vel += move_right();
+		app.player.hasTarget = false;
 		app.player.facing = true;
 	}
 	if(is_pressed(app.keybind.left))
 	{
 		app.player.vel += move_left();
+		app.player.hasTarget = false;
 		app.player.facing = false;
 	}
 	if(is_pressed(app.keybind.up))
 	{
 		app.player.vel += move_up();
+		app.player.hasTarget = false;
 	}
 	if(is_pressed(app.keybind.down))
 	{
 		app.player.vel += move_down();
+		app.player.hasTarget = false;
 	}
 	
 	//diagonal player movement

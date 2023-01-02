@@ -23,7 +23,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	while(1)
 	{
 		QueryPerformanceCounter(&newTime);
-		
+
 		// get timeFrame in milliseconds
 		// divide by 10k since value of QueryPerformanceFrequency is 10,000,000
 		// when doing very small amounts of work the timeFrame = vsynced frame length
@@ -37,7 +37,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 		// handle input
 		input();					//* input
-		
+
 		// update loop
 		while(accumulator >= app.dt)
 		{
@@ -53,9 +53,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 		//! state blending as per "Fix Your Timestep" not being done right now
 
-		// use alpha as param //! not atm
-		// render the scene
-		render();								//* render
+		// use alpha as param <----------
+		render(alpha);								//* render
 
 		app.Dev.frameCounter++;
 		printf("Frame Rendered: %u\n", app.Dev.frameCounter);

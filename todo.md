@@ -10,12 +10,12 @@
 ## Naming Conventions
 
 - own_functions_like_this :snek
-- MyStructName, myStructInstance :hamL
+- MyStructName, myStructInstance :cameL
 - variableName
 - #define MACRO_NAME_IN_CAPS
 - enums nameLikeDis whilst members are LIKE_MUH_MACROS
 
-## Time
+## Gameloop
 
 - input -> update loop -> render
 
@@ -23,12 +23,13 @@
 
 - ~~basic key input: store all keyboard input in bool[MAX_KEYS], keypress down = 1, keypress up = 0~~
 - ~~player diagonal movement~~
+- ~~enable moving player by mouse click. Cancel move when any movekey pressed~~
 
 ## Updating
 
-- update position: calculus, vectors
+- update position: calculus, vectors. Semi-implicit Euler integration
 - clipping: screen, reflecting vectors
-- collision:
+- collision: if, when , where
 
 ### Vectors
 
@@ -37,6 +38,7 @@
 
 ## Rendering
 
+- ~~using alpha value to render part-frame~~
 - ~~open window with SDL then open renderer with SDL_gpu~~
 - need window resizing !! ONE DAY
 

@@ -166,11 +166,14 @@ void init_player(void)
 {
 	app.playerSprite = load_image(IMAGEPATH_player);
 	GPU_SetImageFilter(app.playerSprite, GPU_FILTER_NEAREST);
-	app.player.collideCircle = {{app.player.pos.x, app.player.pos.y,}, (f32)app.playerSprite->w};
+	// app.player.collideCircle = {{app.player.pos.x, app.player.pos.y,}, (f32)app.playerSprite->w};
 	
 	app.player.pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+	app.player.targetPos = app.player.pos;
+	app.player.hasTarget = false;
 
 	app.player.facing = true;
+	app.player.minDistance = 0.1f;
 }
 
 void init_enemies(void)

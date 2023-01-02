@@ -17,7 +17,8 @@ Vec2 move_down(void);
 Vec2 move_left(void);
 Vec2 move_right(void);
 Vec2 move_stop(void);
-// Vec2 move_to(Vec2 startPos, Vec2 endPos);
+void move_to(Player *player);
+
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END DECLARATIONS ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 void update(void)
@@ -26,15 +27,13 @@ void update(void)
     update_enemy();
     screenclip_enemy();
 
+    if(app.player.hasTarget)
+        move_to(&app.player);
+
     update_player();
     screenclip_player();
     player_collision();
 }
-
-// void check_gamestate(void)
-// {
-
-// }
 
 // spawn enemies
 void spawn_enemy(void)
@@ -55,7 +54,7 @@ void spawn_enemy(void)
     app.eSpawn.cooldown--;
 }
 
-// update enemy position
+// update enemy position using semi-inplicit Euler integration
 void update_enemy(void)
 {
     for(u32 i = 0; i < app.enemyCount; i++)
@@ -79,7 +78,11 @@ void update_enemy(void)
             play_sound(app.sounds.bruh);
         }
 
+        // store current position before calculating new position
+        app.enemy[i].oldPos = app.enemy[i].pos;
         app.enemy[i].pos += app.enemy[i].vel * (app.enemy[i].speed * app.dt);
+        // find difference of current & old positions for renderer
+        app.enemy[i].dPos = app.enemy[i].pos - app.enemy[i].oldPos;
 
         // check enemy facing dependant on velocity.x value
         if(app.enemy[i].vel.x > 0)
@@ -90,19 +93,21 @@ void update_enemy(void)
     }
 }
 
+// moveplayer if has targetPos
+void move_to(Player *player)
+{
+    player->vel = unit_Vec2(player->targetPos - player->pos);
 
-// Vec2 move_to(Entity e, Vec2 targetPos)
-// {
-//     Vec2 temp = unit_Vec2(targetPos - e.pos);
+    f32 distance = check_distance(player->pos, player->targetPos);
 
-//     f32 distance = check_distance(e.pos, targetPos);
-
-//     // when waypoint reached, set next waypoint
-//     if(distance < e.minDistance)
-//     {
-//         e.vel = move_stop();
-//     }
-// }
+    // when waypoint reached, set next waypoint
+    if(distance < player->minDistance)
+    {
+        player->vel = move_stop();
+        player->targetPos = player->pos;
+        player->hasTarget = false;
+    }
+}
 
 // clip enemy position to to bounds of the screen
 void screenclip_enemy(void)
@@ -140,13 +145,17 @@ void screenclip_enemy(void)
     }
 }
 
-// update player position
+// update player position using semi-inplicit Euler integration
 void update_player(void)
 {
-    app.player.pos = app.player.pos + app.player.vel * (app.player.speed * app.dt);
+    // store current position before calculating new position
+    app.player.oldPos = app.player.pos;
+    app.player.pos += app.player.vel * (app.player.speed * app.dt);
+    // find difference of current & old positions for renderer
+    app.player.dPos = app.player.pos - app.player.oldPos;
 }
 
-// clip player position to to bounds of the screen
+// clip player position to screen bounds
 void screenclip_player(void)
 {
 	Vec2 r = {0};
@@ -184,6 +193,7 @@ void screenclip_player(void)
         app.player.vel = app.player.vel - (r * 2.0f) * dot_product(app.player.vel, r);
 }
 
+//! non working player collision
 void player_collision(void)
 {
     for(u32 i = 0; i < app.enemyCount; i++)

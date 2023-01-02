@@ -121,36 +121,36 @@ struct enemySpawner
 
 struct Enemy
 {
-    Vec2 pos, vel, targetPos;
-    f32 minDistance;
+    Vec2 pos, vel, targetPos, oldPos, dPos;
     f32 speed;
+    f32 minDistance;
     u16 WpIdx;
-    bool alive;
-    bool facing;
+    bool alive, facing;
     GPU_Rect renderRect;
     Circle collideCircle;
 };
 
 struct Player
 {
-    Vec2 pos, vel, targetPos;
+    Vec2 pos, vel, targetPos, oldPos, dPos;
     f32 speed;
-    bool facing;
+    f32 minDistance;
+    bool alive, facing, hasTarget;
     GPU_Rect renderRect;
     Circle collideCircle;
 };
 
-struct Entity
-{
-    Vec2 pos, vel;
-    f32 speed, minDistance;
-    bool alive;
-    bool facing;
-    GPU_Rect renderRect;
-    Circle collideCircle;
-    enum EntityType type;
-    u16 healthMax, healthCurrent;
-};
+// // replacement data type for enemies( AND player ???)
+// struct Entity
+// {
+//     Vec2 pos, vel, targetPos, oldPos, dPos;
+//     f32 speed, minDistance;
+//     u16 healthMax, healthCurrent;
+//     bool alive, facing;
+//     GPU_Rect renderRect;
+//     Circle collideCircle;
+//     enum EntityType type;
+// };
 
 struct Soundbank
 {
@@ -189,7 +189,7 @@ typedef struct
     }Dev;
 } App;
 
-struct command
-{
+// struct command
+// {
   
-};
+// };

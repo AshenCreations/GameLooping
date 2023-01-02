@@ -2,4 +2,5 @@
 .vscode/settings.json
 obj/
 .VSCodeCounter/
-someThing.pdb
+GameLooping.pdb
+GameLooping.exe
