@@ -31,9 +31,12 @@
 #define PI_32 3.14159265359f
 
 // stats
-#define PLAYER_SPEED 18.0f
+#define PLAYER_SPEED 12.0f
+#define PLAYER_MAX_NUM_MOVES 8
 #define ENEMY_SPEED 12.0f
 #define MAX_ENEMIES 100
+#define PLAYER_WAYPOINT_MIN_DISTANCE 0.33f
+#define ENEMY_WAYPOINT_MIN_DISTANCE 0.33f
 
 // // templated bound-checked array
 // template <typename T, int N>

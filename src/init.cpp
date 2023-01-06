@@ -152,6 +152,7 @@ void init_keybinds(void)
 	app.keybind.left = SDL_SCANCODE_A;
 	app.keybind.right = SDL_SCANCODE_D;
 	app.keybind.space = SDL_SCANCODE_SPACE;
+	app.keybind.ctrl = SDL_SCANCODE_LCTRL;
 }
 
 // load sounds & set volumes
@@ -166,24 +167,26 @@ void init_player(void)
 {
 	app.playerSprite = load_image(IMAGEPATH_player);
 	GPU_SetImageFilter(app.playerSprite, GPU_FILTER_NEAREST);
-	// app.player.collideCircle = {{app.player.pos.x, app.player.pos.y,}, (f32)app.playerSprite->w};
+	app.player.collider = {{app.player.pos.x, app.player.pos.y,}, (f32)app.playerSprite->w / 2};
 	
 	app.player.pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
-	app.player.targetPos = app.player.pos;
-	app.player.hasTarget = false;
 
 	app.player.facing = true;
-	app.player.minDistance = 0.1f;
+	app.player.hasTarget = false;
+	app.player.minDistance = PLAYER_WAYPOINT_MIN_DISTANCE;
+
+	app.player.moveQueue.capacity = PLAYER_MAX_NUM_MOVES;
+	app.player.moveQueue.front = app.player.moveQueue.size = 0;
+	app.player.moveQueue.rear = app.player.moveQueue.capacity - 1;
 }
 
 void init_enemies(void)
 {
 	app.enemySprite = load_image(IMAGEPATH_smiley);
 	GPU_SetImageFilter(app.enemySprite, GPU_FILTER_NEAREST);
-	// app.enemy->collideCircle = {{app.enemy->pos.x, app.enemy->pos.y}, (f32)app.enemySprite->h};
 }
 
-// init wapoint positions & names
+// init waypoint positions & names
 void init_waypoints(void)
 {
 	app.waypoint[0].pos = {100, 100};
@@ -201,7 +204,7 @@ void init_waypoints(void)
 void init_spawner(void)
 {
 	app.eSpawn.pos = {400, 300};
-	app.eSpawn.cooldown = 150;
-	app.eSpawn.maxSpawns = 30;
+	app.eSpawn.cooldown = 1000;
+	app.eSpawn.maxSpawns = MAX_ENEMIES;
 	app.eSpawn.targetWaypoint = app.waypoint[WAYPOINT_0].pos;
 }

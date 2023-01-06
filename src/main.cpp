@@ -8,7 +8,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	atexit(cleanup);
 
 	//! only needed if use Sleep()
-	// timeBeginPeriod(1);			// set system sleep granularity to 1ms: winmm.lib
+	timeBeginPeriod(1);			// set system sleep granularity to 1ms: winmm.lib
 
 	LARGE_INTEGER newTime, currentTime;
     app.t = 0.0;
@@ -18,15 +18,14 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	QueryPerformanceCounter(&currentTime);
 	f32 accumulator = 0.0;
 
-	app.Dev.frameCounter = 0;
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	while(1)
 	{
 		QueryPerformanceCounter(&newTime);
 
 		// get timeFrame in milliseconds
-		// divide by 10k since value of QueryPerformanceFrequency is 10,000,000
-		// when doing very small amounts of work the timeFrame = vsynced frame length
+		// divide by 10k since value of QueryPerformanceFrequency is 10,000,000 //! is that just on my machine ?????
+		// when doing very small amounts of work the timeFrame(+1ms sleep) = vsynced frame length
 		timeFrame = (newTime.QuadPart - currentTime.QuadPart) / 10000.0f;
 		currentTime = newTime;
 
@@ -36,31 +35,26 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		accumulator += timeFrame;
 
 		// handle input
-		input();					//* input
+		input();
 
 		// update loop
 		while(accumulator >= app.dt)
 		{
-			update();				//* update
+			update();
 			app.t += app.dt;
 			accumulator -= app.dt;
-			printf("updates\n");
 		}
 
 		// accumulator / dt is in the range 0 to 1
 		const f64 alpha = accumulator / app.dt;
-		printf("alpha: %.2f\n", alpha);
 
 		//! state blending as per "Fix Your Timestep" not being done right now
 
-		// use alpha as param <----------
-		render(alpha);								//* render
-
-		app.Dev.frameCounter++;
-		printf("Frame Rendered: %u\n", app.Dev.frameCounter);
+		// use alpha as param
+		render(alpha);
 
 		//! not needed if use Vsync
-		// Sleep(1);
+		Sleep(1);	// but still stops CPU working overtime
 	}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }

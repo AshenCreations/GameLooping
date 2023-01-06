@@ -4,12 +4,15 @@
 void render(f64 alpha);
 void prepare_scene(void);
 void present_scene(void);
-GPU_Image *load_image(char *filename);
+GPU_Image* load_image(char *filename);
+GPU_Image* texture_from_font_wrapped(TTF_Font *font, char *text, SDL_Color color, u32 wrapLength);
 GPU_Image* texture_from_font(TTF_Font *font, char *text, SDL_Color color);
 void draw_enemy(f64 alpha);
 void draw_player(f64 alpha);
 void draw_stats(void);
 void label_waypoints(void);
+void draw_player_moves(Queue* queue);
+void draw_label_text(SDL_Color bgColor, GPU_Image* text, f32 x, f32 y);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 void render(f64 alpha)
@@ -18,6 +21,8 @@ void render(f64 alpha)
 
 	draw_enemy(alpha);
 	draw_player(alpha);
+	
+	draw_player_moves(&app.player.moveQueue);
 	draw_stats();
 	label_waypoints();
 
@@ -52,9 +57,28 @@ GPU_Image* load_image(char *filename)
 }
 
 // Creates texture from TTF font text, free the image returned before generating another
+GPU_Image* texture_from_font_wrapped(TTF_Font *font, char *text, SDL_Color color, u32 wrapLength)
+{
+	SDL_Surface *surface = TTF_RenderText_Blended_Wrapped(font, text, color, wrapLength);
+	if(surface == NULL)
+	{
+		printf("surface not created, exiting\n");
+		exit(2);		
+	}
+	GPU_Image *temp = GPU_CopyImageFromSurface(surface);
+
+	if(temp == NULL)
+	{
+		printf("surface not copied to image, exiting\n");
+		exit(2);
+	}
+	SDL_FreeSurface(surface);
+	return temp;
+}
+
 GPU_Image* texture_from_font(TTF_Font *font, char *text, SDL_Color color)
 {
-	SDL_Surface *surface = TTF_RenderText_Blended_Wrapped(font, text, color, 600);
+	SDL_Surface *surface = TTF_RenderText_Blended(font, text, color);
 	if(surface == NULL)
 	{
 		printf("surface not created, exiting\n");
@@ -81,11 +105,10 @@ void draw_enemy(f64 alpha)
 			//frame offset
 			app.enemy[i].pos = app.enemy[i].pos + (app.enemy[i].dPos * (f32)alpha);
 
-			app.enemy[i].renderRect.x = app.enemy[i].pos.x - app.enemySprite->w / 2.0f;
-			app.enemy[i].renderRect.y = app.enemy[i].pos.y - app.enemySprite->h / 2.0f;
-			app.enemy[i].renderRect.w = app.enemySprite->w;
-			app.enemy[i].renderRect.h = app.enemySprite->h;
-
+			app.enemy[i].renderRect = GPU_MakeRect(app.enemy[i].pos.x - app.enemySprite->w / 2.0f,
+												app.enemy[i].pos.y - app.enemySprite->h / 2.0f,
+												app.enemySprite->w, app.enemySprite->h);
+			
 			GPU_FlipEnum flipflag = 0;
 			if(app.enemy[i].facing)
 				flipflag = GPU_FLIP_NONE;
@@ -102,13 +125,12 @@ void draw_enemy(f64 alpha)
 void draw_player(f64 alpha)
 {
 	//frame offset
-	app.player.pos = app.player.pos + (app.player.dPos * (f32)alpha);	
+	app.player.pos = app.player.pos + (app.player.dPos * (f32)alpha);
 
-	// TODO could init rects to get rid of some globals(& rendertime calculation)
-	app.player.renderRect.x = app.player.pos.x - app.playerSprite->w / 2.0f;
-	app.player.renderRect.y = app.player.pos.y - app.playerSprite->h / 2.0f;
-	app.player.renderRect.w = app.playerSprite->w;
-	app.player.renderRect.h = app.playerSprite->h;
+	app.player.renderRect = GPU_MakeRect(app.player.pos.x - app.playerSprite->w / 2.0f,
+										app.player.pos.y - app.playerSprite->h / 2.0f,
+										app.playerSprite->w,
+										app.playerSprite->h);
 
 	GPU_FlipEnum flipflag = 0;
 	if(app.player.facing)
@@ -123,8 +145,6 @@ void draw_player(f64 alpha)
 // onscreen text overlay
 void draw_stats(void)
 {
-	GPU_RectangleFilled2(app.renderTarget, {140, 500, 370, 170}, {0, 0, 0, 100});
-
 	char textBuffer[256];
 	memset(&textBuffer, 0, sizeof(textBuffer));
 
@@ -135,24 +155,57 @@ void draw_stats(void)
 											app.player.vel.x, app.player.vel.y,
 											app.enemyCount, app.eSpawn.maxSpawns);
 
-	GPU_Image *statsImage = texture_from_font(app.font, textBuffer, COLOR_WHITE);
-	GPU_SetAnchor(statsImage, 0.0f, 0.0f);
-	GPU_SetImageFilter(statsImage, GPU_FILTER_NEAREST);
-	GPU_Blit(statsImage, NULL, app.renderTarget, 150, 500);
-	GPU_FreeImage(statsImage);	// this must be freed after use
+	GPU_Image *statsImage = texture_from_font_wrapped(app.font, textBuffer, COLOR_WHITE, 360);
+	draw_label_text({0, 0, 0, 100}, statsImage, 150, 500);
 }
 
+// labels for waypoints
 void label_waypoints(void)
 {
 	for(u8 i = 0; i < WAYPOINT_COUNT; i++)
 	{
-		GPU_Rect rect = GPU_MakeRect(app.waypoint[i].pos.x - 5, app.waypoint[i].pos.y, 65.0f, 30.0f);
-		GPU_RectangleFilled2(app.renderTarget, rect, {0, 0, 0, 100});
-
 		GPU_Image *text = texture_from_font(app.font, app.waypoint[i].name, COLOR_WHITE);
-		GPU_SetAnchor(text, 0.0f, 0.0f);
-		GPU_SetImageFilter(text, GPU_FILTER_NEAREST);
-		GPU_Blit(text, NULL, app.renderTarget, app.waypoint[i].pos.x, app.waypoint[i].pos.y);
-		GPU_FreeImage(text);
+		draw_label_text({0, 0, 0, 100}, text, app.waypoint[i].pos.x, app.waypoint[i].pos.y);
 	}
+}
+
+// draw the size of player moveQueue. shit function name
+void draw_player_moves(Queue* queue)
+{
+	char textBuffer[256];
+	memset(&textBuffer, 0, sizeof(textBuffer));
+	snprintf(textBuffer, sizeof(textBuffer), "queue size: %d", queue->size);
+
+	GPU_Image* text = texture_from_font(app.font, textBuffer, COLOR_WHITE);
+	draw_label_text({0, 0, 0, 150}, text, app.player.pos.x - text->w / 2, app.player.pos.y + app.player.collider.radius);
+
+	// draw waypoint circles & route lines
+    if(!queue_is_empty(queue))
+	{
+		for(s32 i = 0; i < queue->size; i++)
+		{
+			GPU_Circle(app.renderTarget, app.player.lArray[i].x, app.player.lArray[i].y, 20.0f, COLOR_WHITE);
+
+			// line from player to targetPos
+			GPU_Line(app.renderTarget, app.player.pos.x, app.player.pos.y, app.player.targetPos.x, app.player.targetPos.y, COLOR_WHITE);
+
+			// lines from waypoint to next waypoint
+			if(i < queue->size - 1)
+			{
+				GPU_Line(app.renderTarget, app.player.lArray[i].x, app.player.lArray[i].y,
+						app.player.lArray[i + 1].x, app.player.lArray[i + 1].y, COLOR_WHITE);
+			}
+		}
+	}
+}
+
+// draw already imaged ttf text with background rect
+void draw_label_text(SDL_Color bgColor, GPU_Image* text, f32 x, f32 y)
+{
+	GPU_Rect rect = GPU_MakeRect(x - 10, y, (f32)text->w + 20, (f32)text->h);
+	GPU_RectangleFilled2(app.renderTarget, rect, bgColor);
+	GPU_SetAnchor(text, 0.0f, 0.0f);
+	GPU_SetImageFilter(text, GPU_FILTER_NEAREST);
+	GPU_Blit(text, NULL, app.renderTarget, x, y);
+	GPU_FreeImage(text);
 }

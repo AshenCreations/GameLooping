@@ -98,11 +98,12 @@ struct Mouse
 {
     IVec2 pos;
     u32 buttons;
+    u32 wasButtons;
 };
 
 struct Keybinds
 {
-    u16 left, right, up, down, escape, printscreen, space;
+    u16 left, right, up, down, escape, printscreen, space, ctrl;
 };
 
 struct Waypoint
@@ -115,9 +116,16 @@ struct enemySpawner
 {
     Vec2 pos, targetWaypoint;
     u32 spawnedIdx, maxSpawns;
-    s32 cooldown;
+    f32 cooldown;
     f32 spawnedSpeed;
 };
+
+typedef struct
+{
+  s32 front, rear, size;
+  u32 capacity;
+  Vec2 array[PLAYER_MAX_NUM_MOVES];
+}Queue;
 
 struct Enemy
 {
@@ -127,7 +135,7 @@ struct Enemy
     u16 WpIdx;
     bool alive, facing;
     GPU_Rect renderRect;
-    Circle collideCircle;
+    Circle collider;
 };
 
 struct Player
@@ -137,20 +145,10 @@ struct Player
     f32 minDistance;
     bool alive, facing, hasTarget;
     GPU_Rect renderRect;
-    Circle collideCircle;
+    Circle collider;
+    Queue moveQueue;
+    Vec2 lArray[PLAYER_MAX_NUM_MOVES];
 };
-
-// // replacement data type for enemies( AND player ???)
-// struct Entity
-// {
-//     Vec2 pos, vel, targetPos, oldPos, dPos;
-//     f32 speed, minDistance;
-//     u16 healthMax, healthCurrent;
-//     bool alive, facing;
-//     GPU_Rect renderRect;
-//     Circle collideCircle;
-//     enum EntityType type;
-// };
 
 struct Soundbank
 {
@@ -171,6 +169,7 @@ typedef struct
     f32 dt;
     f32 dtMulti;
     s32 appHz;
+    f32 speedOffset;
 
     TTF_Font *font;
     GPU_Image *enemySprite;
@@ -182,14 +181,4 @@ typedef struct
     u32 enemyCount;
     enemySpawner eSpawn;
     Player player;
-
-    struct
-    {
-        u32 frameCounter;
-    }Dev;
 } App;
-
-// struct command
-// {
-  
-// };

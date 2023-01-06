@@ -45,10 +45,11 @@ void spawn_enemy(void)
         app.enemy[app.eSpawn.spawnedIdx].speed = app.eSpawn.spawnedSpeed;
         app.enemy[app.eSpawn.spawnedIdx].facing = false;
         app.enemy[app.eSpawn.spawnedIdx].targetPos = app.eSpawn.targetWaypoint;
-        app.enemy[app.eSpawn.spawnedIdx].minDistance = 0.9f;
+        app.enemy[app.eSpawn.spawnedIdx].minDistance = ENEMY_WAYPOINT_MIN_DISTANCE;
+        app.enemy[app.eSpawn.spawnedIdx].collider = {{app.eSpawn.pos}, (f32)app.enemySprite->h / 2};
 
         app.eSpawn.spawnedIdx++;
-        app.eSpawn.cooldown = 1000;
+        app.eSpawn.cooldown = ONE_SECOND;
         app.enemyCount++;
     }
     app.eSpawn.cooldown--;
@@ -62,20 +63,17 @@ void update_enemy(void)
         // waypoint following
         app.enemy[i].vel = unit_Vec2(app.enemy[i].targetPos - app.enemy[i].pos);
 
-        f32 distance = check_distance(app.enemy[i].pos, app.enemy[i].targetPos);
-        
-        // when waypoint reached, set next waypoint
-        if(distance < app.enemy[i].minDistance)
+        Circle a = {app.enemy[i].targetPos, app.enemy[i].minDistance};
+        Circle b ={app.enemy[i].pos, app.enemy[i].minDistance};
+        if(circle_in_circle(a, b))
         {
+            // when waypoint reached, set next waypoint
             app.enemy[i].WpIdx++;
 
             if(app.enemy[i].WpIdx == WAYPOINT_COUNT)
                 app.enemy[i].WpIdx = 0;
-            
+
             app.enemy[i].targetPos = app.waypoint[app.enemy[i].WpIdx].pos;
-            
-            // bruh
-            play_sound(app.sounds.bruh);
         }
 
         // store current position before calculating new position
@@ -98,14 +96,24 @@ void move_to(Player *player)
 {
     player->vel = unit_Vec2(player->targetPos - player->pos);
 
-    f32 distance = check_distance(player->pos, player->targetPos);
+    Circle a = {player->targetPos, player->minDistance};
+    Circle b = {player->pos, player->minDistance};
 
-    // when waypoint reached, set next waypoint
-    if(distance < player->minDistance)
+    // when reach target get next waypoint if queue !empty, or stop if queue empty
+    if(circle_in_circle(a, b))
     {
         player->vel = move_stop();
-        player->targetPos = player->pos;
         player->hasTarget = false;
+
+        if(dequeue(&player->moveQueue) && !queue_is_empty(&player->moveQueue))
+        {
+            player->targetPos = queue_front(&player->moveQueue);
+            player->hasTarget = true;
+        }
+        if(queue_is_empty(&player->moveQueue))
+        {
+            reset_queue(&player->moveQueue);
+        }
     }
 }
 
@@ -150,9 +158,19 @@ void update_player(void)
 {
     // store current position before calculating new position
     app.player.oldPos = app.player.pos;
+    // update position
     app.player.pos += app.player.vel * (app.player.speed * app.dt);
     // find difference of current & old positions for renderer
     app.player.dPos = app.player.pos - app.player.oldPos;
+
+    // player facing
+    if(app.player.vel.x > 0)
+        app.player.facing = true;
+    if(app.player.vel.x < 0)
+        app.player.facing = false;
+
+    // transform moveQueue to seperate linear array for easier rendering
+    ring_to_linear_array(&app.player.moveQueue);
 }
 
 // clip player position to screen bounds
@@ -193,22 +211,25 @@ void screenclip_player(void)
         app.player.vel = app.player.vel - (r * 2.0f) * dot_product(app.player.vel, r);
 }
 
-//! non working player collision
+// semi working player collision(detection only so far)
 void player_collision(void)
 {
     for(u32 i = 0; i < app.enemyCount; i++)
     {
-        // check how close player is to enemies
-        f32 distance = check_distance(app.player.pos, app.enemy[i].pos);
-        if(distance < ((app.playerSprite->w / 2) + (app.enemySprite->w / 2)))
+        // check if player collides with enemies
+        Circle a = {app.player.pos, app.player.collider.radius};
+        Circle b = {app.enemy[i].pos, app.enemy[i].collider.radius};
+        if(circle_in_circle(a, b))
         {
-            // what happens here
+            // do collision stuff here
+            play_sound(app.sounds.bruh);
         }
     }
 }
 
 
 //^^^^^^^^^^^^^^^^^ basic move instructions ^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Vec2 move_up(void)
 {
     return {0, -1};
