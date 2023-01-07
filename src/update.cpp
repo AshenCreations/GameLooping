@@ -1,14 +1,14 @@
 #include "update.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ BEGIN DECLARATIONS ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-void update(void);
 
-// void check_gamestate(void);
+void update(void);
 
 void spawn_enemy(void);
 void update_enemy(void);
-void screenclip_enemy(void);
+void move_to(Player *player);
 void update_player(void);
+void screenclip_enemy(void);
 void screenclip_player(void);
 void player_collision(void);
 
@@ -17,7 +17,6 @@ Vec2 move_down(void);
 Vec2 move_left(void);
 Vec2 move_right(void);
 Vec2 move_stop(void);
-void move_to(Player *player);
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END DECLARATIONS ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -47,6 +46,7 @@ void spawn_enemy(void)
         app.enemy[app.eSpawn.spawnedIdx].targetPos = app.eSpawn.targetWaypoint;
         app.enemy[app.eSpawn.spawnedIdx].minDistance = ENEMY_WAYPOINT_MIN_DISTANCE;
         app.enemy[app.eSpawn.spawnedIdx].collider = {{app.eSpawn.pos}, (f32)app.enemySprite->h / 2};
+        app.enemy[app.eSpawn.spawnedIdx].currentHP = app.enemy[app.eSpawn.spawnedIdx].maxHP = 100;
 
         app.eSpawn.spawnedIdx++;
         app.eSpawn.cooldown = ONE_SECOND;
@@ -58,36 +58,44 @@ void spawn_enemy(void)
 // update enemy position using semi-inplicit Euler integration
 void update_enemy(void)
 {
-    for(u32 i = 0; i < app.enemyCount; i++)
+    for(s32 i = 0; i < app.enemyCount; i++)
     {
-        // waypoint following
-        app.enemy[i].vel = unit_Vec2(app.enemy[i].targetPos - app.enemy[i].pos);
-
-        Circle a = {app.enemy[i].targetPos, app.enemy[i].minDistance};
-        Circle b ={app.enemy[i].pos, app.enemy[i].minDistance};
-        if(circle_in_circle(a, b))
+        if(app.enemy[i].alive)
         {
-            // when waypoint reached, set next waypoint
-            app.enemy[i].WpIdx++;
+            // check enemy health
+            if(app.enemy[i].currentHP <= 0)
+            {
+                app.enemy[i].alive = false;
+            }
+            
+            // waypoint following
+            app.enemy[i].vel = unit_Vec2(app.enemy[i].targetPos - app.enemy[i].pos);
 
-            if(app.enemy[i].WpIdx == WAYPOINT_COUNT)
-                app.enemy[i].WpIdx = 0;
+            Circle a = {app.enemy[i].targetPos, app.enemy[i].minDistance};
+            Circle b = {app.enemy[i].pos, app.enemy[i].minDistance};
+            if(circle_in_circle(a, b))
+            {
+                // when waypoint reached, set next waypoint
+                app.enemy[i].WpIdx++;
 
-            app.enemy[i].targetPos = app.waypoint[app.enemy[i].WpIdx].pos;
+                if(app.enemy[i].WpIdx == WAYPOINT_COUNT)
+                    app.enemy[i].WpIdx = 0;
+
+                app.enemy[i].targetPos = app.waypoint[app.enemy[i].WpIdx].pos;
+            }
+
+            // store current position before calculating new position
+            app.enemy[i].oldPos = app.enemy[i].pos;
+            app.enemy[i].pos += app.enemy[i].vel * (app.enemy[i].speed * app.dt);
+            // find difference of current & old positions for renderer
+            app.enemy[i].dPos = app.enemy[i].pos - app.enemy[i].oldPos;
+
+            // check enemy facing dependant on velocity.x value
+            if(app.enemy[i].vel.x > 0)
+                app.enemy[i].facing = false;
+            if(app.enemy[i].vel.x < 0)
+                app.enemy[i].facing = true;
         }
-
-        // store current position before calculating new position
-        app.enemy[i].oldPos = app.enemy[i].pos;
-        app.enemy[i].pos += app.enemy[i].vel * (app.enemy[i].speed * app.dt);
-        // find difference of current & old positions for renderer
-        app.enemy[i].dPos = app.enemy[i].pos - app.enemy[i].oldPos;
-
-        // check enemy facing dependant on velocity.x value
-        if(app.enemy[i].vel.x > 0)
-            app.enemy[i].facing = false;
-
-        if(app.enemy[i].vel.x < 0)
-            app.enemy[i].facing = true;
     }
 }
 
@@ -122,7 +130,7 @@ void screenclip_enemy(void)
 {
 	Vec2 r = {0};
 
-    for(u32 i = 0; i < app.enemyCount; i++)
+    for(s32 i = 0; i < app.enemyCount; i++)
     {
         bool collide = false;
         if(app.enemy[i].pos.x < 0 + app.enemySprite->w / 2.0f)
@@ -171,6 +179,11 @@ void update_player(void)
 
     // transform moveQueue to seperate linear array for easier rendering
     ring_to_linear_array(&app.player.moveQueue);
+
+    app.player.damageCooldown--;
+    if(app.player.damageCooldown <= 0)
+        app.player.damageCooldown = -1;
+
 }
 
 // clip player position to screen bounds
@@ -211,18 +224,26 @@ void screenclip_player(void)
         app.player.vel = app.player.vel - (r * 2.0f) * dot_product(app.player.vel, r);
 }
 
-// semi working player collision(detection only so far)
+// semi working player collision
 void player_collision(void)
 {
-    for(u32 i = 0; i < app.enemyCount; i++)
+    for(s32 i = 0; i < app.enemyCount; i++)
     {
-        // check if player collides with enemies
-        Circle a = {app.player.pos, app.player.collider.radius};
-        Circle b = {app.enemy[i].pos, app.enemy[i].collider.radius};
-        if(circle_in_circle(a, b))
+        if(app.enemy[i].alive)
         {
-            // do collision stuff here
-            play_sound(app.sounds.bruh);
+            // check if player collides with enemies
+            Circle a = {app.player.pos, app.player.collider.radius};
+            Circle b = {app.enemy[i].pos, app.enemy[i].collider.radius};
+            if(circle_in_circle(a, b))
+            {
+                // do collision stuff here
+                if(app.player.damageCooldown <= 0)
+                {
+                    app.enemy[i].currentHP -= app.player.damage;
+                    app.player.damageCooldown = ONE_SECOND;
+                }
+                play_sound(app.sounds.bruh);
+            }
         }
     }
 }

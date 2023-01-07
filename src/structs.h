@@ -132,7 +132,8 @@ struct Enemy
     Vec2 pos, vel, targetPos, oldPos, dPos;
     f32 speed;
     f32 minDistance;
-    u16 WpIdx;
+    s32 WpIdx;
+    s32 currentHP, maxHP;
     bool alive, facing;
     GPU_Rect renderRect;
     Circle collider;
@@ -148,6 +149,8 @@ struct Player
     Circle collider;
     Queue moveQueue;
     Vec2 lArray[PLAYER_MAX_NUM_MOVES];
+    s32 damage;
+    f32 damageCooldown;
 };
 
 struct Soundbank
@@ -169,7 +172,6 @@ typedef struct
     f32 dt;
     f32 dtMulti;
     s32 appHz;
-    f32 speedOffset;
 
     TTF_Font *font;
     GPU_Image *enemySprite;
@@ -178,7 +180,7 @@ typedef struct
 
     Waypoint waypoint[WAYPOINT_COUNT];
     Enemy enemy[MAX_ENEMIES];
-    u32 enemyCount;
+    s32 enemyCount;
     enemySpawner eSpawn;
     Player player;
 } App;

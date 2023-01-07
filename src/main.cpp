@@ -15,6 +15,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     app.dt = 0.01f * app.dtMulti;	// dt * multiplier based on refresh rate
 	f32 timeFrame;
 
+	init2();
+
 	QueryPerformanceCounter(&currentTime);
 	f32 accumulator = 0.0;
 
@@ -31,7 +33,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 		// set update loop length
 		if(timeFrame > 0.25)
-			timeFrame = 0.25;
+			timeFrame = 0.25f;
 		accumulator += timeFrame;
 
 		// handle input

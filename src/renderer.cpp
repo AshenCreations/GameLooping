@@ -1,19 +1,19 @@
 #include "renderer.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 void render(f64 alpha);
+
 void prepare_scene(void);
 void present_scene(void);
-GPU_Image* load_image(char *filename);
-GPU_Image* texture_from_font_wrapped(TTF_Font *font, char *text, SDL_Color color, u32 wrapLength);
-GPU_Image* texture_from_font(TTF_Font *font, char *text, SDL_Color color);
 void draw_enemy(f64 alpha);
 void draw_player(f64 alpha);
 void draw_stats(void);
 void label_waypoints(void);
 void draw_player_moves(Queue* queue);
 void draw_label_text(SDL_Color bgColor, GPU_Image* text, f32 x, f32 y);
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 void render(f64 alpha)
 {
@@ -41,64 +41,10 @@ void present_scene(void)
 	GPU_Flip(app.renderTarget);
 }
 
-// load texture
-GPU_Image* load_image(char *filename)
-{
-	// SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO, "Loading %s", filename);
-
-	GPU_Image *image = GPU_LoadImage(filename);
-	if (!image)
-	{
-		SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO, "Failed to load %s. Check path. Exiting app", filename);
-		exit(1);
-	}
-
-	return image;
-}
-
-// Creates texture from TTF font text, free the image returned before generating another
-GPU_Image* texture_from_font_wrapped(TTF_Font *font, char *text, SDL_Color color, u32 wrapLength)
-{
-	SDL_Surface *surface = TTF_RenderText_Blended_Wrapped(font, text, color, wrapLength);
-	if(surface == NULL)
-	{
-		printf("surface not created, exiting\n");
-		exit(2);		
-	}
-	GPU_Image *temp = GPU_CopyImageFromSurface(surface);
-
-	if(temp == NULL)
-	{
-		printf("surface not copied to image, exiting\n");
-		exit(2);
-	}
-	SDL_FreeSurface(surface);
-	return temp;
-}
-
-GPU_Image* texture_from_font(TTF_Font *font, char *text, SDL_Color color)
-{
-	SDL_Surface *surface = TTF_RenderText_Blended(font, text, color);
-	if(surface == NULL)
-	{
-		printf("surface not created, exiting\n");
-		exit(2);		
-	}
-	GPU_Image *temp = GPU_CopyImageFromSurface(surface);
-
-	if(temp == NULL)
-	{
-		printf("surface not copied to image, exiting\n");
-		exit(2);
-	}
-	SDL_FreeSurface(surface);
-	return temp;
-}
-
 // render the  enemies
 void draw_enemy(f64 alpha)
 {
-	for(u32 i = 0; i < app.enemyCount; i++)
+	for(s32 i = 0; i < app.enemyCount; i++)
 	{
 		if(app.enemy[i].alive)
 		{
@@ -108,15 +54,19 @@ void draw_enemy(f64 alpha)
 			app.enemy[i].renderRect = GPU_MakeRect(app.enemy[i].pos.x - app.enemySprite->w / 2.0f,
 												app.enemy[i].pos.y - app.enemySprite->h / 2.0f,
 												app.enemySprite->w, app.enemySprite->h);
-			
-			GPU_FlipEnum flipflag = 0;
-			if(app.enemy[i].facing)
-				flipflag = GPU_FLIP_NONE;
+
+			GPU_FlipEnum flipflag = GPU_FLIP_NONE;
 			if(!app.enemy[i].facing)
 				flipflag = GPU_FLIP_HORIZONTAL;
 
 			GPU_BlitRectX(app.enemySprite, NULL, app.renderTarget, &app.enemy[i].renderRect,
 				0.0f, app.enemySprite->w / 2.0f, app.enemySprite->h / 2.0f, flipflag);
+
+			// hp bar
+			GPU_Rect rect = {app.enemy[i].pos.x - (app.enemySprite->w / 2), app.enemy[i].pos.y - (app.enemySprite->h / 2) - 12,
+							56 * (app.enemy[i].currentHP / (f32)app.enemy[i].maxHP), 6};
+			SDL_Color color = {200, 0, 0, 255};
+			GPU_RectangleFilled2(app.renderTarget, rect, color);
 		}
 	}
 }
@@ -132,9 +82,7 @@ void draw_player(f64 alpha)
 										app.playerSprite->w,
 										app.playerSprite->h);
 
-	GPU_FlipEnum flipflag = 0;
-	if(app.player.facing)
-		flipflag = GPU_FLIP_NONE;
+	GPU_FlipEnum flipflag = GPU_FLIP_NONE;
 	if(!app.player.facing)
 		flipflag = GPU_FLIP_HORIZONTAL;
 
@@ -169,10 +117,10 @@ void label_waypoints(void)
 	}
 }
 
-// draw the size of player moveQueue. shit function name
+// draw queue->size label & waypoint circles with move lines
 void draw_player_moves(Queue* queue)
 {
-	char textBuffer[256];
+	char textBuffer[16];
 	memset(&textBuffer, 0, sizeof(textBuffer));
 	snprintf(textBuffer, sizeof(textBuffer), "queue size: %d", queue->size);
 

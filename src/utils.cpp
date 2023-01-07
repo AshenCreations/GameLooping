@@ -1,6 +1,7 @@
 #include "utils.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 bool mouse_in_rect(GPU_Rect rect);
 s32 round_float2Int(f32 fNum);
 f32 square(f32 num);
@@ -110,9 +111,6 @@ bool circle_in_circle(Circle a, Circle b)
 }
 
 
-
-
-
 //^^^^^^^^^^^^^^^^^^^^^^^ circular queue ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 // Queue is full when size becomes
@@ -175,6 +173,7 @@ void reset_queue(Queue* queue)
     queue->rear = queue->capacity - 1;
 }
 
+// linearise moveQueue for the renderer
 void ring_to_linear_array(Queue* queue)
 {
     for (int i = 0; i < queue->size; i++)

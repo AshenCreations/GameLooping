@@ -1,6 +1,9 @@
 #include "init.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+void init(void);
+void init2(void);
 void init_SDL(void);
 void init_screen(void);
 void cleanup(void);
@@ -10,6 +13,7 @@ void init_sound(void);
 void init_player(void);
 void init_enemies(void);
 void init_waypoints(void);
+
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 void init(void)
@@ -19,15 +23,18 @@ void init(void)
 
 	// App inits
 	init_screen();
-	init_keybinds();
 	init_sound();
+	init_keybinds();
 
+	// SDL_ShowCursor(SDL_DISABLE);
+}
+
+void init2(void)
+{
 	init_player();
 	init_enemies();
 	init_waypoints();
 	init_spawner();
-
-	// SDL_ShowCursor(SDL_DISABLE);
 }
 
 // init SDL
@@ -51,7 +58,9 @@ void init_SDL(void)
 		printf("Failed to create window with SDL: %s\n", SDL_GetError());
 		exit(1);
 	}
-
+	
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+	
 	// init SDL_gpu
 	u32 windowID = SDL_GetWindowID(window);
 	GPU_SetInitWindow(windowID);
@@ -127,6 +136,14 @@ void init_screen(void)
 	// more things ...
 }
 
+// load sounds & set volumes
+void init_sound(void)
+{
+    app.sounds.nope = load_sound(SOUNDPATH_NOPE);
+	app.sounds.bruh = load_sound(SOUNDPATH_BRUH);
+	Mix_Volume(-1, 10);
+}
+
 // do this when app exits
 void cleanup(void)
 {
@@ -142,6 +159,8 @@ void cleanup(void)
 	SDL_Quit();
 }
 
+
+
 // default keybind values
 void init_keybinds(void)
 {
@@ -155,14 +174,6 @@ void init_keybinds(void)
 	app.keybind.ctrl = SDL_SCANCODE_LCTRL;
 }
 
-// load sounds & set volumes
-void init_sound(void)
-{
-    app.sounds.nope = load_sound(SOUNDPATH_NOPE);
-	app.sounds.bruh = load_sound(SOUNDPATH_BRUH);
-	Mix_Volume(-1, 15);
-}
-
 void init_player(void)
 {
 	app.playerSprite = load_image(IMAGEPATH_player);
@@ -174,6 +185,8 @@ void init_player(void)
 	app.player.facing = true;
 	app.player.hasTarget = false;
 	app.player.minDistance = PLAYER_WAYPOINT_MIN_DISTANCE;
+	app.player.damage = 51;
+	app.player.damageCooldown = ONE_SECOND;
 
 	app.player.moveQueue.capacity = PLAYER_MAX_NUM_MOVES;
 	app.player.moveQueue.front = app.player.moveQueue.size = 0;
@@ -204,7 +217,7 @@ void init_waypoints(void)
 void init_spawner(void)
 {
 	app.eSpawn.pos = {400, 300};
-	app.eSpawn.cooldown = 1000;
+    app.eSpawn.cooldown = ONE_SECOND;
 	app.eSpawn.maxSpawns = MAX_ENEMIES;
 	app.eSpawn.targetWaypoint = app.waypoint[WAYPOINT_0].pos;
 }
