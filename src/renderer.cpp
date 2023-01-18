@@ -1,17 +1,17 @@
 #include "renderer.h"
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 void render(f64 alpha);
 
 void prepare_scene(void);
 void present_scene(void);
 void draw_enemy(f64 alpha);
-void draw_player(f64 alpha);
+void draw_player(void);
 void draw_stats(void);
 void label_waypoints(void);
-void draw_player_moves(Queue* queue);
+void draw_player_moves();
 void draw_label_text(SDL_Color bgColor, GPU_Image* text, f32 x, f32 y);
+
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -20,9 +20,12 @@ void render(f64 alpha)
 	prepare_scene();
 
 	draw_enemy(alpha);
-	draw_player(alpha);
-	
-	draw_player_moves(&app.player.moveQueue);
+
+	//frame offset here, so that draw_player_moves() can be drawn before player
+	app.player.pos = app.player.pos + (app.player.dPos * (f32)alpha);
+	draw_player_moves();
+	draw_player();
+
 	draw_stats();
 	label_waypoints();
 
@@ -72,11 +75,8 @@ void draw_enemy(f64 alpha)
 }
 
 // render the player
-void draw_player(f64 alpha)
+void draw_player(void)
 {
-	//frame offset
-	app.player.pos = app.player.pos + (app.player.dPos * (f32)alpha);
-
 	app.player.renderRect = GPU_MakeRect(app.player.pos.x - app.playerSprite->w / 2.0f,
 										app.player.pos.y - app.playerSprite->h / 2.0f,
 										app.playerSprite->w,
@@ -90,13 +90,45 @@ void draw_player(f64 alpha)
 				0.0f, app.playerSprite->w / 2.0f, app.playerSprite->h / 2.0f, flipflag);
 }
 
+// draw queue->size label & waypoint circles with move lines
+void draw_player_moves()
+{
+	char textBuffer[16];
+	memset(&textBuffer, 0, sizeof(textBuffer));
+	snprintf(textBuffer, sizeof(textBuffer), "queue size: %d", app.player.moveQueue.size);
+
+	// draw label showing moveQueue.size under the player
+	GPU_Image* text = texture_from_font(app.font, textBuffer, COLOR_WHITE);
+	draw_label_text({0, 0, 0, 150}, text, app.player.pos.x - text->w / 2, app.player.pos.y + app.player.collider.radius);
+
+	// draw waypoint circles & route lines
+    if(!app.player.moveQueue.queue_is_empty())
+	{
+		// line from player to targetPos
+		GPU_Line(app.renderTarget, app.player.pos.x, app.player.pos.y, app.player.targetPos.x, app.player.targetPos.y, COLOR_GREEN);
+
+		for(s32 i = 0; i < app.player.moveQueue.size; i++)
+		{
+			// waypoint marker
+			GPU_Circle(app.renderTarget, app.player.lArray[i].x, app.player.lArray[i].y, 20.0f, COLOR_GREEN);
+
+			// lines from waypoint to next waypoint
+			if(i < app.player.moveQueue.size - 1)
+			{
+				GPU_Line(app.renderTarget, app.player.lArray[i].x, app.player.lArray[i].y,
+						app.player.lArray[i + 1].x, app.player.lArray[i + 1].y, COLOR_GREEN);
+			}
+		}
+	}
+}
+
 // onscreen text overlay
 void draw_stats(void)
 {
 	char textBuffer[256];
 	memset(&textBuffer, 0, sizeof(textBuffer));
 
-	snprintf(textBuffer, sizeof(textBuffer), "Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\nplayer move vector: {%.2f, %.2f}\nenemies: %u/%u\n",
+	snprintf(textBuffer, sizeof(textBuffer), "Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\nplayer move vector: {%.2f, %.2f}\nenemies: %d/%u\n",
 											app.appHz,
 											app.dt,
 											app.player.speed,
@@ -114,36 +146,6 @@ void label_waypoints(void)
 	{
 		GPU_Image *text = texture_from_font(app.font, app.waypoint[i].name, COLOR_WHITE);
 		draw_label_text({0, 0, 0, 100}, text, app.waypoint[i].pos.x, app.waypoint[i].pos.y);
-	}
-}
-
-// draw queue->size label & waypoint circles with move lines
-void draw_player_moves(Queue* queue)
-{
-	char textBuffer[16];
-	memset(&textBuffer, 0, sizeof(textBuffer));
-	snprintf(textBuffer, sizeof(textBuffer), "queue size: %d", queue->size);
-
-	GPU_Image* text = texture_from_font(app.font, textBuffer, COLOR_WHITE);
-	draw_label_text({0, 0, 0, 150}, text, app.player.pos.x - text->w / 2, app.player.pos.y + app.player.collider.radius);
-
-	// draw waypoint circles & route lines
-    if(!queue_is_empty(queue))
-	{
-		for(s32 i = 0; i < queue->size; i++)
-		{
-			GPU_Circle(app.renderTarget, app.player.lArray[i].x, app.player.lArray[i].y, 20.0f, COLOR_WHITE);
-
-			// line from player to targetPos
-			GPU_Line(app.renderTarget, app.player.pos.x, app.player.pos.y, app.player.targetPos.x, app.player.targetPos.y, COLOR_WHITE);
-
-			// lines from waypoint to next waypoint
-			if(i < queue->size - 1)
-			{
-				GPU_Line(app.renderTarget, app.player.lArray[i].x, app.player.lArray[i].y,
-						app.player.lArray[i + 1].x, app.player.lArray[i + 1].y, COLOR_WHITE);
-			}
-		}
 	}
 }
 

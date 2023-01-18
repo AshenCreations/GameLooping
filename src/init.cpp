@@ -23,7 +23,6 @@ void init(void)
 
 	// App inits
 	init_screen();
-	init_sound();
 	init_keybinds();
 
 	// SDL_ShowCursor(SDL_DISABLE);
@@ -35,6 +34,7 @@ void init2(void)
 	init_enemies();
 	init_waypoints();
 	init_spawner();
+	init_sound();
 }
 
 // init SDL
@@ -58,9 +58,9 @@ void init_SDL(void)
 		printf("Failed to create window with SDL: %s\n", SDL_GetError());
 		exit(1);
 	}
-	
+
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-	
+
 	// init SDL_gpu
 	u32 windowID = SDL_GetWindowID(window);
 	GPU_SetInitWindow(windowID);
@@ -102,31 +102,33 @@ void init_SDL(void)
 // refresh rate stuff
 void init_screen(void)
 {
-	// find refresh rate from desktop settings & modify dt & speed 
+	// find refresh rate from display setting & modify dt & speed 
 	// fuzzy refresh rate evaluation compensates for different monitor manufacturer implementation of refresh rates
 	// 
 	// TODO: this is not robust. It only checks for 5 common refresh rates on displayIndex 0 (main monitor)
+	// TODO: & may not even do it properly
 	SDL_DisplayMode modeBuffer = {};
-	SDL_GetDesktopDisplayMode(0, &modeBuffer);
+	SDL_GetCurrentDisplayMode(0, &modeBuffer);
+	// SDL_GetDesktopDisplayMode(0, &modeBuffer);
 	app.appHz = modeBuffer.refresh_rate;
 
-	if(modeBuffer.refresh_rate >= 59 && modeBuffer.refresh_rate <= 61)
+	if(modeBuffer.refresh_rate >= 58 && modeBuffer.refresh_rate <= 61)
 	{
 		app.dtMulti = 1.0f;
 	}
-		if(modeBuffer.refresh_rate >= 74 && modeBuffer.refresh_rate <= 76)
+	if(modeBuffer.refresh_rate >= 73 && modeBuffer.refresh_rate <= 76)
 	{
 		app.dtMulti = 1.25f;
 	}
-	if(modeBuffer.refresh_rate >= 119 && modeBuffer.refresh_rate <= 121)
+	if(modeBuffer.refresh_rate >= 118 && modeBuffer.refresh_rate <= 121)
 	{
 		app.dtMulti = 2.0f;
 	}
-	if(modeBuffer.refresh_rate >= 143 && modeBuffer.refresh_rate <= 145)
+	if(modeBuffer.refresh_rate >= 142 && modeBuffer.refresh_rate <= 145)
 	{
 		app.dtMulti = 2.4f;
 	}
-	if(modeBuffer.refresh_rate >= 164 && modeBuffer.refresh_rate <= 166)
+	if(modeBuffer.refresh_rate >= 163 && modeBuffer.refresh_rate <= 166)
 	{
 		app.dtMulti = 2.75f;
 	}
@@ -134,14 +136,6 @@ void init_screen(void)
 	app.player.speed = PLAYER_SPEED / app.dtMulti;
 	app.eSpawn.spawnedSpeed = ENEMY_SPEED / app.dtMulti;
 	// more things ...
-}
-
-// load sounds & set volumes
-void init_sound(void)
-{
-    app.sounds.nope = load_sound(SOUNDPATH_NOPE);
-	app.sounds.bruh = load_sound(SOUNDPATH_BRUH);
-	Mix_Volume(-1, 10);
 }
 
 // do this when app exits
@@ -179,16 +173,15 @@ void init_player(void)
 	app.playerSprite = load_image(IMAGEPATH_player);
 	GPU_SetImageFilter(app.playerSprite, GPU_FILTER_NEAREST);
 	app.player.collider = {{app.player.pos.x, app.player.pos.y,}, (f32)app.playerSprite->w / 2};
-	
+
 	app.player.pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
 
 	app.player.facing = true;
 	app.player.hasTarget = false;
 	app.player.minDistance = PLAYER_WAYPOINT_MIN_DISTANCE;
 	app.player.damage = 51;
-	app.player.damageCooldown = ONE_SECOND;
+	app.player.damageCooldown = app.oneSecond / 2.0f;
 
-	app.player.moveQueue.capacity = PLAYER_MAX_NUM_MOVES;
 	app.player.moveQueue.front = app.player.moveQueue.size = 0;
 	app.player.moveQueue.rear = app.player.moveQueue.capacity - 1;
 }
@@ -217,7 +210,18 @@ void init_waypoints(void)
 void init_spawner(void)
 {
 	app.eSpawn.pos = {400, 300};
-    app.eSpawn.cooldown = ONE_SECOND;
+    app.eSpawn.cooldown = app.oneSecond;
 	app.eSpawn.maxSpawns = MAX_ENEMIES;
 	app.eSpawn.targetWaypoint = app.waypoint[WAYPOINT_0].pos;
+}
+
+// load sounds & set volumes
+void init_sound(void)
+{
+    // app.sounds.nope = load_sound(SOUNDPATH_NOPE);
+	app.sounds.bruh = load_sound(SOUNDPATH_BRUH);
+	s32 value = Mix_Volume(-1, 15);
+	value = Mix_Volume(-1, -1);
+	// value = Mix_VolumeChunk(app.sounds.bruh, -1);
+	// value = Mix_VolumeChunk(app.sounds.bruh, 15);
 }

@@ -4,6 +4,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 {
 	memset(&app, 0, sizeof(App));
 
+	// inits for SDL setup, refresh rate
 	init();
 	atexit(cleanup);
 
@@ -13,8 +14,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	LARGE_INTEGER newTime, currentTime;
     app.t = 0.0;
     app.dt = 0.01f * app.dtMulti;	// dt * multiplier based on refresh rate
+	app.oneSecond = app.appHz / (4 * app.dt); // (Hz * timeFrame) / dt
 	f32 timeFrame;
 
+	// other app inits inc. those which require app.dt
 	init2();
 
 	QueryPerformanceCounter(&currentTime);
@@ -27,7 +30,6 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 		// get timeFrame in milliseconds
 		// divide by 10k since value of QueryPerformanceFrequency is 10,000,000 //! is that just on my machine ?????
-		// when doing very small amounts of work the timeFrame(+1ms sleep) = vsynced frame length
 		timeFrame = (newTime.QuadPart - currentTime.QuadPart) / 10000.0f;
 		currentTime = newTime;
 
@@ -47,12 +49,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			accumulator -= app.dt;
 		}
 
-		// accumulator / dt is in the range 0 to 1
+		// after each update cycle there will be a part frame we need to deal with
+		// we will use a frame offset (alpha) which is normalised to the range 0 -> 1
 		const f64 alpha = accumulator / app.dt;
 
 		//! state blending as per "Fix Your Timestep" not being done right now
 
-		// use alpha as param
+		// pass in alpha to deal with frame offset
 		render(alpha);
 
 		//! not needed if use Vsync

@@ -7,3 +7,9 @@ enum WaypointIdx
 
     WAYPOINT_COUNT
 };
+
+// enum EnemyMovementType
+// {
+//     ENEMY_MOVE_WAYPOINT,
+//     ENEMY_MOVE_FOLLOW
+// };

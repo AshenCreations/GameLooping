@@ -83,11 +83,6 @@ struct IVec2
     s32 x, y;
 };
 
-struct Point
-{
-    f32 x, y;
-};
-
 struct Circle
 {
     Vec2 pos;
@@ -120,13 +115,6 @@ struct enemySpawner
     f32 spawnedSpeed;
 };
 
-typedef struct
-{
-  s32 front, rear, size;
-  u32 capacity;
-  Vec2 array[PLAYER_MAX_NUM_MOVES];
-}Queue;
-
 struct Enemy
 {
     Vec2 pos, vel, targetPos, oldPos, dPos;
@@ -134,23 +122,24 @@ struct Enemy
     f32 minDistance;
     s32 WpIdx;
     s32 currentHP, maxHP;
-    bool alive, facing;
+    bool alive, facing, hasTarget;
     GPU_Rect renderRect;
     Circle collider;
 };
 
 struct Player
 {
-    Vec2 pos, vel, targetPos, oldPos, dPos;
-    f32 speed;
-    f32 minDistance;
-    bool alive, facing, hasTarget;
-    GPU_Rect renderRect;
-    Circle collider;
-    Queue moveQueue;
-    Vec2 lArray[PLAYER_MAX_NUM_MOVES];
-    s32 damage;
-    f32 damageCooldown;
+	Vec2 pos, vel, targetPos, oldPos, dPos;
+	f32 speed;
+	f32 minDistance;
+	bool alive, facing, hasTarget;
+	GPU_Rect renderRect;
+	Circle collider;
+	Vec2 lArray[PLAYER_MAX_NUM_MOVES];
+	Queue <Vec2, PLAYER_MAX_NUM_MOVES> moveQueue;
+	// Array <Vec2, 99> testArray;
+	s32 damage;
+	f32 damageCooldown;
 };
 
 struct Soundbank
@@ -162,25 +151,26 @@ struct Soundbank
 // main app struct
 typedef struct
 {
-    SDL_Window *window;
-    GPU_Target *renderTarget;
-    Keybinds keybind;
-    bool keyboard[MAX_KEYBOARD_KEYS];
-    Mouse mouse;
+	SDL_Window *window;
+	GPU_Target *renderTarget;
+	Keybinds keybind;
+	bool keyboard[MAX_KEYBOARD_KEYS];
+	Mouse mouse;
 
-    f64 t;
-    f32 dt;
-    f32 dtMulti;
-    s32 appHz;
+	f64 t;
+	f32 dt;
+	f32 dtMulti;
+	s32 appHz;
+	f32 oneSecond;
 
-    TTF_Font *font;
-    GPU_Image *enemySprite;
-    GPU_Image *playerSprite;
-    Soundbank sounds;
+	TTF_Font *font;
+	GPU_Image *enemySprite;
+	GPU_Image *playerSprite;
+	Soundbank sounds;
 
-    Waypoint waypoint[WAYPOINT_COUNT];
-    Enemy enemy[MAX_ENEMIES];
-    s32 enemyCount;
-    enemySpawner eSpawn;
-    Player player;
+	Waypoint waypoint[WAYPOINT_COUNT];
+	Enemy enemy[MAX_ENEMIES];
+	s32 enemyCount;
+	enemySpawner eSpawn;
+	Player player;
 } App;

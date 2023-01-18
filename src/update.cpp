@@ -12,12 +12,6 @@ void screenclip_enemy(void);
 void screenclip_player(void);
 void player_collision(void);
 
-Vec2 move_up(void);
-Vec2 move_down(void);
-Vec2 move_left(void);
-Vec2 move_right(void);
-Vec2 move_stop(void);
-
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END DECLARATIONS ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 void update(void)
@@ -49,10 +43,16 @@ void spawn_enemy(void)
         app.enemy[app.eSpawn.spawnedIdx].currentHP = app.enemy[app.eSpawn.spawnedIdx].maxHP = 100;
 
         app.eSpawn.spawnedIdx++;
-        app.eSpawn.cooldown = ONE_SECOND;
+        app.eSpawn.cooldown = app.oneSecond;
         app.enemyCount++;
     }
     app.eSpawn.cooldown--;
+}
+
+// TODO make enemies follow player
+void enemy_fuzzy_follow_player(void)
+{
+
 }
 
 // update enemy position using semi-inplicit Euler integration
@@ -113,14 +113,14 @@ void move_to(Player *player)
         player->vel = move_stop();
         player->hasTarget = false;
 
-        if(dequeue(&player->moveQueue) && !queue_is_empty(&player->moveQueue))
+        if(player->moveQueue.dequeue() && !player->moveQueue.queue_is_empty())
         {
-            player->targetPos = queue_front(&player->moveQueue);
+            player->targetPos = player->moveQueue.queue_front();
             player->hasTarget = true;
         }
-        if(queue_is_empty(&player->moveQueue))
+        if(player->moveQueue.queue_is_empty())
         {
-            reset_queue(&player->moveQueue);
+            (player->moveQueue.reset_queue());
         }
     }
 }
@@ -178,12 +178,11 @@ void update_player(void)
         app.player.facing = false;
 
     // transform moveQueue to seperate linear array for easier rendering
-    ring_to_linear_array(&app.player.moveQueue);
+    app.player.moveQueue.array_to_linear();
 
     app.player.damageCooldown--;
     if(app.player.damageCooldown <= 0)
         app.player.damageCooldown = -1;
-
 }
 
 // clip player position to screen bounds
@@ -237,41 +236,14 @@ void player_collision(void)
             if(circle_in_circle(a, b))
             {
                 // do collision stuff here
+                play_sound(app.sounds.bruh, 1);
+                
                 if(app.player.damageCooldown <= 0)
                 {
                     app.enemy[i].currentHP -= app.player.damage;
-                    app.player.damageCooldown = ONE_SECOND;
+                    app.player.damageCooldown = app.oneSecond / 2.0f;
                 }
-                play_sound(app.sounds.bruh);
             }
         }
     }
-}
-
-
-//^^^^^^^^^^^^^^^^^ basic move instructions ^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Vec2 move_up(void)
-{
-    return {0, -1};
-}
-
-Vec2 move_down(void)
-{
-    return {0, 1};
-}
-
-Vec2 move_left(void)
-{
-    return {-1, 0};
-}
-
-Vec2 move_right(void)
-{
-    return {1, 0};
-}
-
-Vec2 move_stop(void)
-{
-    return {0, 0};
 }

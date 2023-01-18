@@ -11,7 +11,7 @@
 #include "SDL_ttf.h"
 #include "SDL_mixer.h"
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Basic numerical types START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ User Defined basic types START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 // unsigned integers
 typedef uint8_t u8;     // 1-byte unsigned integer
@@ -27,7 +27,7 @@ typedef int64_t s64;    // 8-byte signed integer
 typedef float_t f32;    // 4-byte floating point number
 typedef double_t f64;   // 8-byte floating point number
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Basic numerical types END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ User Defined basic types END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 #include "defs.h"
 #include "enums.h"

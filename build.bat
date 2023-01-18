@@ -13,5 +13,5 @@ SET filename=GameLooping.exe
 IF NOT EXIST obj mkdir obj
 cd obj
 
-cl /nologo /std:c++17 -Oi /W3 %debugFlags% %includes% ../src/*.cpp /Fe../%filename% /link -opt:ref -incremental:no %libpaths% %libs%
-REM cl /nologo /std:c++17 -Oi %optimisationFlags% %includes% ../src/*.cpp /Fe../%filename% /link -opt:ref -incremental:no %libpaths% %libs%
+cl /nologo /std:c++17 -Oi /fp:fast /W3 %debugFlags% %includes% ../src/*.cpp /Fe../%filename% /link -opt:ref -incremental:no %libpaths% %libs%
+REM cl /nologo /std:c++17 -Oi /fp:fast %optimisationFlags% %includes% ../src/*.cpp /Fe../%filename% /link -opt:ref -incremental:no %libpaths% %libs%

@@ -8,6 +8,12 @@ void input(void);
 void check_keys(void);
 bool is_pressed(u16 keybind);
 
+Vec2 move_up(void);
+Vec2 move_down(void);
+Vec2 move_left(void);
+Vec2 move_right(void);
+Vec2 move_stop(void);
+
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 // Set app.keyboard[scancode] to 1
@@ -69,48 +75,49 @@ void check_keys(void)
 		exit(0);
 	}
 
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^ mouse clicks ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	// set target pos to mouse pos by leftclick
 	if(app.mouse.buttons == SDL_BUTTON_LEFT && !is_pressed(app.keybind.ctrl))
 	{
 		app.player.targetPos = mousePos;
 		app.player.hasTarget = true;
 		// let a single move order empty the movement queue
-		reset_queue(&app.player.moveQueue);
+		app.player.moveQueue.reset_queue();
 	}
 
 	// ctrl + leftclick to add waypoint to player move queue
 	if(is_pressed(app.keybind.ctrl) && app.mouse.buttons == SDL_BUTTON_LEFT && app.mouse.wasButtons == 0)
 	{
-		enqueue(&app.player.moveQueue, mousePos);
+		app.player.moveQueue.enqueue(mousePos);
 		// set targetPos to front of queue
-		app.player.targetPos = queue_front(&app.player.moveQueue);
+		app.player.targetPos = app.player.moveQueue.queue_front();
 		app.player.hasTarget = true;
 	}
 
-	// movement keys
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^ Movement Keys ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	if(is_pressed(app.keybind.right))
 	{
 		app.player.vel += move_right();
 		app.player.hasTarget = false;
-		reset_queue(&app.player.moveQueue);
+		app.player.moveQueue.reset_queue();
 	}
 	if(is_pressed(app.keybind.left))
 	{
 		app.player.vel += move_left();
 		app.player.hasTarget = false;
-		reset_queue(&app.player.moveQueue);
+		app.player.moveQueue.reset_queue();
 	}
 	if(is_pressed(app.keybind.up))
 	{
 		app.player.vel += move_up();
 		app.player.hasTarget = false;
-		reset_queue(&app.player.moveQueue);
+		app.player.moveQueue.reset_queue();
 	}
 	if(is_pressed(app.keybind.down))
 	{
 		app.player.vel += move_down();
 		app.player.hasTarget = false;
-		reset_queue(&app.player.moveQueue);
+		app.player.moveQueue.reset_queue();
 	}
 	
 	//diagonal player movement
@@ -124,4 +131,31 @@ void check_keys(void)
 bool is_pressed(u16 keybind)
 {
 	return (app.keyboard[keybind]) ? true:false;
+}
+
+//^^^^^^^^^^^^^^^^^ basic move instructions ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Vec2 move_up(void)
+{
+    return {0, -1};
+}
+
+Vec2 move_down(void)
+{
+    return {0, 1};
+}
+
+Vec2 move_left(void)
+{
+    return {-1, 0};
+}
+
+Vec2 move_right(void)
+{
+    return {1, 0};
+}
+
+Vec2 move_stop(void)
+{
+    return {0, 0};
 }
