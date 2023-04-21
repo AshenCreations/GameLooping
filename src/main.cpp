@@ -1,41 +1,48 @@
 #include "main.h"
+#include <Windows.h>
+
+App app;
+
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	memset(&app, 0, sizeof(App));
+	memset(&app, 0, sizeof(app));
 
+	atexit(cleanup);
 	// inits for SDL setup, refresh rate
 	init();
-	atexit(cleanup);
 
 	//! only needed if use Sleep()
 	timeBeginPeriod(1);			// set system sleep granularity to 1ms: winmm.lib
 
-	LARGE_INTEGER newTime, currentTime;
-    app.t = 0.0;
-    app.dt = 0.01f * app.dtMulti;	// dt * multiplier based on refresh rate
-	app.oneSecond = app.appHz / (4 * app.dt); // (Hz * timeFrame) / dt
-	f32 timeFrame;
+	LARGE_INTEGER newTime, currentTime, frequency;
+    app.t = 0.0;		// 1 second of t is 10 million QueryPerformanceCounter ticks
+    //! use deltatime multiplier to set deltatime for the app
+	app.dt = 0.01f * app.dtMulti;
+	// definition one 1 second based on update rate
+	app.oneSecond = app.appHz / app.dt * APP_BASE_TIMEFRAME;
 
 	// other app inits inc. those which require app.dt
 	init2();
 
+	float accumulator = 0.0;
+	float timeFrame;
+	QueryPerformanceFrequency(&frequency);
+	frequency.QuadPart /= 1000;			// divide by 1000 to convert microseconds to milliseconds
 	QueryPerformanceCounter(&currentTime);
-	f32 accumulator = 0.0;
+	QueryPerformanceCounter(&newTime);
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	while(1)
 	{
-		QueryPerformanceCounter(&newTime);
-
 		// get timeFrame in milliseconds
-		// divide by 10k since value of QueryPerformanceFrequency is 10,000,000 //! is that just on my machine ?????
-		timeFrame = (newTime.QuadPart - currentTime.QuadPart) / 10000.0f;
+		timeFrame = (newTime.QuadPart - currentTime.QuadPart) / (float)frequency.QuadPart;
 		currentTime = newTime;
+		app.t += timeFrame;
 
 		// set update loop length
-		if(timeFrame > 0.25)
-			timeFrame = 0.25f;
+		if(timeFrame > APP_BASE_TIMEFRAME)
+			timeFrame = APP_BASE_TIMEFRAME;
 		accumulator += timeFrame;
 
 		// handle input
@@ -45,21 +52,26 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		while(accumulator >= app.dt)
 		{
 			update();
-			app.t += app.dt;
 			accumulator -= app.dt;
 		}
 
 		// after each update cycle there will be a part frame we need to deal with
-		// we will use a frame offset (alpha) which is normalised to the range 0 -> 1
-		const f64 alpha = accumulator / app.dt;
+		// we will use a part-frame offset(alpha) which is normalised to the range 0 -> 1
+		const float alpha = accumulator / app.dt;
 
-		//! state blending as per "Fix Your Timestep" not being done right now
-
+		//! state blending(lerp) as per "Fix Your Timestep" not being done right now
+		
 		// pass in alpha to deal with frame offset
 		render(alpha);
 
+
+
 		//! not needed if use Vsync
 		Sleep(1);	// but still stops CPU working overtime
+
+
+
+		QueryPerformanceCounter(&newTime);
 	}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 }

@@ -1,12 +1,30 @@
+#pragma once
 #include "common.h"
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START EXTERNAL Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+void render(float alpha);
 
-extern GPU_Image* texture_from_font_wrapped(TTF_Font *font, char *text, SDL_Color color, u32 wrapLength);
-extern GPU_Image* texture_from_font(TTF_Font *font, char *text, SDL_Color color);
-extern f32 check_distance(Vec2 a, Vec2 b);
+void present_scene(void);
+void draw_background(void);
+void draw_middleground(float alpha);
+void draw_foreground(void);
+
+void draw_enemy(float alpha, GPU_Target *target);
+void draw_player(float alpha, GPU_Target *target);
+void draw_player_moves(float alpha, GPU_Target *target);
+
+void draw_stats(GPU_Target *target);
+void label_waypoints(GPU_Target *target);
+void draw_player_vectorlabel(GPU_Target *target);
+void draw_time(double time, GPU_Target *target);
+
+enum RenderSubLayers
+{
+	RENDER_SUB_BG = -1,
+	RENDER_SUB_MG,
+	RENDER_SUB_FG
+};
+
+
 
 
 extern App app;
-
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END EXTERNAL Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

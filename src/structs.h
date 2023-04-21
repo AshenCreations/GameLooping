@@ -2,8 +2,10 @@
 
 struct Vec2
 {
-    f32 x, y;
+    float x, y;
 };
+
+typedef Vec2 Point;
 
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Vec2 operators ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 internal Vec2 operator+(Vec2 a, Vec2 other)
@@ -31,6 +33,13 @@ internal Vec2 operator-(Vec2 a, Vec2 other)
   return Vec2{
     a.x - other.x,
     a.y - other.y};
+}
+
+internal Vec2 operator-(float scalar, Vec2 a)
+{
+  return Vec2{
+    scalar - a.x,
+    scalar - a.y};
 }
 
 internal Vec2& operator-=(Vec2& a, Vec2 b)
@@ -67,38 +76,40 @@ internal Vec2 operator/(Vec2 a, float scalar)
     a.y / scalar};
 }
 
-internal Vec2 vec_2(float x, float y)
-{
-  return {x, y};
-}
-
-internal Vec2 vec_2(float val)
-{
-  return {val, val};
-}
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 struct IVec2
 {
-    s32 x, y;
+    int x, y;
 };
 
 struct Circle
 {
-    Vec2 pos;
-    f32 radius;
+    Point pos;
+    float radius;
+};
+
+struct Color
+{
+	u8 r, g, b;
 };
 
 struct Mouse
 {
     IVec2 pos;
-    u32 buttons;
-    u32 wasButtons;
+    unsigned buttons;
+	unsigned wasButtons;
+};
+
+struct Keystate
+{
+	bool keyPressed;
+	bool wasPressed;
 };
 
 struct Keybinds
 {
-    u16 left, right, up, down, escape, printscreen, space, ctrl;
+    int escape, left, right, up, down, ctrl, BGLayer, MGLayer, FGLayer;
 };
 
 struct Waypoint
@@ -111,35 +122,51 @@ struct enemySpawner
 {
     Vec2 pos, targetWaypoint;
     u32 spawnedIdx, maxSpawns;
-    f32 cooldown;
-    f32 spawnedSpeed;
+    float cooldown;
+    float spawnedSpeed;
 };
 
 struct Enemy
 {
-    Vec2 pos, vel, targetPos, oldPos, dPos;
-    f32 speed;
-    f32 minDistance;
-    s32 WpIdx;
-    s32 currentHP, maxHP;
-    bool alive, facing, hasTarget;
-    GPU_Rect renderRect;
-    Circle collider;
+	int ID;
+	Vec2 pos, vel, targetPos, oldPos, dPos;
+	float speed;
+	float minDistance;
+	int WpIdx;
+	int currentHP, maxHP;
+	bool alive, facing, hasTarget;
+	GPU_Rect renderRect;
+	Circle collider;
+
+
+
+	float cooldownTest;
+
+	//TODO: try to add a timer to an enemy
+	//TODO: base the timer in seconds
+	//! why was i doing this ?????
+	void add_timer(float time)
+	{
+		cooldownTest = time;
+		// add_to_timers_queue(ID);
+	}
 };
 
 struct Player
 {
-	Vec2 pos, vel, targetPos, oldPos, dPos;
-	f32 speed;
-	f32 minDistance;
+	Vec2 pos, vel, accel, targetPos, oldPos, dPos;
+	float speed, maxSpeed;
+	float minDistance;
 	bool alive, facing, hasTarget;
 	GPU_Rect renderRect;
 	Circle collider;
-	Vec2 lArray[PLAYER_MAX_NUM_MOVES];
+
 	Queue <Vec2, PLAYER_MAX_NUM_MOVES> moveQueue;
-	// Array <Vec2, 99> testArray;
-	s32 damage;
-	f32 damageCooldown;
+	Vec2 lArray[PLAYER_MAX_NUM_MOVES];
+
+	// Array <Vec2, 3> testArray;
+	int damage;
+	float damageCooldown;
 };
 
 struct Soundbank
@@ -148,29 +175,38 @@ struct Soundbank
     // Mix_Music *track1;
 };
 
+struct Screen
+{
+	GPU_Target *screenOutput;
+	GPU_Image *BG, *MG, *FG;
+};
+
+
 // main app struct
 typedef struct
 {
 	SDL_Window *window;
-	GPU_Target *renderTarget;
-	Keybinds keybind;
-	bool keyboard[MAX_KEYBOARD_KEYS];
+	Screen screen;
+	Keystate keys[MAX_KEYBOARD_KEYS];
 	Mouse mouse;
+	Keybinds keybind;
+	u32 screenState;
 
-	f64 t;
-	f32 dt;
-	f32 dtMulti;
-	s32 appHz;
-	f32 oneSecond;
+	double t;
+	float dt;
+	float dtMulti;
+	int appHz;
+	float oneSecond;
 
-	TTF_Font *font;
 	GPU_Image *enemySprite;
 	GPU_Image *playerSprite;
+	GPU_Image *grass;
+	FC_Font *fcfont;
 	Soundbank sounds;
 
 	Waypoint waypoint[WAYPOINT_COUNT];
 	Enemy enemy[MAX_ENEMIES];
-	s32 enemyCount;
+	int enemyCount;
 	enemySpawner eSpawn;
 	Player player;
 } App;

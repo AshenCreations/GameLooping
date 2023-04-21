@@ -1,12 +1,5 @@
 #include "sound.h"
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ declarations BEGIN ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Mix_Music* load_music(const char* file);
-Mix_Chunk* load_sound(const char* file);
-void play_music(Mix_Music *music);
-void play_sound(Mix_Chunk *sound, bool flag);
-
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ declarations END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Mix_Music* load_music(const char* file)
 {
@@ -29,16 +22,13 @@ void play_music(Mix_Music *music)
     Mix_PlayMusic(music, 0);
 }
 
-void play_sound(Mix_Chunk *sound, bool flag)
+void play_sound(Mix_Chunk *sound)
 {
-    if(flag)
+    if(Mix_Playing(-1))
     {
-        if(Mix_Playing(-1))
-        {
-            // Mix_FadeOutChannel(-1, 125);
-            // Mix_HaltChannel(-1);
-        }
+        Mix_HaltChannel(0);
+        Mix_PlayChannel(1, sound, 0);
     }
-
-    Mix_PlayChannel(-1, sound, 0);
+    else
+        Mix_PlayChannel(1, sound, 0);
 }

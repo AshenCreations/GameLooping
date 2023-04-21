@@ -21,7 +21,9 @@
 
 ## Input
 
-- ~~basic key input: store all keyboard input in bool[MAX_KEYS], keypress down = 1, keypress up = 0~~
+- ~~basic key input: store all keyboard input in keyPressed[], keypress down = 1, keypress up = 0~~
+- use a second array wasPressed[]
+- ~~change input from using is_pressed() was_pressed() directly to using get_keytate() which uses them to check if a key has just been pressed, has been held since last frame or has been released.~~
 
 ### Movement
 

@@ -1,33 +1,24 @@
 #include "input.h"
-
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-void do_key_up(SDL_KeyboardEvent *event);
-void do_key_down(SDL_KeyboardEvent *event);
-void input(void);
-void check_keys(void);
-bool is_pressed(u16 keybind);
-
-Vec2 move_up(void);
-Vec2 move_down(void);
-Vec2 move_left(void);
-Vec2 move_right(void);
-Vec2 move_stop(void);
-
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#include "sound.h"
 
 // Set app.keyboard[scancode] to 1
 void do_key_down(SDL_KeyboardEvent *event)
 {
 	if (event->repeat == 0 && event->keysym.scancode < MAX_KEYBOARD_KEYS)
-		app.keyboard[event->keysym.scancode] = 1;
+	{
+		app.keys[event->keysym.scancode].wasPressed = app.keys[event->keysym.scancode].keyPressed;
+		app.keys[event->keysym.scancode].keyPressed = true;
+	}
 }
 
 // Set app.keyboard[scancode] to 0
 void do_key_up(SDL_KeyboardEvent *event)
 {
 	if (event->repeat == 0 && event->keysym.scancode < MAX_KEYBOARD_KEYS)
-		app.keyboard[event->keysym.scancode] = 0;
+	{
+		app.keys[event->keysym.scancode].wasPressed = app.keys[event->keysym.scancode].keyPressed;
+		app.keys[event->keysym.scancode].keyPressed = false;
+	}
 }
 
 // Get keyboard & mouse input via SDL Events
@@ -64,18 +55,30 @@ void input(void)
 // checks player input
 void check_keys(void)
 {
-	Vec2 mousePos = {(f32)app.mouse.pos.x, (f32)app.mouse.pos.y};
-	
+	Vec2 mousePos = {(float)app.mouse.pos.x, (float)app.mouse.pos.y};
+
 	// zero player velocity for when no keys pressed
 	app.player.vel = {0.0f, 0.0f};
 
 	// Escape exits
-	if(is_pressed(app.keybind.escape))
+	if(get_keystate(app.keybind.escape) == KEY_PRESSED)
 	{
-		exit(0);
+		quit_app();
 	}
 
+	// changed to turn off layers by keypresses
+	app.screenState = STATE_BGLAYER | STATE_MGLAYER | STATE_FGLAYER;
+
+	if(get_keystate(app.keybind.BGLayer) == KEY_PRESSED)
+		app.screenState = clearBit(app.screenState, 1);
+	if(get_keystate(app.keybind.MGLayer) == KEY_PRESSED)
+		app.screenState = clearBit(app.screenState, 2);
+	if(get_keystate(app.keybind.FGLayer) == KEY_PRESSED)
+		app.screenState = clearBit(app.screenState, 3);
+
+
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^ mouse clicks ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 	// set target pos to mouse pos by leftclick
 	if(app.mouse.buttons == SDL_BUTTON_LEFT && !is_pressed(app.keybind.ctrl))
 	{
@@ -86,40 +89,53 @@ void check_keys(void)
 	}
 
 	// ctrl + leftclick to add waypoint to player move queue
-	if(is_pressed(app.keybind.ctrl) && app.mouse.buttons == SDL_BUTTON_LEFT && app.mouse.wasButtons == 0)
+	if(is_pressed(app.keybind.ctrl) && (app.mouse.buttons == SDL_BUTTON_LEFT && !app.mouse.wasButtons))
 	{
-		app.player.moveQueue.enqueue(mousePos);
-		// set targetPos to front of queue
-		app.player.targetPos = app.player.moveQueue.queue_front();
-		app.player.hasTarget = true;
+		Vec2 tPos = app.player.moveQueue.queue_rear();
+		Vec2 tMPos = {(float)app.mouse.pos.x, (float)app.mouse.pos.y};
+		if(!point_in_circle(tMPos, {tPos, 40.0f}))
+		{
+			app.player.moveQueue.enqueue(mousePos);
+			// set targetPos to front of queue
+			app.player.targetPos = app.player.moveQueue.queue_front();
+			app.player.hasTarget = true;
+		}
 	}
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^ Movement Keys ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	if(is_pressed(app.keybind.right))
+
+	int key = get_keystate(app.keybind.right);
+	if(key == KEY_PRESSED || key == KEY_HELD)
 	{
 		app.player.vel += move_right();
 		app.player.hasTarget = false;
 		app.player.moveQueue.reset_queue();
 	}
-	if(is_pressed(app.keybind.left))
+
+	key = get_keystate(app.keybind.left);
+	if(key == KEY_PRESSED || key == KEY_HELD)
 	{
 		app.player.vel += move_left();
 		app.player.hasTarget = false;
 		app.player.moveQueue.reset_queue();
 	}
-	if(is_pressed(app.keybind.up))
+
+	key = get_keystate(app.keybind.up);
+	if(key == KEY_PRESSED || key == KEY_HELD)
 	{
 		app.player.vel += move_up();
 		app.player.hasTarget = false;
 		app.player.moveQueue.reset_queue();
 	}
-	if(is_pressed(app.keybind.down))
+
+	key = get_keystate(app.keybind.down);
+	if(key == KEY_PRESSED || key == KEY_HELD)
 	{
 		app.player.vel += move_down();
 		app.player.hasTarget = false;
 		app.player.moveQueue.reset_queue();
 	}
-	
+
 	//diagonal player movement
 	if(app.player.vel.x != 0 && app.player.vel.y != 0)
 	{
@@ -128,9 +144,26 @@ void check_keys(void)
 }
 
 // Checks if keybind has been pressed
-bool is_pressed(u16 keybind)
+bool is_pressed(int keybind)
 {
-	return (app.keyboard[keybind]) ? true:false;
+	return (app.keys[keybind].keyPressed) ? true:false;
+}
+
+bool was_pressed(int keybind)
+{
+	return (app.keys[keybind].wasPressed) ? true:false;
+}
+
+int get_keystate(int keybind)
+{
+	if(!was_pressed(keybind) && is_pressed(keybind))
+		return KEY_PRESSED;
+	if(was_pressed(keybind) && !is_pressed(keybind))
+		return KEY_RELEASED;
+	if(was_pressed(keybind) && is_pressed(keybind))
+		return KEY_HELD;
+
+	return KEY_NOTPRESSED;
 }
 
 //^^^^^^^^^^^^^^^^^ basic move instructions ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -158,4 +191,9 @@ Vec2 move_right(void)
 Vec2 move_stop(void)
 {
     return {0, 0};
+}
+
+void quit_app(void)
+{
+	exit(0);
 }

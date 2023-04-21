@@ -1,20 +1,8 @@
 #include "init.h"
+#include "textures.h"
+#include "sound.h"
+#include "utils.h"
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-void init(void);
-void init2(void);
-void init_SDL(void);
-void init_screen(void);
-void cleanup(void);
-void init_keybinds(void);
-void init_spawner(void);
-void init_sound(void);
-void init_player(void);
-void init_enemies(void);
-void init_waypoints(void);
-
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ END Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 void init(void)
 {
@@ -24,6 +12,8 @@ void init(void)
 	// App inits
 	init_screen();
 	init_keybinds();
+	init_sound();
+	init_renderlayers();
 
 	// SDL_ShowCursor(SDL_DISABLE);
 }
@@ -34,7 +24,6 @@ void init2(void)
 	init_enemies();
 	init_waypoints();
 	init_spawner();
-	init_sound();
 }
 
 // init SDL
@@ -46,12 +35,12 @@ void init_SDL(void)
 		printf("Couldn't initialize SDL: %s\n", SDL_GetError());
 		exit(1);
 	}
-	// window
+	// window by SDL
 	u32 windowFlags = SDL_WINDOW_OPENGL;
 	SDL_Window *window = SDL_CreateWindow(WINDOW_TITLE,
 										SDL_WINDOWPOS_UNDEFINED,
 										SDL_WINDOWPOS_UNDEFINED,
-										1600, 900,
+										SCREEN_WIDTH, SCREEN_HEIGHT,
 										windowFlags);
 	if(!window)
 	{
@@ -65,25 +54,23 @@ void init_SDL(void)
 	u32 windowID = SDL_GetWindowID(window);
 	GPU_SetInitWindow(windowID);
 	GPU_WindowFlagEnum renderFlags = GPU_DEFAULT_INIT_FLAGS;
-	// renderer
-	app.renderTarget = GPU_Init((u16)SCREEN_WIDTH, (u16)SCREEN_HEIGHT, renderFlags);
-	if(!app.renderTarget)
+	// renderer by SDL_gpu
+	app.screen.screenOutput = GPU_Init((u16)SCREEN_WIDTH, (u16)SCREEN_HEIGHT, renderFlags);
+	if(!app.screen.screenOutput)
 	{
 		printf("Failed to create renderer with SDL_gpu: %s\n", SDL_GetError());
 		exit(1);
 	}
 
-	// simple init for SDL_ttf
+	//init SDL_ttf
 	if(TTF_Init() < 0)
 	{
 		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(2);
 	}
-	// open the font
-	app.font = TTF_OpenFont(FONT_PATH, FONT_SIZE);
-	if(app.font == NULL)
-		printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
-	TTF_SetFontStyle(app.font, TTF_STYLE_NORMAL);
+	// open font using SDL_fontcache
+	app.fcfont = FC_CreateFont();
+	FC_LoadFont(app.fcfont, FONT_PATH, FONT_SIZE, COLOR_WHITE, TTF_STYLE_NORMAL);
 
 	// init SDL_mixer
 	if(Mix_Init(MIX_INIT_MP3) == 0)
@@ -92,7 +79,7 @@ void init_SDL(void)
 		exit(2);
 	}
 	// open default audio device
-	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MAX_AUDIO_CHANNELS, 2048) < 0)
 	{
 		printf("SDL_mixer could not initialize the default audio device! SDL_mixer Error: %s\n", Mix_GetError());
 		exit(2);
@@ -104,37 +91,15 @@ void init_screen(void)
 {
 	// find refresh rate from display setting & modify dt & speed 
 	// fuzzy refresh rate evaluation compensates for different monitor manufacturer implementation of refresh rates
-	// 
-	// TODO: this is not robust. It only checks for 5 common refresh rates on displayIndex 0 (main monitor)
-	// TODO: & may not even do it properly
+	//! Checks current refresh rate & calculates the deltatime multiplier
 	SDL_DisplayMode modeBuffer = {};
 	SDL_GetCurrentDisplayMode(0, &modeBuffer);
-	// SDL_GetDesktopDisplayMode(0, &modeBuffer);
 	app.appHz = modeBuffer.refresh_rate;
+	app.dtMulti = modeBuffer.refresh_rate / 60.0f;	// this line works in this project but not for opengl project
 
-	if(modeBuffer.refresh_rate >= 58 && modeBuffer.refresh_rate <= 61)
-	{
-		app.dtMulti = 1.0f;
-	}
-	if(modeBuffer.refresh_rate >= 73 && modeBuffer.refresh_rate <= 76)
-	{
-		app.dtMulti = 1.25f;
-	}
-	if(modeBuffer.refresh_rate >= 118 && modeBuffer.refresh_rate <= 121)
-	{
-		app.dtMulti = 2.0f;
-	}
-	if(modeBuffer.refresh_rate >= 142 && modeBuffer.refresh_rate <= 145)
-	{
-		app.dtMulti = 2.4f;
-	}
-	if(modeBuffer.refresh_rate >= 163 && modeBuffer.refresh_rate <= 166)
-	{
-		app.dtMulti = 2.75f;
-	}
-
-	app.player.speed = PLAYER_SPEED / app.dtMulti;
-	app.eSpawn.spawnedSpeed = ENEMY_SPEED / app.dtMulti;
+	//! deltatime multiplier needed to modify speeds & other things... ???
+	app.player.speed = PLAYER_BASE_SPEED / app.dtMulti;
+	app.eSpawn.spawnedSpeed = ENEMY_BASE_SPEED / app.dtMulti;
 	// more things ...
 }
 
@@ -144,8 +109,12 @@ void cleanup(void)
 	Mix_FreeChunk(app.sounds.nope);
 	Mix_FreeChunk(app.sounds.bruh);
 	Mix_CloseAudio();
-	TTF_CloseFont(app.font);
-	GPU_FreeTarget(app.renderTarget);
+
+	FC_FreeFont(app.fcfont);
+
+	GPU_FreeImage(app.screen.BG);
+	GPU_FreeImage(app.screen.MG);
+	GPU_FreeImage(app.screen.FG);
 
 	Mix_Quit();
 	TTF_Quit();
@@ -153,28 +122,37 @@ void cleanup(void)
 	SDL_Quit();
 }
 
-
+// load sounds & set volumes
+// TODO: 1 channel for music, 6 channels for sfx, 1 channel for UI.
+void init_sound(void)
+{
+	app.sounds.nope = load_sound(SOUNDPATH_NOPE);
+	app.sounds.bruh = load_sound(SOUNDPATH_BRUH);
+	int value = Mix_Volume(-1, 50);
+}
 
 // default keybind values
 void init_keybinds(void)
 {
-	// app.keybind.printscreen = SDL_SCANCODE_F1;
 	app.keybind.escape = SDL_SCANCODE_ESCAPE;
 	app.keybind.up = SDL_SCANCODE_W;
 	app.keybind.down = SDL_SCANCODE_S;
 	app.keybind.left = SDL_SCANCODE_A;
 	app.keybind.right = SDL_SCANCODE_D;
-	app.keybind.space = SDL_SCANCODE_SPACE;
 	app.keybind.ctrl = SDL_SCANCODE_LCTRL;
+	app.keybind.BGLayer = SDL_SCANCODE_1;
+	app.keybind.MGLayer = SDL_SCANCODE_2;
+	app.keybind.FGLayer = SDL_SCANCODE_3;
 }
 
 void init_player(void)
 {
 	app.playerSprite = load_image(IMAGEPATH_player);
 	GPU_SetImageFilter(app.playerSprite, GPU_FILTER_NEAREST);
-	app.player.collider = {{app.player.pos.x, app.player.pos.y,}, (f32)app.playerSprite->w / 2};
+	app.player.collider = {{app.player.pos.x, app.player.pos.y,}, (float)app.playerSprite->w / 2};
 
 	app.player.pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
+	app.player.maxSpeed = PLAYER_BASE_SPEED;
 
 	app.player.facing = true;
 	app.player.hasTarget = false;
@@ -215,13 +193,11 @@ void init_spawner(void)
 	app.eSpawn.targetWaypoint = app.waypoint[WAYPOINT_0].pos;
 }
 
-// load sounds & set volumes
-void init_sound(void)
+void init_renderlayers(void)
 {
-    // app.sounds.nope = load_sound(SOUNDPATH_NOPE);
-	app.sounds.bruh = load_sound(SOUNDPATH_BRUH);
-	s32 value = Mix_Volume(-1, 15);
-	value = Mix_Volume(-1, -1);
-	// value = Mix_VolumeChunk(app.sounds.bruh, -1);
-	// value = Mix_VolumeChunk(app.sounds.bruh, 15);
+	app.screen.BG = GPU_CreateImage(SCREEN_WIDTH, SCREEN_HEIGHT, GPU_FORMAT_RGBA);
+	app.screen.MG = GPU_CreateImage(SCREEN_WIDTH, SCREEN_HEIGHT, GPU_FORMAT_RGBA);
+	app.screen.FG = GPU_CreateImage(SCREEN_WIDTH, SCREEN_HEIGHT, GPU_FORMAT_RGBA);
+
+	app.grass = load_image(IMAGEPATH_grass);
 }

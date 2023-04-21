@@ -8,8 +8,9 @@ enum WaypointIdx
     WAYPOINT_COUNT
 };
 
-// enum EnemyMovementType
-// {
-//     ENEMY_MOVE_WAYPOINT,
-//     ENEMY_MOVE_FOLLOW
-// };
+enum ScreenDrawStates
+{
+    STATE_BGLAYER = 1,
+    STATE_MGLAYER = 2,
+    STATE_FGLAYER = 4
+};

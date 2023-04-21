@@ -1,59 +1,96 @@
 #include "renderer.h"
-
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-void render(f64 alpha);
-
-void prepare_scene(void);
-void present_scene(void);
-void draw_enemy(f64 alpha);
-void draw_player(void);
-void draw_stats(void);
-void label_waypoints(void);
-void draw_player_moves();
-void draw_label_text(SDL_Color bgColor, GPU_Image* text, f32 x, f32 y);
+#include "textures.h"
+#include "utils.h"
 
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ START Declarations ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-void render(f64 alpha)
+// Render all the things
+void render(float alpha)
 {
-	prepare_scene();
+	// clear to help check layer system
+	GPU_ClearRGB(app.screen.screenOutput, 35, 0, 35);
 
-	draw_enemy(alpha);
+	// check screenState to see which layers should be drawn/hidden
+	if(isBitSet(app.screenState, 1))
+	{
+		draw_background();
+	}
+	if(isBitSet(app.screenState, 2))
+	{
+		draw_middleground(alpha);
+	}
+	if(isBitSet(app.screenState, 3))
+	{
+		draw_foreground();
+	}
 
-	//frame offset here, so that draw_player_moves() can be drawn before player
-	app.player.pos = app.player.pos + (app.player.dPos * (f32)alpha);
-	draw_player_moves();
-	draw_player();
-
-	draw_stats();
-	label_waypoints();
-
+	// show screen
 	present_scene();
 }
 
-// Clears the window to RGB
-void prepare_scene(void)
+//********************************************************
+// arrange BG then draw to screen
+void draw_background(void)
 {
-	GPU_ClearRGB(app.renderTarget, 35, 0, 35);
+	// set render target to BG layer & clear it to transparent
+	GPU_LoadTarget(app.screen.BG);
+	GPU_ClearRGBA(app.screen.BG->target, 0, 0, 0, 0);
+
+	// grass
+	GPU_BlitRect(app.grass, NULL, app.screen.BG->target, NULL);
+
+	GPU_BlitRect(app.screen.BG, NULL, app.screen.screenOutput, NULL);
 }
 
-// show the window
+// arrange MG then screen
+void draw_middleground(float alpha)
+{
+	// switch rendertarget to MG
+	GPU_LoadTarget(app.screen.MG);
+	//clear MG to transparent
+	GPU_ClearRGBA(app.screen.MG->target, 0, 0, 0, 0);
+
+	// draw MG things
+	draw_enemy(alpha, app.screen.MG->target);
+	draw_player_moves(alpha, app.screen.MG->target);
+	draw_player(alpha, app.screen.MG->target);
+
+	// blit MG to screenOutput
+	GPU_BlitRect(app.screen.MG, NULL, app.screen.screenOutput, NULL);
+}
+
+// arrange FG then screen
+void draw_foreground(void)
+{
+	GPU_LoadTarget(app.screen.FG);
+	GPU_ClearRGBA(app.screen.FG->target, 0, 0, 0, 0);
+
+	draw_stats(app.screen.FG->target);
+	label_waypoints(app.screen.FG->target);
+	draw_time(get_time_secs(), app.screen.FG->target);
+	draw_player_vectorlabel(app.screen.FG->target);
+
+	GPU_BlitRect(app.screen.FG, NULL, app.screen.screenOutput, NULL);
+}
+
+//********************************************************
+
+// show the screen
 void present_scene(void)
 {
-	GPU_Flip(app.renderTarget);
+	GPU_Flip(app.screen.screenOutput);
 }
 
 // render the  enemies
-void draw_enemy(f64 alpha)
+void draw_enemy(float alpha, GPU_Target *target)
 {
-	for(s32 i = 0; i < app.enemyCount; i++)
+	for(int i = 0; i < app.enemyCount; i++)
 	{
 		if(app.enemy[i].alive)
 		{
 			//frame offset
-			app.enemy[i].pos = app.enemy[i].pos + (app.enemy[i].dPos * (f32)alpha);
+			app.enemy[i].pos += app.enemy[i].dPos * alpha;
 
+			// draw enemy
 			app.enemy[i].renderRect = GPU_MakeRect(app.enemy[i].pos.x - app.enemySprite->w / 2.0f,
 												app.enemy[i].pos.y - app.enemySprite->h / 2.0f,
 												app.enemySprite->w, app.enemySprite->h);
@@ -62,21 +99,24 @@ void draw_enemy(f64 alpha)
 			if(!app.enemy[i].facing)
 				flipflag = GPU_FLIP_HORIZONTAL;
 
-			GPU_BlitRectX(app.enemySprite, NULL, app.renderTarget, &app.enemy[i].renderRect,
+			GPU_BlitRectX(app.enemySprite, NULL, target, &app.enemy[i].renderRect,
 				0.0f, app.enemySprite->w / 2.0f, app.enemySprite->h / 2.0f, flipflag);
 
-			// hp bar
+			// draw hp bar
 			GPU_Rect rect = {app.enemy[i].pos.x - (app.enemySprite->w / 2), app.enemy[i].pos.y - (app.enemySprite->h / 2) - 12,
-							56 * (app.enemy[i].currentHP / (f32)app.enemy[i].maxHP), 6};
+							56 * (app.enemy[i].currentHP / (float)app.enemy[i].maxHP), 6};
 			SDL_Color color = {200, 0, 0, 255};
-			GPU_RectangleFilled2(app.renderTarget, rect, color);
+			GPU_RectangleFilled2(target, rect, color);
 		}
 	}
 }
 
 // render the player
-void draw_player(void)
+void draw_player(float alpha, GPU_Target *target)
 {
+	// frame offset here, so that draw_player_moves() can be drawn before player
+	app.player.pos += app.player.dPos * (float)alpha;
+
 	app.player.renderRect = GPU_MakeRect(app.player.pos.x - app.playerSprite->w / 2.0f,
 										app.player.pos.y - app.playerSprite->h / 2.0f,
 										app.playerSprite->w,
@@ -86,36 +126,31 @@ void draw_player(void)
 	if(!app.player.facing)
 		flipflag = GPU_FLIP_HORIZONTAL;
 
-	GPU_BlitRectX(app.playerSprite, NULL, app.renderTarget, &app.player.renderRect,
+	GPU_BlitRectX(app.playerSprite, NULL, target, &app.player.renderRect,
 				0.0f, app.playerSprite->w / 2.0f, app.playerSprite->h / 2.0f, flipflag);
 }
 
 // draw queue->size label & waypoint circles with move lines
-void draw_player_moves()
+void draw_player_moves(float alpha, GPU_Target *target)
 {
-	char textBuffer[16];
-	memset(&textBuffer, 0, sizeof(textBuffer));
-	snprintf(textBuffer, sizeof(textBuffer), "queue size: %d", app.player.moveQueue.size);
-
-	// draw label showing moveQueue.size under the player
-	GPU_Image* text = texture_from_font(app.font, textBuffer, COLOR_WHITE);
-	draw_label_text({0, 0, 0, 150}, text, app.player.pos.x - text->w / 2, app.player.pos.y + app.player.collider.radius);
+	// frame offset here, so that draw_player_moves() can be drawn before player
+	app.player.pos += app.player.dPos * (float)alpha;
 
 	// draw waypoint circles & route lines
     if(!app.player.moveQueue.queue_is_empty())
 	{
 		// line from player to targetPos
-		GPU_Line(app.renderTarget, app.player.pos.x, app.player.pos.y, app.player.targetPos.x, app.player.targetPos.y, COLOR_GREEN);
+		GPU_Line(target, app.player.pos.x, app.player.pos.y, app.player.targetPos.x, app.player.targetPos.y, COLOR_GREEN);
 
-		for(s32 i = 0; i < app.player.moveQueue.size; i++)
+		for(int i = 0; i < app.player.moveQueue.size; i++)
 		{
 			// waypoint marker
-			GPU_Circle(app.renderTarget, app.player.lArray[i].x, app.player.lArray[i].y, 20.0f, COLOR_GREEN);
+			GPU_Circle(target, app.player.lArray[i].x, app.player.lArray[i].y, 20.0f, COLOR_GREEN);
 
 			// lines from waypoint to next waypoint
 			if(i < app.player.moveQueue.size - 1)
 			{
-				GPU_Line(app.renderTarget, app.player.lArray[i].x, app.player.lArray[i].y,
+				GPU_Line(target, app.player.lArray[i].x, app.player.lArray[i].y,
 						app.player.lArray[i + 1].x, app.player.lArray[i + 1].y, COLOR_GREEN);
 			}
 		}
@@ -123,39 +158,78 @@ void draw_player_moves()
 }
 
 // onscreen text overlay
-void draw_stats(void)
+void draw_stats(GPU_Target *target)
 {
-	char textBuffer[256];
-	memset(&textBuffer, 0, sizeof(textBuffer));
+	u16 textW = FC_GetWidth(app.fcfont, "Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\nspawned: %d/%u",
+										app.appHz, app.dt, app.player.speed, app.enemyCount, app.eSpawn.maxSpawns);
+	u16 textH = FC_GetHeight(app.fcfont,"Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\nspawned: %d/%u",
+										app.appHz, app.dt, app.player.speed, app.enemyCount, app.eSpawn.maxSpawns);
+	GPU_RectangleFilled2(target,
+						{300 - 4, 500, (float)textW + 8, (float)textH},
+						{0, 0, 0, 125});
 
-	snprintf(textBuffer, sizeof(textBuffer), "Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\nplayer move vector: {%.2f, %.2f}\nenemies: %d/%u\n",
-											app.appHz,
-											app.dt,
-											app.player.speed,
-											app.player.vel.x, app.player.vel.y,
-											app.enemyCount, app.eSpawn.maxSpawns);
-
-	GPU_Image *statsImage = texture_from_font_wrapped(app.font, textBuffer, COLOR_WHITE, 360);
-	draw_label_text({0, 0, 0, 100}, statsImage, 150, 500);
+	FC_DrawColor(app.fcfont, target, 300, 500,
+				COLOR_WHITE,
+				"Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\nspawned: %d/%u",
+				app.appHz,
+				app.dt,
+				app.player.speed,
+				app.enemyCount, app.eSpawn.maxSpawns);
 }
 
 // labels for waypoints
-void label_waypoints(void)
+void label_waypoints(GPU_Target *target)
 {
-	for(u8 i = 0; i < WAYPOINT_COUNT; i++)
+	for(int i = 0; i < WAYPOINT_COUNT; i++)
 	{
-		GPU_Image *text = texture_from_font(app.font, app.waypoint[i].name, COLOR_WHITE);
-		draw_label_text({0, 0, 0, 100}, text, app.waypoint[i].pos.x, app.waypoint[i].pos.y);
+		u16 textW = FC_GetWidth(app.fcfont, app.waypoint[i].name);
+		u16 textH = FC_GetHeight(app.fcfont, app.waypoint[i].name);
+		GPU_RectangleFilled2(target,
+							{app.waypoint[i].pos.x - 4, app.waypoint[i].pos.y, (float)textW + 8, (float)textH},
+							{0, 0, 0, 125});
+
+		FC_DrawColor(app.fcfont, target,
+					app.waypoint[i].pos.x,
+					app.waypoint[i].pos.y,
+					COLOR_WHITE,
+					app.waypoint[i].name);
 	}
 }
 
-// draw already imaged ttf text with background rect
-void draw_label_text(SDL_Color bgColor, GPU_Image* text, f32 x, f32 y)
+void draw_player_vectorlabel(GPU_Target *target)
 {
-	GPU_Rect rect = GPU_MakeRect(x - 10, y, (f32)text->w + 20, (f32)text->h);
-	GPU_RectangleFilled2(app.renderTarget, rect, bgColor);
-	GPU_SetAnchor(text, 0.0f, 0.0f);
-	GPU_SetImageFilter(text, GPU_FILTER_NEAREST);
-	GPU_Blit(text, NULL, app.renderTarget, x, y);
-	GPU_FreeImage(text);
+	u16 textW = FC_GetWidth(app.fcfont, "x: %.2f\ny: %.2f", app.player.vel.x, app.player.vel.y);
+	u16 textH = FC_GetHeight(app.fcfont, "x: %.2f\ny: %.2f", app.player.vel.x, app.player.vel.y);
+	GPU_RectangleFilled2(target,
+						{app.player.pos.x - (textW / 2.0f) - 4,
+						app.player.pos.y + (textH / 2.0f) + 4,
+						(float)textW + 8,
+						(float)textH},
+						{0, 0, 0, 125});
+
+	SDL_Color tempColor = FC_GetDefaultColor(app.fcfont);
+	FC_SetDefaultColor(app.fcfont, COLOR_RED);
+
+	FC_DrawAlign(app.fcfont, target,
+				app.player.pos.x,
+				app.player.pos.y + app.playerSprite->h / 2.0f,
+				FC_ALIGN_CENTER,
+				"x: %.2f\ny: %.2f", app.player.vel.x, app.player.vel.y);
+
+	FC_SetDefaultColor(app.fcfont, tempColor);
+}
+
+void draw_time(double time, GPU_Target *target)
+{
+	u16 textW = FC_GetWidth(app.fcfont, "%.3f", time);
+	u16 textH = FC_GetHeight(app.fcfont, "%.3f", time);
+	GPU_RectangleFilled2(target,
+						{0, 0, (float)textW + 4, (float)textH},
+						{0, 0, 0, 125});
+
+	FC_DrawColor(app.fcfont, target,
+				0,
+				0,
+				COLOR_GREEN,
+				"%.3f", time);
 }
