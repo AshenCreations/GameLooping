@@ -69,9 +69,12 @@ void update_enemy(void)
                 }
             }
 
-            // store current position before calculating new position
+            // store current position
             app.enemy[i].oldPos = app.enemy[i].pos;
+
+            // calc new position
             app.enemy[i].pos += app.enemy[i].vel * (app.enemy[i].speed * app.dt);
+
             // find difference of current & old positions for renderer
             app.enemy[i].dPos = app.enemy[i].pos - app.enemy[i].oldPos;
 

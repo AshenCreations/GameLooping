@@ -3,14 +3,15 @@
 
 void render(float alpha);
 
+void update_part_frame(float alpha);
 void present_scene(void);
 void draw_background(void);
-void draw_middleground(float alpha);
+void draw_middleground(void);
 void draw_foreground(void);
 
-void draw_enemy(float alpha, GPU_Target *target);
-void draw_player(float alpha, GPU_Target *target);
-void draw_player_moves(float alpha, GPU_Target *target);
+void draw_enemy(GPU_Target *target);
+void draw_player(GPU_Target *target);
+void draw_player_moves(GPU_Target *target);
 
 void draw_stats(GPU_Target *target);
 void label_waypoints(GPU_Target *target);

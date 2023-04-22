@@ -192,7 +192,7 @@ typedef struct
 	Keybinds keybind;
 	u32 screenState;
 
-	double t;
+	double time;
 	float dt;
 	float dtMulti;
 	int appHz;

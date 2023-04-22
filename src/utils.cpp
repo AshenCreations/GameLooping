@@ -144,12 +144,12 @@ Color extract_RGB(SDL_Color iCol)
 
 float get_time_ms(void)
 {
-    return (float)app.t;
+    return (float)app.time;
 }
 
 float get_time_secs(void)
 {
-    return (float)app.t / 1000.0f;
+    return (float)app.time / 1000.0f;
 }
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^ BIT CHECKING ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

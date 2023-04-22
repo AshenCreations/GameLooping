@@ -16,7 +16,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	timeBeginPeriod(1);			// set system sleep granularity to 1ms: winmm.lib
 
 	LARGE_INTEGER newTime, currentTime, frequency;
-    app.t = 0.0;		// 1 second of t is 10 million QueryPerformanceCounter ticks
+    app.time = 0.0;		// 1 second of t is 10 million QueryPerformanceCounter ticks
     //! use deltatime multiplier to set deltatime for the app
 	app.dt = 0.01f * app.dtMulti;
 	// definition one 1 second based on update rate
@@ -35,10 +35,10 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	while(1)
 	{
-		// get timeFrame in milliseconds
+		// get timeFrame in milliseconds then update time
 		timeFrame = (newTime.QuadPart - currentTime.QuadPart) / (float)frequency.QuadPart;
 		currentTime = newTime;
-		app.t += timeFrame;
+		app.time += timeFrame;
 
 		// set update loop length
 		if(timeFrame > APP_BASE_TIMEFRAME)
@@ -59,18 +59,11 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		// we will use a part-frame offset(alpha) which is normalised to the range 0 -> 1
 		const float alpha = accumulator / app.dt;
 
-		//! state blending(lerp) as per "Fix Your Timestep" not being done right now
-		
 		// pass in alpha to deal with frame offset
 		render(alpha);
 
-
-
-		//! not needed if use Vsync
+		//! Sleep not needed if use Vsync
 		Sleep(1);	// but still stops CPU working overtime
-
-
-
 		QueryPerformanceCounter(&newTime);
 	}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Gameloop END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -6,28 +6,36 @@
 // Render all the things
 void render(float alpha)
 {
+	// update the part frame before drawing
+	update_part_frame(alpha);
+
 	// clear to help check layer system
 	GPU_ClearRGB(app.screen.screenOutput, 35, 0, 35);
 
 	// check screenState to see which layers should be drawn/hidden
-	if(isBitSet(app.screenState, 1))
-	{
-		draw_background();
-	}
-	if(isBitSet(app.screenState, 2))
-	{
-		draw_middleground(alpha);
-	}
-	if(isBitSet(app.screenState, 3))
-	{
-		draw_foreground();
-	}
+	if (isBitSet(app.screenState, 1)) draw_background();
+	if (isBitSet(app.screenState, 2)) draw_middleground();
+	if (isBitSet(app.screenState, 3)) draw_foreground();
 
 	// show screen
 	present_scene();
 }
 
+void update_part_frame(float alpha)
+{
+	// for enemies
+	for(int i = 0; i < app.enemyCount; i++)
+	{
+		app.enemy[i].pos += app.enemy[i].dPos * alpha;
+	}
+
+	// for player
+	app.player.pos += app.player.dPos * (float)alpha;
+}
+
+
 //********************************************************
+
 // arrange BG then draw to screen
 void draw_background(void)
 {
@@ -42,7 +50,7 @@ void draw_background(void)
 }
 
 // arrange MG then screen
-void draw_middleground(float alpha)
+void draw_middleground(void)
 {
 	// switch rendertarget to MG
 	GPU_LoadTarget(app.screen.MG);
@@ -50,9 +58,9 @@ void draw_middleground(float alpha)
 	GPU_ClearRGBA(app.screen.MG->target, 0, 0, 0, 0);
 
 	// draw MG things
-	draw_enemy(alpha, app.screen.MG->target);
-	draw_player_moves(alpha, app.screen.MG->target);
-	draw_player(alpha, app.screen.MG->target);
+	draw_enemy(app.screen.MG->target);
+	draw_player_moves(app.screen.MG->target);
+	draw_player(app.screen.MG->target);
 
 	// blit MG to screenOutput
 	GPU_BlitRect(app.screen.MG, NULL, app.screen.screenOutput, NULL);
@@ -72,24 +80,22 @@ void draw_foreground(void)
 	GPU_BlitRect(app.screen.FG, NULL, app.screen.screenOutput, NULL);
 }
 
-//********************************************************
-
 // show the screen
 void present_scene(void)
 {
 	GPU_Flip(app.screen.screenOutput);
 }
 
+//********************************************************
+
+
 // render the  enemies
-void draw_enemy(float alpha, GPU_Target *target)
+void draw_enemy(GPU_Target *target)
 {
 	for(int i = 0; i < app.enemyCount; i++)
 	{
 		if(app.enemy[i].alive)
 		{
-			//frame offset
-			app.enemy[i].pos += app.enemy[i].dPos * alpha;
-
 			// draw enemy
 			app.enemy[i].renderRect = GPU_MakeRect(app.enemy[i].pos.x - app.enemySprite->w / 2.0f,
 												app.enemy[i].pos.y - app.enemySprite->h / 2.0f,
@@ -112,11 +118,8 @@ void draw_enemy(float alpha, GPU_Target *target)
 }
 
 // render the player
-void draw_player(float alpha, GPU_Target *target)
+void draw_player(GPU_Target *target)
 {
-	// frame offset here, so that draw_player_moves() can be drawn before player
-	app.player.pos += app.player.dPos * (float)alpha;
-
 	app.player.renderRect = GPU_MakeRect(app.player.pos.x - app.playerSprite->w / 2.0f,
 										app.player.pos.y - app.playerSprite->h / 2.0f,
 										app.playerSprite->w,
@@ -131,11 +134,8 @@ void draw_player(float alpha, GPU_Target *target)
 }
 
 // draw queue->size label & waypoint circles with move lines
-void draw_player_moves(float alpha, GPU_Target *target)
+void draw_player_moves(GPU_Target *target)
 {
-	// frame offset here, so that draw_player_moves() can be drawn before player
-	app.player.pos += app.player.dPos * (float)alpha;
-
 	// draw waypoint circles & route lines
     if(!app.player.moveQueue.queue_is_empty())
 	{

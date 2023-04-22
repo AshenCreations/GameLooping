@@ -6,9 +6,9 @@ void do_key_up(SDL_KeyboardEvent *event);
 void do_key_down(SDL_KeyboardEvent *event);
 void input(void);
 void check_keys(void);
+int get_keystate(int keybind);
 bool is_pressed(int keybind);
 bool was_pressed(int keybind);
-int get_keystate(int keybind);
 
 void quit_app(void);
 Vec2 move_up(void);

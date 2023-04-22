@@ -60,15 +60,16 @@ void check_keys(void)
 	// zero player velocity for when no keys pressed
 	app.player.vel = {0.0f, 0.0f};
 
-	// Escape exits
+	// Escape key exits
 	if(get_keystate(app.keybind.escape) == KEY_PRESSED)
 	{
 		quit_app();
 	}
 
-	// changed to turn off layers by keypresses
+	// set all 3 layers to SHOW
 	app.screenState = STATE_BGLAYER | STATE_MGLAYER | STATE_FGLAYER;
 
+	// HIDE layer if key held
 	if(get_keystate(app.keybind.BGLayer) == KEY_PRESSED)
 		app.screenState = clearBit(app.screenState, 1);
 	if(get_keystate(app.keybind.MGLayer) == KEY_PRESSED)
@@ -91,9 +92,9 @@ void check_keys(void)
 	// ctrl + leftclick to add waypoint to player move queue
 	if(is_pressed(app.keybind.ctrl) && (app.mouse.buttons == SDL_BUTTON_LEFT && !app.mouse.wasButtons))
 	{
-		Vec2 tPos = app.player.moveQueue.queue_rear();
-		Vec2 tMPos = {(float)app.mouse.pos.x, (float)app.mouse.pos.y};
-		if(!point_in_circle(tMPos, {tPos, 40.0f}))
+		Vec2 tempPos = app.player.moveQueue.queue_rear();
+		Vec2 tempMPos = {(float)app.mouse.pos.x, (float)app.mouse.pos.y};
+		if(!point_in_circle(tempMPos, {tempPos, 40.0f}))
 		{
 			app.player.moveQueue.enqueue(mousePos);
 			// set targetPos to front of queue
@@ -102,8 +103,8 @@ void check_keys(void)
 		}
 	}
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^ Movement Keys ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^ Movement Keys ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	int key = get_keystate(app.keybind.right);
 	if(key == KEY_PRESSED || key == KEY_HELD)
 	{
@@ -138,22 +139,10 @@ void check_keys(void)
 
 	//diagonal player movement
 	if(app.player.vel.x != 0 && app.player.vel.y != 0)
-	{
 		app.player.vel = app.player.vel * INVERSE_ROOT_2;
-	}
 }
 
-// Checks if keybind has been pressed
-bool is_pressed(int keybind)
-{
-	return (app.keys[keybind].keyPressed) ? true:false;
-}
-
-bool was_pressed(int keybind)
-{
-	return (app.keys[keybind].wasPressed) ? true:false;
-}
-
+// check keystate from is_pressed and was_pressed
 int get_keystate(int keybind)
 {
 	if(!was_pressed(keybind) && is_pressed(keybind))
@@ -166,8 +155,18 @@ int get_keystate(int keybind)
 	return KEY_NOTPRESSED;
 }
 
-//^^^^^^^^^^^^^^^^^ basic move instructions ^^^^^^^^^^^^^^^^^^^^^^^^^
+bool is_pressed(int keybind)
+{
+	return (app.keys[keybind].keyPressed) ? true:false;
+}
 
+bool was_pressed(int keybind)
+{
+	return (app.keys[keybind].wasPressed) ? true:false;
+}
+
+
+//^^^^^^^^^^^^^^^^^ basic move instructions ^^^^^^^^^^^^^^^^^^^^^^^^^
 Vec2 move_up(void)
 {
     return {0, -1};
