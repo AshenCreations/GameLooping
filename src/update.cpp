@@ -3,6 +3,8 @@
 
 void update(void)
 {
+    app.updatesPerFrame++;
+
     spawn_enemy();
     update_enemy();
     screenclip_enemy();
@@ -13,23 +15,23 @@ void update(void)
     update_player();
     screenclip_player();
     player_collision();
-
 }
 
 // spawn enemies
 void spawn_enemy(void)
 {
+    int idx = app.eSpawn.spawnedIdx;
     if((app.eSpawn.spawnedIdx < app.eSpawn.maxSpawns) && (app.eSpawn.cooldown <= 0))
     {
-        app.enemy[app.eSpawn.spawnedIdx].alive = true;
-        app.enemy[app.eSpawn.spawnedIdx].pos = app.eSpawn.pos;
-        app.enemy[app.eSpawn.spawnedIdx].speed = app.eSpawn.spawnedSpeed;
-        app.enemy[app.eSpawn.spawnedIdx].facing = false;
-        app.enemy[app.eSpawn.spawnedIdx].targetPos = app.eSpawn.targetWaypoint;
-        app.enemy[app.eSpawn.spawnedIdx].hasTarget = true;
-        app.enemy[app.eSpawn.spawnedIdx].minDistance = ENEMY_WAYPOINT_MIN_DISTANCE;
-        app.enemy[app.eSpawn.spawnedIdx].collider = {{app.eSpawn.pos}, app.enemySprite->h / 2.0f};
-        app.enemy[app.eSpawn.spawnedIdx].currentHP = app.enemy[app.eSpawn.spawnedIdx].maxHP = 100;
+        app.enemy[idx].alive = true;
+        app.enemy[idx].pos = app.eSpawn.pos;
+        app.enemy[idx].speed = app.eSpawn.spawnedSpeed;
+        app.enemy[idx].facing = false;
+        app.enemy[idx].targetPos = app.eSpawn.targetWaypoint;
+        app.enemy[idx].hasTarget = true;
+        app.enemy[idx].minDistance = ENEMY_WAYPOINT_MIN_DISTANCE;
+        app.enemy[idx].collider = {{app.eSpawn.pos}, app.enemySprite->h / 2.0f};
+        app.enemy[idx].currentHP = app.enemy[idx].maxHP = 100;
 
         app.eSpawn.spawnedIdx++;
         app.eSpawn.cooldown = app.oneSecond / 2.0f;
@@ -168,9 +170,9 @@ void update_player(void)
     // transform moveQueue to seperate linear array for easier rendering
     app.player.moveQueue.to_linear();
 
-    app.player.damageCooldown--;
-    if(app.player.damageCooldown <= 0)
-        app.player.damageCooldown = -1;
+    app.player.damageCd--;
+    if(app.player.damageCd <= 0)
+        app.player.damageCd = -1;
 }
 
 // clip player position to screen bounds
@@ -224,10 +226,10 @@ void player_collision(void)
             if(circle_in_circle(a, b))
             {
                 // do collision stuff here
-                if(app.player.damageCooldown <= 0)
+                if(app.player.damageCd <= 0)
                 {
                     app.enemy[i].currentHP -= app.player.damage;
-                    app.player.damageCooldown = app.oneSecond / 2.0f;
+                    app.player.damageCd = app.oneSecond / 2.0f;
                     // app.enemy[i].hasTarget = false;
                     play_sound(app.sounds.bruh);
                 }

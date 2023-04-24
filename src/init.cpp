@@ -55,8 +55,8 @@ void init_SDL(void)
 	GPU_SetInitWindow(windowID);
 	GPU_WindowFlagEnum renderFlags = GPU_DEFAULT_INIT_FLAGS;
 	// renderer by SDL_gpu
-	app.screen.screenOutput = GPU_Init((u16)SCREEN_WIDTH, (u16)SCREEN_HEIGHT, renderFlags);
-	if(!app.screen.screenOutput)
+	app.screen.renderOutput = GPU_Init((u16)SCREEN_WIDTH, (u16)SCREEN_HEIGHT, renderFlags);
+	if(!app.screen.renderOutput)
 	{
 		printf("Failed to create renderer with SDL_gpu: %s\n", SDL_GetError());
 		exit(1);
@@ -128,7 +128,7 @@ void init_sound(void)
 {
 	app.sounds.nope = load_sound(SOUNDPATH_NOPE);
 	app.sounds.bruh = load_sound(SOUNDPATH_BRUH);
-	int value = Mix_Volume(-1, 50);
+	Mix_Volume(-1, 50);
 }
 
 // default keybind values
@@ -158,7 +158,7 @@ void init_player(void)
 	app.player.hasTarget = false;
 	app.player.minDistance = PLAYER_WAYPOINT_MIN_DISTANCE;
 	app.player.damage = 51;
-	app.player.damageCooldown = app.oneSecond / 2.0f;
+	app.player.damageCd = app.oneSecond / 2.0f;
 
 	app.player.moveQueue.front = app.player.moveQueue.size = 0;
 	app.player.moveQueue.rear = app.player.moveQueue.capacity - 1;

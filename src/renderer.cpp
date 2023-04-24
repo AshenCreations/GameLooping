@@ -2,25 +2,37 @@
 #include "textures.h"
 #include "utils.h"
 
-
-// Render all the things
 void render(float alpha)
 {
 	// update the part frame before drawing
 	update_part_frame(alpha);
 
 	// clear to help check layer system
-	GPU_ClearRGB(app.screen.screenOutput, 35, 0, 35);
+	GPU_ClearRGB(app.screen.renderOutput, 35, 0, 35);
 
 	// check screenState to see which layers should be drawn/hidden
-	if (isBitSet(app.screenState, 1)) draw_background();
-	if (isBitSet(app.screenState, 2)) draw_middleground();
-	if (isBitSet(app.screenState, 3)) draw_foreground();
-
+	if(isBitSet(app.screenState, BIT_BG))
+	{
+		set_renderlayer(app.screen.BG);
+		draw_background();
+	}
+	if(isBitSet(app.screenState, BIT_MG))
+	{
+		set_renderlayer(app.screen.MG);
+		draw_middleground();
+	}
+	if(isBitSet(app.screenState, BIT_FG))
+	{
+		set_renderlayer(app.screen.FG);
+		draw_foreground();
+	}
 	// show screen
 	present_scene();
 }
 
+//********************************************************
+
+// update positionals before drawing
 void update_part_frame(float alpha)
 {
 	// for enemies
@@ -33,57 +45,49 @@ void update_part_frame(float alpha)
 	app.player.pos += app.player.dPos * (float)alpha;
 }
 
-
-//********************************************************
+void set_renderlayer(GPU_Image* image)
+{
+	GPU_LoadTarget(image);
+	GPU_ClearRGBA(image->target, 0, 0, 0, 0);
+}
 
 // arrange BG then draw to screen
 void draw_background(void)
 {
-	// set render target to BG layer & clear it to transparent
-	GPU_LoadTarget(app.screen.BG);
-	GPU_ClearRGBA(app.screen.BG->target, 0, 0, 0, 0);
-
-	// grass
+	// draw BG things
 	GPU_BlitRect(app.grass, NULL, app.screen.BG->target, NULL);
 
-	GPU_BlitRect(app.screen.BG, NULL, app.screen.screenOutput, NULL);
+	GPU_BlitRect(app.screen.BG, NULL, app.screen.renderOutput, NULL);
 }
 
 // arrange MG then screen
 void draw_middleground(void)
 {
-	// switch rendertarget to MG
-	GPU_LoadTarget(app.screen.MG);
-	//clear MG to transparent
-	GPU_ClearRGBA(app.screen.MG->target, 0, 0, 0, 0);
-
 	// draw MG things
 	draw_enemy(app.screen.MG->target);
 	draw_player_moves(app.screen.MG->target);
 	draw_player(app.screen.MG->target);
 
 	// blit MG to screenOutput
-	GPU_BlitRect(app.screen.MG, NULL, app.screen.screenOutput, NULL);
+	GPU_BlitRect(app.screen.MG, NULL, app.screen.renderOutput, NULL);
 }
 
 // arrange FG then screen
 void draw_foreground(void)
 {
-	GPU_LoadTarget(app.screen.FG);
-	GPU_ClearRGBA(app.screen.FG->target, 0, 0, 0, 0);
-
+	// draw FG things
 	draw_stats(app.screen.FG->target);
 	label_waypoints(app.screen.FG->target);
 	draw_time(get_time_secs(), app.screen.FG->target);
 	draw_player_vectorlabel(app.screen.FG->target);
 
-	GPU_BlitRect(app.screen.FG, NULL, app.screen.screenOutput, NULL);
+	GPU_BlitRect(app.screen.FG, NULL, app.screen.renderOutput, NULL);
 }
 
 // show the screen
 void present_scene(void)
 {
-	GPU_Flip(app.screen.screenOutput);
+	GPU_Flip(app.screen.renderOutput);
 }
 
 //********************************************************
@@ -160,18 +164,19 @@ void draw_player_moves(GPU_Target *target)
 // onscreen text overlay
 void draw_stats(GPU_Target *target)
 {
-	u16 textW = FC_GetWidth(app.fcfont, "Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\nspawned: %d/%u",
-										app.appHz, app.dt, app.player.speed, app.enemyCount, app.eSpawn.maxSpawns);
-	u16 textH = FC_GetHeight(app.fcfont,"Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\nspawned: %d/%u",
-										app.appHz, app.dt, app.player.speed, app.enemyCount, app.eSpawn.maxSpawns);
+	u16 textW = FC_GetWidth(app.fcfont, "Refresh Rate: %dHz\nupdatesPerFrame: %d\ndelta time: %.3f\nplayer speed: %.2f\nspawned: %d/%u",
+										app.appHz, app.updatesPerFrame, app.dt, app.player.speed, app.enemyCount, app.eSpawn.maxSpawns);
+	u16 textH = FC_GetHeight(app.fcfont,"Refresh Rate: %dHz\nupdatesPerFrame: %d\ndelta time: %.3f\nplayer speed: %.2f\nspawned: %d/%u",
+										app.appHz, app.updatesPerFrame, app.dt, app.player.speed, app.enemyCount, app.eSpawn.maxSpawns);
 	GPU_RectangleFilled2(target,
 						{300 - 4, 500, (float)textW + 8, (float)textH},
 						{0, 0, 0, 125});
 
 	FC_DrawColor(app.fcfont, target, 300, 500,
 				COLOR_WHITE,
-				"Refresh Rate: %dHz\ndelta time: %.3f\nplayer speed: %.2f\nspawned: %d/%u",
+				"Refresh Rate: %dHz\nupdatesPerFrame: %d\ndelta time: %.3f\nplayer speed: %.2f\nspawned: %d/%u",
 				app.appHz,
+				app.updatesPerFrame,
 				app.dt,
 				app.player.speed,
 				app.enemyCount, app.eSpawn.maxSpawns);
@@ -221,8 +226,8 @@ void draw_player_vectorlabel(GPU_Target *target)
 
 void draw_time(double time, GPU_Target *target)
 {
-	u16 textW = FC_GetWidth(app.fcfont, "%.3f", time);
-	u16 textH = FC_GetHeight(app.fcfont, "%.3f", time);
+	u16 textW = FC_GetWidth(app.fcfont, "%.2f", time);
+	u16 textH = FC_GetHeight(app.fcfont, "%.2f", time);
 	GPU_RectangleFilled2(target,
 						{0, 0, (float)textW + 4, (float)textH},
 						{0, 0, 0, 125});
@@ -231,5 +236,13 @@ void draw_time(double time, GPU_Target *target)
 				0,
 				0,
 				COLOR_GREEN,
-				"%.3f", time);
+				"%.2f", time);
+}
+
+//! not working
+TTFSize get_text_size(const char* formattedString)
+{
+	app.fontsize.w = FC_GetWidth(app.fcfont, formattedString);
+	app.fontsize.h = FC_GetHeight(app.fcfont, formattedString);
+	return app.fontsize;
 }

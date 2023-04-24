@@ -1,19 +1,18 @@
 #pragma once
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <math.h>
-#include <time.h>
-#include <string.h>
-#include <assert.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstdint>
+#include <cmath>
+#include <ctime>
+#include <cstring>
+#include <cassert>
 
 #include "SDL_gpu.h"
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "SDL_mixer.h"
 #include "SDL_FontCache.h"
-
 
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ User Defined basic types START ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

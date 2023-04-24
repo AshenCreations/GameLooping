@@ -164,9 +164,8 @@ struct Player
 	Queue <Vec2, PLAYER_MAX_NUM_MOVES> moveQueue;
 	Vec2 lArray[PLAYER_MAX_NUM_MOVES];
 
-	// Array <Vec2, 3> testArray;
 	int damage;
-	float damageCooldown;
+	float damageCd;
 };
 
 struct Soundbank
@@ -177,10 +176,14 @@ struct Soundbank
 
 struct Screen
 {
-	GPU_Target *screenOutput;
+	GPU_Target *renderOutput;
 	GPU_Image *BG, *MG, *FG;
 };
 
+struct TTFSize
+{
+	u16 w, h;
+};
 
 // main app struct
 typedef struct
@@ -196,12 +199,14 @@ typedef struct
 	float dt;
 	float dtMulti;
 	int appHz;
+	int updatesPerFrame;
 	float oneSecond;
 
 	GPU_Image *enemySprite;
 	GPU_Image *playerSprite;
 	GPU_Image *grass;
 	FC_Font *fcfont;
+	TTFSize fontsize;
 	Soundbank sounds;
 
 	Waypoint waypoint[WAYPOINT_COUNT];

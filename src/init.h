@@ -9,7 +9,6 @@ void cleanup(void);
 void init_keybinds(void);
 void init_spawner(void);
 void init_sound(void);
-void init_ui(void);
 void init_player(void);
 void init_enemies(void);
 void init_waypoints(void);

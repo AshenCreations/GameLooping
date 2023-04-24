@@ -19,8 +19,6 @@
 #define IMAGEPATH_player "img/monakS_64x64.png"
 #define IMAGEPATH_grass "img/grass.png"
 
-
-
 // sounds
 #define MAX_AUDIO_CHANNELS 8
 #define SOUNDPATH_NOPE "sound/nope.wav"
