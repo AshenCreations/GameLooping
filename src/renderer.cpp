@@ -1,6 +1,4 @@
 #include "renderer.h"
-#include "textures.h"
-#include "utils.h"
 
 void render(float alpha)
 {
@@ -27,7 +25,7 @@ void render(float alpha)
 		draw_foreground();
 	}
 	// show screen
-	present_scene();
+	GPU_Flip(app.screen.renderOutput);
 }
 
 //********************************************************
@@ -38,44 +36,35 @@ void update_part_frame(float alpha)
 	// for enemies
 	for(int i = 0; i < app.enemyCount; i++)
 	{
-		app.enemy[i].pos += app.enemy[i].dPos * alpha;
+		app.enemy[i].pos += app.enemy[i].dPos * alpha * app.dt;
 	}
 
 	// for player
-	app.player.pos += app.player.dPos * (float)alpha;
+	app.player.pos += app.player.dPos * alpha * app.dt;
 }
 
+// draw render layers
 void set_renderlayer(GPU_Image* image)
 {
 	GPU_LoadTarget(image);
 	GPU_ClearRGBA(image->target, 0, 0, 0, 0);
 }
-
-// arrange BG then draw to screen
 void draw_background(void)
 {
-	// draw BG things
 	GPU_BlitRect(app.grass, NULL, app.screen.BG->target, NULL);
 
 	GPU_BlitRect(app.screen.BG, NULL, app.screen.renderOutput, NULL);
 }
-
-// arrange MG then screen
 void draw_middleground(void)
 {
-	// draw MG things
 	draw_enemy(app.screen.MG->target);
 	draw_player_moves(app.screen.MG->target);
 	draw_player(app.screen.MG->target);
 
-	// blit MG to screenOutput
 	GPU_BlitRect(app.screen.MG, NULL, app.screen.renderOutput, NULL);
 }
-
-// arrange FG then screen
 void draw_foreground(void)
 {
-	// draw FG things
 	draw_stats(app.screen.FG->target);
 	label_waypoints(app.screen.FG->target);
 	draw_time(get_time_secs(), app.screen.FG->target);
@@ -84,23 +73,16 @@ void draw_foreground(void)
 	GPU_BlitRect(app.screen.FG, NULL, app.screen.renderOutput, NULL);
 }
 
-// show the screen
-void present_scene(void)
-{
-	GPU_Flip(app.screen.renderOutput);
-}
-
 //********************************************************
-
 
 // render the  enemies
 void draw_enemy(GPU_Target *target)
 {
+	// draw enemy
 	for(int i = 0; i < app.enemyCount; i++)
 	{
 		if(app.enemy[i].alive)
 		{
-			// draw enemy
 			app.enemy[i].renderRect = GPU_MakeRect(app.enemy[i].pos.x - app.enemySprite->w / 2.0f,
 												app.enemy[i].pos.y - app.enemySprite->h / 2.0f,
 												app.enemySprite->w, app.enemySprite->h);
@@ -111,13 +93,19 @@ void draw_enemy(GPU_Target *target)
 
 			GPU_BlitRectX(app.enemySprite, NULL, target, &app.enemy[i].renderRect,
 				0.0f, app.enemySprite->w / 2.0f, app.enemySprite->h / 2.0f, flipflag);
+		}
+	}
 
-			// draw hp bar
+	// draw hp bar
+	for(int i = 0; i < app.enemyCount; i++)
+	{
+		if(app.enemy[i].alive)
+		{
 			GPU_Rect rect = {app.enemy[i].pos.x - (app.enemySprite->w / 2), app.enemy[i].pos.y - (app.enemySprite->h / 2) - 12,
 							56 * (app.enemy[i].currentHP / (float)app.enemy[i].maxHP), 6};
 			SDL_Color color = {200, 0, 0, 255};
 			GPU_RectangleFilled2(target, rect, color);
-		}
+		}	
 	}
 }
 
@@ -136,8 +124,6 @@ void draw_player(GPU_Target *target)
 	GPU_BlitRectX(app.playerSprite, NULL, target, &app.player.renderRect,
 				0.0f, app.playerSprite->w / 2.0f, app.playerSprite->h / 2.0f, flipflag);
 }
-
-// draw queue->size label & waypoint circles with move lines
 void draw_player_moves(GPU_Target *target)
 {
 	// draw waypoint circles & route lines
@@ -161,7 +147,7 @@ void draw_player_moves(GPU_Target *target)
 	}
 }
 
-// onscreen text overlay
+// onscreen text overlay elements
 void draw_stats(GPU_Target *target)
 {
 	u16 textW = FC_GetWidth(app.fcfont, "Refresh Rate: %dHz\nupdatesPerFrame: %d\ndelta time: %.3f\nplayer speed: %.2f\nspawned: %d/%u",
@@ -181,8 +167,6 @@ void draw_stats(GPU_Target *target)
 				app.player.speed,
 				app.enemyCount, app.eSpawn.maxSpawns);
 }
-
-// labels for waypoints
 void label_waypoints(GPU_Target *target)
 {
 	for(int i = 0; i < WAYPOINT_COUNT; i++)
@@ -200,7 +184,6 @@ void label_waypoints(GPU_Target *target)
 					app.waypoint[i].name);
 	}
 }
-
 void draw_player_vectorlabel(GPU_Target *target)
 {
 	u16 textW = FC_GetWidth(app.fcfont, "x: %.2f\ny: %.2f", app.player.vel.x, app.player.vel.y);
@@ -223,7 +206,6 @@ void draw_player_vectorlabel(GPU_Target *target)
 
 	FC_SetDefaultColor(app.fcfont, tempColor);
 }
-
 void draw_time(double time, GPU_Target *target)
 {
 	u16 textW = FC_GetWidth(app.fcfont, "%.2f", time);
@@ -237,12 +219,4 @@ void draw_time(double time, GPU_Target *target)
 				0,
 				COLOR_GREEN,
 				"%.2f", time);
-}
-
-//! not working
-TTFSize get_text_size(const char* formattedString)
-{
-	app.fontsize.w = FC_GetWidth(app.fcfont, formattedString);
-	app.fontsize.h = FC_GetHeight(app.fcfont, formattedString);
-	return app.fontsize;
 }

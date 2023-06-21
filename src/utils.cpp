@@ -27,7 +27,7 @@ float cubed(float a)
     return a * a * a;
 }
 
-// returns the distance from a to b
+// returns the distance from a to b //! not used
 float check_distance(Vec2 a, Vec2 b)
 {
     return sqrtf(square(b.x - a.x) + square(b.y - a.y));
@@ -55,17 +55,14 @@ float lerp(float a, float b, float t)
 {
     return (a * (1.0f - t)) + (b * t);
 }
-
 u8 lerp(u8 a, u8 b, float t)
 {
     return round_float2Int((a * (1.0f - t)) + (b * t));
 }
-
 Vec2 lerp(Vec2 a, Vec2 b, float t)
 {
     return (a * (1.0f - t)) + (b * t);
 }
-
 Color lerp(Color a, Color b, float t)
 {
     u8 R = lerp(a.r, b.r, t);
@@ -74,7 +71,6 @@ Color lerp(Color a, Color b, float t)
 
     return {R, G, B};
 }
-
 float inverse_lerp(float a, float b, float v)
 {
     return (v - a) - (b - a);
@@ -87,7 +83,6 @@ float inverse_lerp(Vec2 a, Vec2 b, Vec2 value)
 	Vec2 AV = value - a;
 	return dot_product(AV, AB) / dot_product(AB, AB);
 }
-
 float remap_lerp(float iMin, float iMax, float oMin, float oMax, float value)
 {
     float t = inverse_lerp(iMin, iMax, value);
@@ -96,26 +91,35 @@ float remap_lerp(float iMin, float iMax, float oMin, float oMax, float value)
 
 //^^^^^^^^^^^^^^^^^^^^^ lerp functions END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-// return inner product of 2 Vec2's, one of which must be normalised
-float dot_product(Vec2 a, Vec2 b)
-{
-    return (a.x * b.x) + (a.y * b.y);
-}
-
 // returns a Vec2 input as a unit vector
 Vec2 unit_Vec2(Vec2 a)
 {
     return (a / Vec2_length(a));
 }
+// make 2 floats into a Vec2
+Vec2 make_Vec2(float x, float y)
+{
+    return {x, y};
+}
+// make 1 value into a Vec2
+Vec2 make_Vec2(float val)
+{
+    return {val, val};
+}
 
+
+// return inner product of 2 Vec2's, one of which must be normalised
+float dot_product(Vec2 a, Vec2 b)
+{
+    return (a.x * b.x) + (a.y * b.y);
+}
 // return true if point pos is in circle a
-bool point_in_circle(Vec2 pos, Circle a)
+bool point_in_circle(Point pos, Circle a)
 {
     Vec2 dist = a.pos - pos;
     float distSq = dot_product(dist, dist);
     return distSq < square(a.radius);
 }
-
 // return true if target circle a collides with source circle b
 bool circle_in_circle(Circle a, Circle b)
 {
@@ -123,18 +127,6 @@ bool circle_in_circle(Circle a, Circle b)
     float vSq = dot_product(v, v);
     float radiusSum = a.radius + b.radius;
     return vSq < square(radiusSum);
-}
-
-// make 2 floats into a Vec2
-Vec2 make_Vec2(float x, float y)
-{
-    return {x, y};
-}
-
-// make 1 value into a Vec2
-Vec2 make_Vec2(float val)
-{
-    return {val, val};
 }
 
 Color extract_RGB(SDL_Color iCol)
@@ -146,7 +138,6 @@ float get_time_ms(void)
 {
     return (float)app.time;
 }
-
 float get_time_secs(void)
 {
     return (float)app.time / 1000.0f;
@@ -159,26 +150,22 @@ int setBit(int x, unsigned char position)
     int mask = 1 << (position - 1);
     return x | mask;
 }
-
 int clearBit(int x, unsigned char position)
 {
     int mask = 1 << (position - 1);
   return x & ~mask;
 }
-
 int modifyBit(int x, unsigned char position, bool newState)
 {
     int mask = 1 << (position - 1);
     int state = int(newState);  // relies on true = 1 and false = 0
     return (x & ~mask) | (-state & mask);
 }
-
 int flipBit(int x, unsigned char position)
 {
     int mask = 1 << (position - 1);
     return x ^ mask;
 }
-
 bool isBitSet(int x, unsigned char position)
 {
     x >>= (position - 1);

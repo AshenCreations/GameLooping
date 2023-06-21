@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include "types.h"
 
 void init(void);
 void init2(void);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "types.h"
+
 #define internal static
 #define global_variable static
 
@@ -40,71 +42,16 @@
 // stats
 #define APP_BASE_TIMEFRAME 0.25f
 #define APP_BASE_SPEED 1.0f         //TODO: this as a variable would affect game speed. would affect alot of data
-#define PLAYER_BASE_SPEED 12.0f
+#define PLAYER_MAX_SPEED 18.0f
 #define PLAYER_MAX_NUM_MOVES 8
-#define ENEMY_BASE_SPEED 15.0f
-#define MAX_ENEMIES 100
+#define ENEMY_BASE_SPEED 12.0f
+#define MAX_ENEMIES 1000
 #define PLAYER_WAYPOINT_MIN_DISTANCE 0.33f
 #define ENEMY_WAYPOINT_MIN_DISTANCE 0.33f
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Templated Array BEGIN ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-template <typename T, u32 N>
-struct Array
-{
-    static constexpr u32 maxElements = N;
-
-    u32 count = 0;
-    T elements[N];
-
-    T& operator[](u32 idx)
-    {
-        assert(idx < count);
-        return elements[idx];
-    }
-
-    bool add(T item);           // add an item 
-    bool remove(u32 idx);       // remove an element. //! Doesn't sort the array
-    void reset_array();         // empty the array
-    // TODO: what other actions can be done on an array ???
-};
-
-template <typename T, u32 N>
-bool Array<T, N>::add(T item)
-{
-    if(count < maxElements)
-    {
-        elements[count] = item;
-        count++;
-        return true;
-    }
-    else
-        return false;
-}
-
-template <typename T, u32 N>
-bool Array<T, N>::remove(u32 idx)
-{
-    if(count >= 0 && idx < count)
-    {
-        elements[idx] = elements[--count];
-        return true;
-    }
-    else
-        return false;
-}
-
-// empty array
-template <typename T, u32 N>
-void Array<T, N>::reset_array()
-{
-    memset(elements, 0, sizeof(elements));
-    count = 0;
-}
-
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Templated Array END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Circular Queue Template BEGIN ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//! this templated circular queue needs to be untemplated and should use a templated array?
+//************** v Circular Queue Template v ********************
 
 template <typename T, u32 N>
 struct Queue
@@ -150,7 +97,7 @@ bool Queue<T, N>::enqueue(T const& item)
     return true;
 }
 
-// return true if there is an item to dequeue, then dequeue iwithout actually getting the item.
+// return true if there is an item to dequeue, then dequeue it without actually getting the item.
 // Use queue_front() to get the front item before checking dequeue. Changes front and size
 template <typename T, u32 N>
 bool Queue<T, N>::dequeue()
@@ -200,4 +147,4 @@ void Queue<T, N>::to_linear()
     }
 }
 
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Circular Queue Template END ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//************** ^ Circular Queue Template ^ ********************

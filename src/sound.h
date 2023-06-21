@@ -1,11 +1,11 @@
 #pragma once
+
 #include "common.h"
 
 Mix_Music* load_music(const char* file);
 Mix_Chunk* load_sound(const char* file);
 void play_music(Mix_Music *music);
 void play_sound(Mix_Chunk *sound);
-
 
 enum SoundChannels
 {

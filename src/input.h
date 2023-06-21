@@ -1,11 +1,14 @@
 #pragma once
 #include "common.h"
 #include "utils.h"
+#include "types.h"
+#include "sound.h"
+#include "math.h"
 
 void do_key_up(SDL_KeyboardEvent *event);
 void do_key_down(SDL_KeyboardEvent *event);
 void input(void);
-void check_keys(void);
+void check_input(void);
 int get_keystate(int keybind);
 bool is_pressed(int keybind);
 bool was_pressed(int keybind);
@@ -24,6 +27,5 @@ enum KeypressState
 	KEY_RELEASED,
 	KEY_HELD
 };
-
 
 extern App app;

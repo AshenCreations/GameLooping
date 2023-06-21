@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "sound.h"
 #include "input.h"
+#include "types.h"
 
 void update(void);
 
@@ -13,6 +14,5 @@ void update_player(void);
 void screenclip_enemy(void);
 void screenclip_player(void);
 void player_collision(void);
-
 
 extern App app;

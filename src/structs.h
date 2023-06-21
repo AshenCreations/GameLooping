@@ -1,87 +1,7 @@
 #pragma once
 
-struct Vec2
-{
-    float x, y;
-};
-
-typedef Vec2 Point;
-
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Vec2 operators ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-internal Vec2 operator+(Vec2 a, Vec2 other)
-{
-  return Vec2{
-    a.x + other.x,
-    a.y + other.y};
-}
-
-internal Vec2 operator+(Vec2 a, float scalar)
-{
-  return Vec2{
-    a.x + scalar,
-    a.y + scalar};
-}
-
-internal Vec2& operator+=(Vec2& a, Vec2 b)
-{
-  a = a + b;
-  return a;
-}
-
-internal Vec2 operator-(Vec2 a, Vec2 other)
-{
-  return Vec2{
-    a.x - other.x,
-    a.y - other.y};
-}
-
-internal Vec2 operator-(float scalar, Vec2 a)
-{
-  return Vec2{
-    scalar - a.x,
-    scalar - a.y};
-}
-
-internal Vec2& operator-=(Vec2& a, Vec2 b)
-{
-  a = a - b;
-  return a;
-}
-
-internal Vec2 operator*(Vec2 a, Vec2 other)
-{
-  return Vec2{
-    a.x * other.x,
-    a.y * other.y};
-}
-
-internal Vec2 operator*(Vec2 a, float scalar)
-{
-  return Vec2{
-    a.x * scalar,
-    a.y * scalar};
-}
-
-internal Vec2 operator/(Vec2 a, Vec2 other)
-{
-  return Vec2{
-    a.x / other.x,
-    a.y / other.y};
-}
-
-internal Vec2 operator/(Vec2 a, float scalar)
-{
-  return Vec2{
-    a.x / scalar,
-    a.y / scalar};
-}
-
-// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-struct IVec2
-{
-    int x, y;
-};
+#include "types.h"
+#include "math.h"
 
 struct Circle
 {
@@ -94,19 +14,21 @@ struct Color
 	u8 r, g, b;
 };
 
+struct IVec2
+{
+    int x, y;
+};
 struct Mouse
 {
     IVec2 pos;
-    unsigned buttons;
-	unsigned wasButtons;
+    u32 buttons;
+	u32 wasButtons;
 };
-
 struct Keystate
 {
 	bool keyPressed;
 	bool wasPressed;
 };
-
 struct Keybinds
 {
     int escape, left, right, up, down, ctrl, BGLayer, MGLayer, FGLayer;
@@ -114,10 +36,9 @@ struct Keybinds
 
 struct Waypoint
 {
-  Vec2 pos;
-  char *name;
+	Vec2 pos;
+	char *name;
 };
-
 struct enemySpawner
 {
     Vec2 pos, targetWaypoint;
@@ -125,7 +46,6 @@ struct enemySpawner
     float cooldown;
     float spawnedSpeed;
 };
-
 struct Enemy
 {
 	int ID;
@@ -180,11 +100,6 @@ struct Screen
 	GPU_Image *BG, *MG, *FG;
 };
 
-struct TTFSize
-{
-	u16 w, h;
-};
-
 // main app struct
 typedef struct
 {
@@ -204,9 +119,8 @@ typedef struct
 
 	GPU_Image *enemySprite;
 	GPU_Image *playerSprite;
-	GPU_Image *grass;
 	FC_Font *fcfont;
-	TTFSize fontsize;
+	GPU_Image *grass;
 	Soundbank sounds;
 
 	Waypoint waypoint[WAYPOINT_COUNT];

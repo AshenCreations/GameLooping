@@ -3,7 +3,6 @@
 #include "sound.h"
 #include "utils.h"
 
-
 void init(void)
 {
 	// SDL inits
@@ -26,17 +25,34 @@ void init2(void)
 	init_spawner();
 }
 
-// init SDL
+void cleanup(void)
+{
+	Mix_FreeChunk(app.sounds.nope);
+	Mix_FreeChunk(app.sounds.bruh);
+	Mix_CloseAudio();
+
+	FC_FreeFont(app.fcfont);
+
+	GPU_FreeImage(app.screen.BG);
+	GPU_FreeImage(app.screen.MG);
+	GPU_FreeImage(app.screen.FG);
+
+	Mix_Quit();
+	TTF_Quit();
+	GPU_Quit();
+	SDL_Quit();
+}
+
 void init_SDL(void)
 {
 	// SDL init
-	if(SDL_Init(SDL_INIT_VIDEO||SDL_INIT_AUDIO) < 0)
+	if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) < 0)
 	{
 		printf("Couldn't initialize SDL: %s\n", SDL_GetError());
 		exit(1);
 	}
 	// window by SDL
-	u32 windowFlags = SDL_WINDOW_OPENGL;
+	u32 windowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS;
 	SDL_Window *window = SDL_CreateWindow(WINDOW_TITLE,
 										SDL_WINDOWPOS_UNDEFINED,
 										SDL_WINDOWPOS_UNDEFINED,
@@ -86,40 +102,18 @@ void init_SDL(void)
 	}
 }
 
-// refresh rate stuff
 void init_screen(void)
 {
-	// find refresh rate from display setting & modify dt & speed 
-	// fuzzy refresh rate evaluation compensates for different monitor manufacturer implementation of refresh rates
-	//! Checks current refresh rate & calculates the deltatime multiplier
+	// Checks current refresh rate & calculates the deltatime multiplier
 	SDL_DisplayMode modeBuffer = {};
 	SDL_GetCurrentDisplayMode(0, &modeBuffer);
 	app.appHz = modeBuffer.refresh_rate;
 	app.dtMulti = modeBuffer.refresh_rate / 60.0f;	// this line works in this project but not for opengl project
 
-	//! deltatime multiplier needed to modify speeds & other things... ???
-	app.player.speed = PLAYER_BASE_SPEED / app.dtMulti;
+	// deltatime multiplier needed to modify speeds & other things... ???
+	app.player.speed = PLAYER_MAX_SPEED / app.dtMulti;
 	app.eSpawn.spawnedSpeed = ENEMY_BASE_SPEED / app.dtMulti;
 	// more things ...
-}
-
-// do this when app exits
-void cleanup(void)
-{
-	Mix_FreeChunk(app.sounds.nope);
-	Mix_FreeChunk(app.sounds.bruh);
-	Mix_CloseAudio();
-
-	FC_FreeFont(app.fcfont);
-
-	GPU_FreeImage(app.screen.BG);
-	GPU_FreeImage(app.screen.MG);
-	GPU_FreeImage(app.screen.FG);
-
-	Mix_Quit();
-	TTF_Quit();
-	GPU_Quit();
-	SDL_Quit();
 }
 
 // load sounds & set volumes
@@ -152,7 +146,7 @@ void init_player(void)
 	app.player.collider = {{app.player.pos.x, app.player.pos.y,}, (float)app.playerSprite->w / 2};
 
 	app.player.pos = {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
-	app.player.maxSpeed = PLAYER_BASE_SPEED;
+	app.player.maxSpeed = PLAYER_MAX_SPEED;
 
 	app.player.facing = true;
 	app.player.hasTarget = false;
@@ -169,8 +163,6 @@ void init_enemies(void)
 	app.enemySprite = load_image(IMAGEPATH_smiley);
 	GPU_SetImageFilter(app.enemySprite, GPU_FILTER_NEAREST);
 }
-
-// init waypoint positions & names
 void init_waypoints(void)
 {
 	app.waypoint[0].pos = {100, 100};

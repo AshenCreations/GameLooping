@@ -1,10 +1,7 @@
 #include "update.h"
 
-
 void update(void)
 {
-    app.updatesPerFrame++;
-
     spawn_enemy();
     update_enemy();
     screenclip_enemy();
@@ -34,16 +31,15 @@ void spawn_enemy(void)
         app.enemy[idx].currentHP = app.enemy[idx].maxHP = 100;
 
         app.eSpawn.spawnedIdx++;
-        app.eSpawn.cooldown = app.oneSecond / 2.0f;
+        app.eSpawn.cooldown = app.oneSecond / 10.0f;
         app.enemyCount++;
     }
     app.eSpawn.cooldown--;
 }
-
 // update enemy position using semi-inplicit Euler integration
 void update_enemy(void)
 {
-    for(int i = 0; i < app.enemyCount; i++)
+    for(int i = 0; i < app.enemyCount; ++i)
     {
         if(app.enemy[i].alive)
         {
@@ -51,13 +47,12 @@ void update_enemy(void)
             if(app.enemy[i].currentHP <= 0)
             {
                 app.enemy[i].alive = false;
+                break;
             }
             
             // waypoint following
             if(app.enemy[i].hasTarget)
             {
-                app.enemy[i].vel = unit_Vec2(app.enemy[i].targetPos - app.enemy[i].pos);
-
                 Circle a = {app.enemy[i].pos, app.enemy[i].minDistance};
                 if(point_in_circle(app.enemy[i].targetPos, a))
                 {
@@ -69,6 +64,7 @@ void update_enemy(void)
 
                     app.enemy[i].targetPos = app.waypoint[app.enemy[i].WpIdx].pos;
                 }
+                app.enemy[i].vel = unit_Vec2(app.enemy[i].targetPos - app.enemy[i].pos);
             }
 
             // store current position
@@ -80,7 +76,7 @@ void update_enemy(void)
             // find difference of current & old positions for renderer
             app.enemy[i].dPos = app.enemy[i].pos - app.enemy[i].oldPos;
 
-            // check enemy facing dependant on velocity.x value
+            // check enemy facing based on velocity.x
             if(app.enemy[i].vel.x > 0)
                 app.enemy[i].facing = false;
             if(app.enemy[i].vel.x < 0)
@@ -114,7 +110,6 @@ void move_to(Player *player)
         }
     }
 }
-
 // clip enemy position to to bounds of the screen
 void screenclip_enemy(void)
 {
@@ -145,17 +140,17 @@ void screenclip_enemy(void)
         }
         
         if(collide)
-            app.enemy[i].vel -= r * (2.0f * dot_product(app.player.vel, r));
+            app.enemy[i].vel -= r * (2.0f * dot_product(app.enemy[i].vel, r));
     }
 }
-
 // update player position using semi-inplicit Euler integration
 void update_player(void)
 {
     // store current position before calculating new position
     app.player.oldPos = app.player.pos;
     
-    // update position & velocity
+    // update velocity & position
+    // app.player.vel += app.player.accel * app.dt;
     app.player.pos += app.player.vel * (app.player.speed * app.dt);
 
     // find difference of current & old positions for renderer
@@ -174,7 +169,6 @@ void update_player(void)
     if(app.player.damageCd <= 0)
         app.player.damageCd = -1;
 }
-
 // clip player position to screen bounds
 void screenclip_player(void)
 {

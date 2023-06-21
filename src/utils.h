@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include "main.h"
 
 int round_float2Int(float a);
 float square(float a);
@@ -19,10 +20,10 @@ float inverse_lerp(Vec2 a, Vec2 b, Vec2 value);
 float remap_lerp(float iMin, float iMax, float oMin, float oMax, float value);
 
 float dot_product(Vec2 a, Vec2 b);
-Vec2 unit_Vec2(Vec2 a);
-bool point_in_circle(Vec2 pos, Circle a);
+bool point_in_circle(Point pos, Circle a);
 bool circle_in_circle(Circle a, Circle b);
 
+Vec2 unit_Vec2(Vec2 a);
 Vec2 make_Vec2(float x, float y);
 Vec2 make_Vec2(float val);
 

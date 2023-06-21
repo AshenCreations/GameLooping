@@ -135,12 +135,14 @@ static void set_color(FC_Image* src, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 static char* new_concat(const char* a, const char* b)
 {
     // Create new buffer
-    unsigned int size = strlen(a) + strlen(b);
+    unsigned int size = (uint32_t)(strlen(a) + strlen(b));
     char* new_string = (char*)malloc(size+1);
 
     // Concatenate strings in the new buffer
-    strcpy(new_string, a);
-    strcat(new_string, b);
+    strcpy_s(new_string, size, a);
+    // strcpy(new_string, a);
+    strcat_s(new_string, size, b);
+    // strcat(new_string, b);
 
     return new_string;
 }
@@ -496,9 +498,10 @@ char* U8_strdup(const char* string)
     char* result;
     if(string == NULL)
         return NULL;
-
-    result = (char*)malloc(strlen(string)+1);
-    strcpy(result, string);
+    unsigned int size = (unsigned int)(strlen(string)+1);
+    result = (char*)malloc(size);
+    strcpy_s(result, size, string);
+    // strcpy(result, string);
 
     return result;
 }
@@ -564,9 +567,9 @@ int U8_strinsert(char* string, int position, const char* source, int max_bytes)
     if(string == NULL || source == NULL)
         return 0;
 
-    len = strlen(string);
-    add_len = strlen(source);
-    ulen = U8_strlen(string);
+    len = (int)strlen(string);
+    add_len = (int)strlen(source);
+    ulen = (int)U8_strlen(string);
 
     if(position == -1)
         position = ulen;
@@ -601,7 +604,7 @@ void U8_strdel(char* string, int position)
         if(position == 0)
         {
             int chars_to_erase = U8_charsize(string);
-            int remaining_bytes = strlen(string) + 1;
+            int remaining_bytes = (int)(strlen(string) + 1);
             memmove(string, string + chars_to_erase, remaining_bytes);
             break;
         }
@@ -1510,7 +1513,7 @@ Uint8 FC_AddGlyphToCache(FC_Font* font, SDL_Surface* glyph_surface)
         GPU_SetBlendMode(img, GPU_BLEND_SET);
 
         SDL_Rect destrect = font->last_glyph.rect;
-        GPU_Blit(img, NULL, target, destrect.x + destrect.w/2, destrect.y + destrect.h/2);
+        GPU_Blit(img, NULL, target, destrect.x + destrect.w/2.0f, destrect.y + destrect.h/2.0f);
 
         GPU_FreeImage(img);
         GPU_FreeTarget(target);
@@ -1701,13 +1704,13 @@ static FC_Rect FC_RenderLeft(FC_Font* font, FC_Target* dest, float x, float y, F
     if(c == NULL || font->glyph_cache_count == 0 || dest == NULL)
         return dirtyRect;
 
-    int newlineX = x;
+    int newlineX = (int)x;
 
     for(; *c != '\0'; c++)
     {
         if(*c == '\n')
         {
-            destX = newlineX;
+            destX = (float)newlineX;
             destY += destH + destLineSpacing;
             continue;
         }
@@ -1722,7 +1725,7 @@ static FC_Rect FC_RenderLeft(FC_Font* font, FC_Target* dest, float x, float y, F
 
         if (codepoint == ' ')
         {
-            destX += glyph.rect.w*scale.x + destLetterSpacing;
+            destX += glyph.rect.w * scale.x + destLetterSpacing;
             continue;
         }
         /*if(destX >= dest->w)
@@ -1731,10 +1734,10 @@ static FC_Rect FC_RenderLeft(FC_Font* font, FC_Target* dest, float x, float y, F
             continue;*/
 
         #ifdef FC_USE_SDL_GPU
-        srcRect.x = glyph.rect.x;
-        srcRect.y = glyph.rect.y;
-        srcRect.w = glyph.rect.w;
-        srcRect.h = glyph.rect.h;
+        srcRect.x = (float)glyph.rect.x;
+        srcRect.y = (float)glyph.rect.y;
+        srcRect.w = (float)glyph.rect.w;
+        srcRect.h = (float)glyph.rect.h;
         #else
         srcRect = glyph.rect;
         #endif
@@ -1775,6 +1778,17 @@ FC_Rect FC_Draw(FC_Font* font, FC_Target* dest, float x, float y, const char* fo
     return FC_RenderLeft(font, dest, x, y, FC_MakeScale(1,1), fc_buffer);
 }
 
+//! Added by Ashen to take standard char* buffer rather than variadic
+//! is it actually needed ??
+FC_Rect FC_Draw_B(FC_Font* font, FC_Target* dest, float x, float y, const char* text)
+{
+    if(text == NULL || font == NULL)
+        return FC_MakeRect(x, y, 0, 0);
+
+    set_color_for_all_caches(font, font->default_color);
+
+    return FC_RenderLeft(font, dest, x, y, FC_MakeScale(1,1), text);
+}
 
 
 typedef struct FC_StringList
@@ -2037,19 +2051,19 @@ static FC_StringList* FC_GetBufferFitToColumn(FC_Font* font, int width, FC_Scale
 
 static void FC_DrawColumnFromBuffer(FC_Font* font, FC_Target* dest, FC_Rect box, int* total_height, FC_Scale scale, FC_AlignEnum align)
 {
-    int y = box.y;
+    int y = (int)box.y;
     FC_StringList *ls, *iter;
 
-    ls = FC_GetBufferFitToColumn(font, box.w, scale, 0);
+    ls = FC_GetBufferFitToColumn(font, (int)box.w, scale, 0);
     for(iter = ls; iter != NULL; iter = iter->next)
     {
-        FC_RenderAlign(font, dest, box.x, y, box.w, scale, align, iter->value);
+        FC_RenderAlign(font, dest, box.x, (float)y, (int)box.w, scale, align, iter->value);
         y += FC_GetLineHeight(font);
     }
     FC_StringListFree(ls);
 
     if(total_height != NULL)
-        *total_height = y - box.y;
+        *total_height = (int)(y - box.y);
 }
 
 FC_Rect FC_DrawBox(FC_Font* font, FC_Target* dest, FC_Rect box, const char* formatted_text, ...)
@@ -2222,7 +2236,7 @@ FC_Rect FC_DrawColumn(FC_Font* font, FC_Target* dest, float x, float y, Uint16 w
 
     FC_DrawColumnFromBuffer(font, dest, box, &total_height, FC_MakeScale(1,1), FC_ALIGN_LEFT);
 
-    return FC_MakeRect(box.x, box.y, width, total_height);
+    return FC_MakeRect(box.x, box.y, (float)width, (float)total_height);
 }
 
 FC_Rect FC_DrawColumnAlign(FC_Font* font, FC_Target* dest, float x, float y, Uint16 width, FC_AlignEnum align, const char* formatted_text, ...)
@@ -2251,7 +2265,7 @@ FC_Rect FC_DrawColumnAlign(FC_Font* font, FC_Target* dest, float x, float y, Uin
 
     FC_DrawColumnFromBuffer(font, dest, box, &total_height, FC_MakeScale(1,1), align);
 
-    return FC_MakeRect(box.x, box.y, width, total_height);
+    return FC_MakeRect(box.x, box.y, (float)width, (float)total_height);
 }
 
 FC_Rect FC_DrawColumnScale(FC_Font* font, FC_Target* dest, float x, float y, Uint16 width, FC_Scale scale, const char* formatted_text, ...)
@@ -2268,7 +2282,7 @@ FC_Rect FC_DrawColumnScale(FC_Font* font, FC_Target* dest, float x, float y, Uin
 
     FC_DrawColumnFromBuffer(font, dest, box, &total_height, scale, FC_ALIGN_LEFT);
 
-    return FC_MakeRect(box.x, box.y, width, total_height);
+    return FC_MakeRect(box.x, box.y, (float)width, (float)total_height);
 }
 
 FC_Rect FC_DrawColumnColor(FC_Font* font, FC_Target* dest, float x, float y, Uint16 width, SDL_Color color, const char* formatted_text, ...)
@@ -2285,7 +2299,7 @@ FC_Rect FC_DrawColumnColor(FC_Font* font, FC_Target* dest, float x, float y, Uin
 
     FC_DrawColumnFromBuffer(font, dest, box, &total_height, FC_MakeScale(1,1), FC_ALIGN_LEFT);
 
-    return FC_MakeRect(box.x, box.y, width, total_height);
+    return FC_MakeRect(box.x, box.y, (float)width, (float)total_height);
 }
 
 FC_Rect FC_DrawColumnEffect(FC_Font* font, FC_Target* dest, float x, float y, Uint16 width, FC_Effect effect, const char* formatted_text, ...)
@@ -2314,7 +2328,7 @@ FC_Rect FC_DrawColumnEffect(FC_Font* font, FC_Target* dest, float x, float y, Ui
 
     FC_DrawColumnFromBuffer(font, dest, box, &total_height, effect.scale, effect.alignment);
 
-    return FC_MakeRect(box.x, box.y, width, total_height);
+    return FC_MakeRect(box.x, box.y, (float)width, (float)total_height);
 }
 
 static FC_Rect FC_RenderCenter(FC_Font* font, FC_Target* dest, float x, float y, FC_Scale scale, const char* text)
@@ -2585,7 +2599,7 @@ FC_Rect FC_GetCharacterOffset(FC_Font* font, Uint16 position_index, int column_w
 
     if(num_lines > 1)
     {
-        result.y = (num_lines - 1) * FC_GetLineHeight(font);
+        result.y = (float)((num_lines - 1) * FC_GetLineHeight(font));
     }
 
     return result;
@@ -2808,7 +2822,8 @@ Uint16 FC_GetPositionFromOffset(FC_Font* font, float x, float y, int column_widt
         {
             if(FC_GetGlyphData(font, &glyph_data, FC_GetCodepointFromUTF8((const char**)&line, 0)))
             {
-                if(FC_InRect(x, y, FC_MakeRect(current_x, current_y, glyph_data.rect.w, glyph_data.rect.h)))
+                if(FC_InRect(x, y, FC_MakeRect((float)current_x, (float)current_y,
+                                        (float)glyph_data.rect.w, (float)glyph_data.rect.h)))
                 {
                     done = 1;
                     break;
@@ -2849,7 +2864,7 @@ int FC_GetWrappedText(FC_Font* font, char* result, int max_result_size, Uint16 w
     for(iter = ls; iter != NULL && size_remaining > 0; iter = iter->next)
     {
         // Copy as much of this line as we can
-        int len = strlen(iter->value);
+        int len = (int)(strlen(iter->value));
         int num_bytes = FC_MIN(len, size_remaining);
         memcpy(&result[size_so_far], iter->value, num_bytes);
         size_so_far += num_bytes;
